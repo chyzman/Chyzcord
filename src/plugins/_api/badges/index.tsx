@@ -33,7 +33,7 @@ import { User } from "discord-types/general";
 
 const CONTRIBUTOR_BADGE = "https://vencord.dev/assets/favicon.png";
 const EQUICORD_CONTRIBUTOR_BADGE = "https://i.imgur.com/57ATLZu.png";
-const CHYZCORD_CONTRIBUTOR_BADGE = "https://chyz.xyz/assets/chyz.png";
+const CHYZCORD_CONTRIBUTOR_BADGE = "https://discord.com/assets/030484501acb33086115.svg";
 
 const ContributorBadge: ProfileBadge = {
     description: "Vencord Contributor",
