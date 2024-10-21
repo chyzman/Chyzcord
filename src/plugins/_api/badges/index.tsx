@@ -130,6 +130,7 @@ export default definePlugin({
     async start() {
         Vencord.Api.Badges.addBadge(ContributorBadge);
         Vencord.Api.Badges.addBadge(EquicordContributorBadge);
+        Vencord.Api.Badges.addBadge(ChyzcordContributorBadge);
         await loadAllBadges();
     },
 
@@ -288,6 +289,20 @@ export default definePlugin({
                     </ErrorBoundary>
                 ));
             },
+        }));
+    },
+
+    getChyzcordDonorBadges(userId: string) {
+        return ChyzcordDonorBadges[userId]?.map(badge => ({
+            image: badge.badge,
+            description: badge.tooltip,
+            position: BadgePosition.START,
+            props: {
+                style: {
+                    borderRadius: "50%",
+                    transform: "scale(0.9)" // The image is a bit too big compared to default badges
+                }
+            }
         }));
     }
 });
