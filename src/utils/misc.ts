@@ -18,7 +18,7 @@
 
 import { Clipboard, Toasts } from "@webpack/common";
 
-import { EquicordDevsById, VencordDevsById } from "./constants";
+import { ChyzcordDevsById, EquicordDevsById, VencordDevsById} from "./constants";
 
 /**
  * Calls .join(" ") on the arguments
@@ -96,6 +96,7 @@ export const isMobile = navigator.userAgent.includes("Mobi");
 
 export const isPluginDev = (id: string) => Object.hasOwn(VencordDevsById, id);
 export const isEquicordPluginDev = (id: string) => Object.hasOwn(EquicordDevsById, id);
+export const isChyzcordPluginDev = (id: string) => Object.hasOwn(ChyzcordDevsById, id);
 
 export function pluralise(amount: number, singular: string, plural = singular + "s") {
     return amount === 1 ? `${amount} ${singular}` : `${amount} ${plural}`;

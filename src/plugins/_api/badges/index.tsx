@@ -25,7 +25,7 @@ import { openContributorModal } from "@components/PluginSettings/ContributorModa
 import { Devs } from "@utils/constants";
 import { Logger } from "@utils/Logger";
 import { Margins } from "@utils/margins";
-import { isEquicordPluginDev, isPluginDev } from "@utils/misc";
+import { isChyzcordPluginDev, isEquicordPluginDev, isPluginDev } from "@utils/misc";
 import { closeModal, Modals, openModal } from "@utils/modal";
 import definePlugin from "@utils/types";
 import { Forms, Toasts, UserStore } from "@webpack/common";
@@ -33,6 +33,7 @@ import { User } from "discord-types/general";
 
 const CONTRIBUTOR_BADGE = "https://vencord.dev/assets/favicon.png";
 const EQUICORD_CONTRIBUTOR_BADGE = "https://i.imgur.com/57ATLZu.png";
+const CHYZCORD_CONTRIBUTOR_BADGE = "https://chyz.xyz/assets/chyz.png";
 
 const ContributorBadge: ProfileBadge = {
     description: "Vencord Contributor",
@@ -50,8 +51,17 @@ const EquicordContributorBadge: ProfileBadge = {
     onClick: (_, { userId }) => openContributorModal(UserStore.getUser(userId))
 };
 
+const ChyzcordContributorBadge: ProfileBadge = {
+    description: "Chyzcord Contributor",
+    image: CHYZCORD_CONTRIBUTOR_BADGE,
+    position: BadgePosition.START,
+    shouldShow: ({ userId }) => isChyzcordPluginDev(userId),
+    onClick: (_, { userId }) => openContributorModal(UserStore.getUser(userId))
+};
+
 let DonorBadges = {} as Record<string, Array<Record<"tooltip" | "badge", string>>>;
 let EquicordDonorBadges = {} as Record<string, Array<Record<"tooltip" | "badge", string>>>;
+let ChyzcordDonorBadges = {} as Record<string, Array<Record<"tooltip" | "badge", string>>>;
 
 async function loadBadges(url: string, noCache = false) {
     const init = {} as RequestInit;
@@ -63,9 +73,11 @@ async function loadBadges(url: string, noCache = false) {
 async function loadAllBadges(noCache = false) {
     const vencordBadges = await loadBadges("https://badges.vencord.dev/badges.json", noCache);
     const equicordBadges = await loadBadges("https://raw.githubusercontent.com/Equicord/Equibored/main/badges.json", noCache);
+    const chyzcordBadges = await loadBadges("https://raw.githubusercontent.com/chyzman/Chyzcord/main/badges.json", noCache);
 
     DonorBadges = vencordBadges;
     EquicordDonorBadges = equicordBadges;
+    ChyzcordDonorBadges = chyzcordBadges;
 }
 
 
