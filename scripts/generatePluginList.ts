@@ -45,6 +45,7 @@ interface PluginData {
 
 const devs = {} as Record<string, Dev>;
 const equicordDevs = {} as Record<string, Dev>;
+const chyzcordDevs = {} as Record<string, Dev>;
 
 function getName(node: NamedDeclaration) {
     return node.name && isIdentifier(node.name) ? node.name.text : undefined;
@@ -142,7 +143,7 @@ function parseChyzcordDevs() {
 
             if (!isObjectLiteralExpression(value)) throw new Error(`Failed to parse ChyzcordDevs: ${name} is not an object literal`);
 
-            equicordDevs[name] = {
+            chyzcordDevs[name] = {
                 name: (getObjectProp(value, "name") as StringLiteral).text,
                 id: (getObjectProp(value, "id") as BigIntLiteral).text.slice(0, -1)
             };

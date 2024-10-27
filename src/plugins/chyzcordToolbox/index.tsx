@@ -21,7 +21,7 @@ import "./index.css";
 import { openNotificationLogModal } from "@api/Notifications/notificationLog";
 import { migratePluginSettings, Settings, useSettings } from "@api/Settings";
 import ErrorBoundary from "@components/ErrorBoundary";
-import { Devs } from "@utils/constants";
+import { ChyzcordDevs, Devs } from "@utils/constants";
 import definePlugin from "@utils/types";
 import { findExportedComponentLazy } from "@webpack";
 import { Menu, Popout, useState } from "@webpack/common";
@@ -137,7 +137,8 @@ migratePluginSettings("ChyzcordToolbox", "EquicordToolbox", "VencordToolbox");
 export default definePlugin({
     name: "ChyzcordToolbox",
     description: "Adds a button next to the inbox button in the channel header that houses Chyzcord quick actions",
-    authors: [Devs.Ven, Devs.AutumnVN],
+    authors: [Devs.Ven, Devs.AutumnVN, ChyzcordDevs.chyzman],
+    enabledByDefault: true,
 
     patches: [
         {
