@@ -38,6 +38,10 @@ export interface Dev {
  * If you are fine with attribution but don't want the badge, add badge: false
  */
 export const Devs = /* #__PURE__*/ Object.freeze({
+    None: {
+        name: "None",
+        id: 0n
+    },
     Ven: {
         name: "Vee",
         id: 343383572805058560n
@@ -579,6 +583,82 @@ export const Devs = /* #__PURE__*/ Object.freeze({
     RamziAH: {
         name: "RamziAH",
         id: 1279957227612147747n
+    },
+    Strencher: {
+        name: "Strencher",
+        id: 415849376598982656n,
+    },
+    KawaiianPizza: {
+        name: "KawaiianPizza",
+        id: 501000986735673347n,
+    },
+    zoodogood: {
+        name: "zoodogood",
+        id: 921403577539387454n,
+    },
+    Max: {
+        name: "Max",
+        id: 1189527130611138663n,
+    },
+    Fres: {
+        name: "Fres",
+        id: 843448897737064448n,
+    },
+    Hanzy: {
+        name: "hanzydev",
+        id: 1093131781043126322n,
+    },
+    VISHNYA_NET_CHERESHNYA: {
+        name: "Vishnya",
+        id: 282541644484575233n,
+    },
+    Wolfie: {
+        name: "Wolfie",
+        id: 347096063569559553n,
+    },
+    iamme: {
+        name: "i am me",
+        id: 984392761929256980n,
+    },
+    MrDiamond: {
+        name: "mrdiamonddog",
+        id: 523338295644782592n,
+    },
+    Tolgchu: {
+        name: "✨Tolgchu✨",
+        id: 329671025312923648n,
+    },
+    Slightly: {
+        name: "Slightly",
+        id: 119536078452424704n,
+    },
+    DaBluLite: {
+        name: "DaBluLite",
+        id: 582170007505731594n,
+    },
+    Colorman: {
+        name: "colorman",
+        id: 298842558610800650n,
+    },
+    PWall: {
+        name: "PWall",
+        id: 0n,
+    },
+    hen: {
+        id: 279266228151779329n,
+        name: "Hen",
+    },
+    philhk: {
+        name: "philhk",
+        id: 305288513941667851n,
+    },
+    walrus: {
+        name: "walrus",
+        id: 305317288775778306n,
+    },
+    Fafa: {
+        name: "Fafa",
+        id: 428188716641812481n,
     },
 } satisfies Record<string, Dev>);
 
