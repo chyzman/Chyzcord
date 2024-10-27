@@ -16,13 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {Dirent, readdirSync, readFileSync, writeFileSync} from "fs";
-import {access, readFile} from "fs/promises";
-import {join, sep} from "path";
-import {normalize as posixNormalize, sep as posixSep} from "path/posix";
-import {BigIntLiteral, createSourceFile, Identifier, isArrayLiteralExpression, isCallExpression, isExportAssignment, isIdentifier, isObjectLiteralExpression, isPropertyAccessExpression, isPropertyAssignment, isSatisfiesExpression, isStringLiteral, isVariableStatement, NamedDeclaration, NodeArray, ObjectLiteralExpression, ScriptTarget, StringLiteral, SyntaxKind} from "typescript";
+import { Dirent, readdirSync, readFileSync, writeFileSync } from "fs";
+import { access, readFile } from "fs/promises";
+import { join, sep } from "path";
+import { normalize as posixNormalize, sep as posixSep } from "path/posix";
+import { BigIntLiteral, createSourceFile, Identifier, isArrayLiteralExpression, isCallExpression, isExportAssignment, isIdentifier, isObjectLiteralExpression, isPropertyAccessExpression, isPropertyAssignment, isSatisfiesExpression, isStringLiteral, isVariableStatement, NamedDeclaration, NodeArray, ObjectLiteralExpression, ScriptTarget, StringLiteral, SyntaxKind } from "typescript";
 
-import {getPluginTarget} from "./utils.mjs";
+import { getPluginTarget } from "./utils.mjs";
 
 interface Dev {
     name: string;
@@ -39,12 +39,13 @@ interface PluginData {
     hasCommands: boolean;
     required: boolean;
     enabledByDefault: boolean;
-    target: "discordDesktop" | "vencordDesktop" | "equicordDesktop" | "chyzcordDesktop" | "desktop" | "web" | "dev";
+    target: "discordDesktop" | "vencordDesktop" | "equicordDesktop" | "desktop" | "web" | "dev";
     filePath: string;
 }
 
 const devs = {} as Record<string, Dev>;
 const equicordDevs = {} as Record<string, Dev>;
+const chyzcordDevs = {} as Record<string, Dev>;
 
 function getName(node: NamedDeclaration) {
     return node.name && isIdentifier(node.name) ? node.name.text : undefined;
@@ -122,7 +123,6 @@ function parseEquicordDevs() {
     throw new Error("Could not find EquicordDevs constant");
 }
 
-
 function parseChyzcordDevs() {
     const file = createSourceFile("constants.ts", readFileSync("src/utils/constants.ts", "utf8"), ScriptTarget.Latest);
 
@@ -142,7 +142,7 @@ function parseChyzcordDevs() {
 
             if (!isObjectLiteralExpression(value)) throw new Error(`Failed to parse ChyzcordDevs: ${name} is not an object literal`);
 
-            equicordDevs[name] = {
+            chyzcordDevs[name] = {
                 name: (getObjectProp(value, "name") as StringLiteral).text,
                 id: (getObjectProp(value, "id") as BigIntLiteral).text.slice(0, -1)
             };
@@ -198,7 +198,7 @@ async function parseFile(fileName: string) {
                     if (!isArrayLiteralExpression(value)) throw fail("authors is not an array literal");
                     data.authors = value.elements.map(e => {
                         if (!isPropertyAccessExpression(e)) throw fail("authors array contains non-property access expressions");
-                        const d = devs[getName(e)!] || equicordDevs[getName(e)!];
+                        const d = devs[getName(e)!] || equicordDevs[getName(e)!] || chyzcordDevs[getName(e)!];
                         if (!d) throw fail(`couldn't look up author ${getName(e)}`);
                         return d;
                     });
@@ -212,7 +212,7 @@ async function parseFile(fileName: string) {
                     break;
                 case "dependencies":
                     if (!isArrayLiteralExpression(value)) throw fail("dependencies is not an array literal");
-                    const {elements} = value;
+                    const { elements } = value;
                     if (elements.some(e => !isStringLiteral(e))) throw fail("dependencies array contains non-string elements");
                     data.dependencies = (elements as NodeArray<StringLiteral>).map(e => e.text);
                     break;
@@ -227,7 +227,7 @@ async function parseFile(fileName: string) {
 
         const target = getPluginTarget(fileName);
         if (target) {
-            if (!["web", "discordDesktop", "vencordDesktop", "equicordDesktop", "chyzcordDesktop", "desktop", "dev"].includes(target)) throw fail(`invalid target ${target}`);
+            if (!["web", "discordDesktop", "vencordDesktop", "equicordDesktop", "desktop", "dev"].includes(target)) throw fail(`invalid target ${target}`);
             data.target = target as any;
         }
 
@@ -237,12 +237,7 @@ async function parseFile(fileName: string) {
             .replace(/\/index\.([jt]sx?)$/, "")
             .replace(/^src\/plugins\//, "");
 
-        let readme = "";
-        try {
-            readme = readFileSync(join(fileName, "..", "README.md"), "utf-8");
-        } catch {
-        }
-        return [data, readme] as const;
+        return [data] as const;
     }
 
     throw fail("no default export called 'definePlugin' found");
@@ -257,14 +252,13 @@ async function getEntryPoint(dir: string, dirent: Dirent) {
         try {
             await access(full);
             return full;
-        } catch {
-        }
+        } catch { }
     }
 
     throw new Error(`${dirent.name}: Couldn't find entry point`);
 }
 
-function isPluginFile({name}: { name: string; }) {
+function isPluginFile({ name }: { name: string; }) {
     if (name === "index.ts") return false;
     return !name.startsWith("_") && !name.startsWith(".");
 }
@@ -275,23 +269,20 @@ function isPluginFile({name}: { name: string; }) {
     parseChyzcordDevs();
 
     const plugins = [] as PluginData[];
-    const readmes = {} as Record<string, string>;
 
-    await Promise.all([].flatMap(dir =>
-        readdirSync(dir, {withFileTypes: true})
+    await Promise.all(["src/chyzcordplugins"].flatMap(dir =>
+        readdirSync(dir, { withFileTypes: true })
             .filter(isPluginFile)
             .map(async dirent => {
-                const [data, readme] = await parseFile(await getEntryPoint(dir, dirent));
+                const [data] = await parseFile(await getEntryPoint(dir, dirent));
                 plugins.sort().push(data);
-                if (readme) readmes[data.name] = readme;
             })
     ));
 
     const data = JSON.stringify(plugins);
 
-    if (process.argv.length > 3) {
+    if (process.argv.length > 2) {
         writeFileSync(process.argv[2], data);
-        writeFileSync(process.argv[3], JSON.stringify(readmes));
     } else {
         console.log(data);
     }

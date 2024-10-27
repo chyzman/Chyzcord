@@ -39,7 +39,7 @@ interface PluginData {
     hasCommands: boolean;
     required: boolean;
     enabledByDefault: boolean;
-    target: "discordDesktop" | "vencordDesktop" | "equicordDesktop" | "chyzcordDesktop" | "desktop" | "web" | "dev";
+    target: "discordDesktop" | "vencordDesktop" | "equicordDesktop" | "desktop" | "web" | "dev";
     filePath: string;
 }
 
@@ -122,7 +122,6 @@ function parseEquicordDevs() {
 
     throw new Error("Could not find EquicordDevs constant");
 }
-
 
 function parseChyzcordDevs() {
     const file = createSourceFile("constants.ts", readFileSync("src/utils/constants.ts", "utf8"), ScriptTarget.Latest);
@@ -228,7 +227,7 @@ async function parseFile(fileName: string) {
 
         const target = getPluginTarget(fileName);
         if (target) {
-            if (!["web", "discordDesktop", "vencordDesktop", "equicordDesktop", "chyzcordDesktop", "desktop", "dev"].includes(target)) throw fail(`invalid target ${target}`);
+            if (!["web", "discordDesktop", "vencordDesktop", "equicordDesktop", "desktop", "dev"].includes(target)) throw fail(`invalid target ${target}`);
             data.target = target as any;
         }
 
@@ -276,7 +275,7 @@ function isPluginFile({ name }: { name: string; }) {
     const plugins = [] as PluginData[];
     const readmes = {} as Record<string, string>;
 
-    await Promise.all(["src/plugins", "src/plugins/_core", "src/equicordplugins" ].flatMap(dir =>
+    await Promise.all(["src/plugins", "src/plugins/_core", "src/equicordplugins", "src/chyzcordplugins"].flatMap(dir =>
         readdirSync(dir, { withFileTypes: true })
             .filter(isPluginFile)
             .map(async dirent => {

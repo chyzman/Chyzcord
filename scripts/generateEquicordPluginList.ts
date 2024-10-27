@@ -45,6 +45,7 @@ interface PluginData {
 
 const devs = {} as Record<string, Dev>;
 const equicordDevs = {} as Record<string, Dev>;
+const chyzcordDevs = {} as Record<string, Dev>;
 
 function getName(node: NamedDeclaration) {
     return node.name && isIdentifier(node.name) ? node.name.text : undefined;
@@ -122,6 +123,37 @@ function parseEquicordDevs() {
     throw new Error("Could not find EquicordDevs constant");
 }
 
+function parseChyzcordDevs() {
+    const file = createSourceFile("constants.ts", readFileSync("src/utils/constants.ts", "utf8"), ScriptTarget.Latest);
+
+    for (const child of file.getChildAt(0).getChildren()) {
+        if (!isVariableStatement(child)) continue;
+
+        const devsDeclaration = child.declarationList.declarations.find(d => hasName(d, "ChyzcordDevs"));
+        if (!devsDeclaration?.initializer || !isCallExpression(devsDeclaration.initializer)) continue;
+
+        const value = devsDeclaration.initializer.arguments[0];
+
+        if (!isSatisfiesExpression(value) || !isObjectLiteralExpression(value.expression)) throw new Error("Failed to parse ChyzcordDevs: not an object literal");
+
+        for (const prop of value.expression.properties) {
+            const name = (prop.name as Identifier).text;
+            const value = isPropertyAssignment(prop) ? prop.initializer : prop;
+
+            if (!isObjectLiteralExpression(value)) throw new Error(`Failed to parse ChyzcordDevs: ${name} is not an object literal`);
+
+            chyzcordDevs[name] = {
+                name: (getObjectProp(value, "name") as StringLiteral).text,
+                id: (getObjectProp(value, "id") as BigIntLiteral).text.slice(0, -1)
+            };
+        }
+
+        return;
+    }
+
+    throw new Error("Could not find ChyzcordDevs constant");
+}
+
 async function parseFile(fileName: string) {
     const file = createSourceFile(fileName, await readFile(fileName, "utf8"), ScriptTarget.Latest);
 
@@ -166,7 +198,7 @@ async function parseFile(fileName: string) {
                     if (!isArrayLiteralExpression(value)) throw fail("authors is not an array literal");
                     data.authors = value.elements.map(e => {
                         if (!isPropertyAccessExpression(e)) throw fail("authors array contains non-property access expressions");
-                        const d = devs[getName(e)!] || equicordDevs[getName(e)!];
+                        const d = devs[getName(e)!] || equicordDevs[getName(e)!] || chyzcordDevs[getName(e)!];
                         if (!d) throw fail(`couldn't look up author ${getName(e)}`);
                         return d;
                     });
@@ -205,11 +237,7 @@ async function parseFile(fileName: string) {
             .replace(/\/index\.([jt]sx?)$/, "")
             .replace(/^src\/plugins\//, "");
 
-        let readme = "";
-        try {
-            readme = readFileSync(join(fileName, "..", "README.md"), "utf-8");
-        } catch { }
-        return [data, readme] as const;
+        return [data] as const;
     }
 
     throw fail("no default export called 'definePlugin' found");
@@ -238,17 +266,16 @@ function isPluginFile({ name }: { name: string; }) {
 (async () => {
     parseDevs();
     parseEquicordDevs();
+    parseChyzcordDevs();
 
     const plugins = [] as PluginData[];
-    const readmes = {} as Record<string, string>;
 
     await Promise.all(["src/equicordplugins"].flatMap(dir =>
         readdirSync(dir, { withFileTypes: true })
             .filter(isPluginFile)
             .map(async dirent => {
-                const [data, readme] = await parseFile(await getEntryPoint(dir, dirent));
+                const [data] = await parseFile(await getEntryPoint(dir, dirent));
                 plugins.sort().push(data);
-                if (readme) readmes[data.name] = readme;
             })
     ));
 
