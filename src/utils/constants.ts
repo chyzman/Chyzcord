@@ -197,6 +197,8 @@ export const Devs = /* #__PURE__*/ Object.freeze({
     SomeAspy: { name: "SomeAspy", id: 516750892372852754n },
     Zoid: { name: "Zoid", id: 854819626969333771n },
     vappster: { name: "vappster", id: 747192967311261748n },
+    redbaron2k7: { name: "redbaron2k7", id: 1142923640778797157n },
+    ryanamay: { name: "ryanamay", id: 1262793452236570667n },
 } satisfies Record<string, Dev>);
 
 export const EquicordDevs = Object.freeze({

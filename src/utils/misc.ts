@@ -18,7 +18,7 @@
 
 import { Clipboard, Toasts } from "@webpack/common";
 
-import { ChyzcordDevsById, EquicordDevsById, VencordDevsById} from "./constants";
+import { ChyzcordDevsById, EquicordDevsById, VencordDevsById } from "./constants";
 
 /**
  * Calls .join(" ") on the arguments

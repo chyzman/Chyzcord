@@ -1,11 +1,12 @@
 /*
  * Vencord, a Discord client mod
- * Copyright (c) 2024 sadan
+ * Copyright (c) 2024 Vendicated and contributors
  * SPDX-License-Identifier: GPL-3.0-or-later
-*/
+ */
 
-import definePlugin from "@utils/types";
 import { Devs } from "@utils/constants";
+import definePlugin from "@utils/types";
+
 import { makeContextItem } from "./components";
 import settings, { folderIconsData } from "./settings";
 import { folderProp, int2rgba } from "./util";
