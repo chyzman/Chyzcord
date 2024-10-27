@@ -39,6 +39,9 @@ jobs:
             -   name: Generate Equicord plugin list
                 run: pnpm generateEquicordPluginJson dist/equicordplugins.json
 
+            -   name: Generate Chyzcord plugin list
+                run: pnpm generateChyzcordPluginJson dist/chyzcordplugins.json
+
             -   name: Collect files to be released
                 run: |
                     cd dist
