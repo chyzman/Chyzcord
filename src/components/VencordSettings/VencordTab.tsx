@@ -16,19 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import "./VencordTab.css";
+
 import { openNotificationLogModal } from "@api/Notifications/notificationLog";
 import { useSettings } from "@api/Settings";
 import { classNameFactory } from "@api/Styles";
-import DonateButton from "@components/DonateButton";
 import { openPluginModal } from "@components/PluginSettings/PluginModal";
 import { gitRemote } from "@shared/vencordUserAgent";
+import { openInviteModal } from "@utils/discord";
 import { Margins } from "@utils/margins";
 import { identity } from "@utils/misc";
 import { relaunch, showItemInFolder } from "@utils/native";
 import { useAwaiter } from "@utils/react";
-import { Button, Card, Forms, React, Select, Switch } from "@webpack/common";
+import { Button, Card, Forms, React, Select, showToast, Switch } from "@webpack/common";
 
-import { Flex, FolderIcon, GithubIcon, LogIcon, PaintbrushIcon, RestartIcon } from "..";
+import { Flex, FolderIcon, GithubIcon, Heart, LogIcon, PaintbrushIcon, RestartIcon } from "..";
 import { openNotificationSettingsModal } from "./NotificationSettings";
 import { QuickAction, QuickActionCard } from "./quickActions";
 import { SettingsTab, wrapTab } from "./shared";
@@ -49,6 +51,7 @@ function EquicordSettings() {
     });
     const settings = useSettings();
 
+    const discordInvite = "bFp57wxCkv";
     const donateImage = React.useMemo(() => Math.random() > 0.5 ? DEFAULT_DONATE_IMAGE : SHIGGY_DONATE_IMAGE, []);
 
     const isWindows = navigator.platform.toLowerCase().startsWith("win");
@@ -59,47 +62,55 @@ function EquicordSettings() {
         key: KeysOfType<typeof settings, boolean>;
         title: string;
         note: string;
+        warning: { enabled: boolean; message?: string; };
     }> =
         [
             {
                 key: "useQuickCss",
                 title: "Enable Custom CSS",
-                note: "Loads your Custom CSS"
+                note: "Loads your Custom CSS",
+                warning: { enabled: false }
             },
             !IS_WEB && {
                 key: "enableReactDevtools",
                 title: "Enable React Developer Tools",
-                note: "Requires a full restart"
+                note: "Requires a full restart",
+                warning: { enabled: false }
             },
             !IS_WEB && (!IS_DISCORD_DESKTOP || !isWindows ? {
                 key: "frameless",
                 title: "Disable the window frame",
-                note: "Requires a full restart"
+                note: "Requires a full restart",
+                warning: { enabled: false }
             } : {
                 key: "winNativeTitleBar",
                 title: "Use Windows' native title bar instead of Discord's custom one",
-                note: "Requires a full restart"
+                note: "Requires a full restart",
+                warning: { enabled: false }
             }),
             !IS_WEB && {
                 key: "transparent",
                 title: "Enable window transparency.",
-                note: "You need a theme that supports transparency or this will do nothing. WILL STOP THE WINDOW FROM BEING RESIZABLE!! Requires a full restart"
+                note: "You need a theme that supports transparency or this will do nothing. Requires a full restart",
+                warning: { enabled: true, message: "This will stop the window from being resizable" }
             },
             !IS_WEB && isWindows && {
                 key: "winCtrlQ",
                 title: "Register Ctrl+Q as shortcut to close Discord (Alternative to Alt+F4)",
-                note: "Requires a full restart"
+                note: "Requires a full restart",
+                warning: { enabled: false }
             },
             IS_DISCORD_DESKTOP && {
                 key: "disableMinSize",
                 title: "Disable minimum window size",
-                note: "Requires a full restart"
+                note: "Requires a full restart",
+                warning: { enabled: false }
             },
         ];
 
     return (
         <SettingsTab title="Equicord Settings">
-            <DonateCard image={donateImage} />
+            <DiscordInviteCard invite={discordInvite} image={donateImage} />
             <Forms.FormSection title="Quick Actions">
                 <QuickActionCard>
                     <QuickAction
@@ -153,7 +164,14 @@ function EquicordSettings() {
                         key={s.key}
                         value={settings[s.key]}
                         onChange={v => settings[s.key] = v}
-                        note={s.note}
+                        note={
+                            s.warning.enabled ? <>
+                                {s.note}
+                                <div className="form-switch-warning">
+                                    {s.warning.message}
+                                </div>
+                            </> : s.note
+                        }
                     >
                         {s.title}
                     </Switch>
@@ -239,17 +257,38 @@ function EquicordSettings() {
     );
 }
 
-interface DonateCardProps {
+interface DiscordInviteProps {
+    invite: string;
     image: string;
 }
 
-function DonateCard({ image }: DonateCardProps) {
+
+function DiscordInviteCard({ invite, image }: DiscordInviteProps) {
     return (
-        <Card className={cl("card", "donate")}>
+        <Card className={cl("card", "discordinvite")}>
             <div>
-                <Forms.FormTitle tag="h5">Support the Project</Forms.FormTitle>
-                <Forms.FormText>Please consider supporting the development of Equicord by donating!</Forms.FormText>
-                <DonateButton style={{ transform: "translateX(-1em)" }} />
+                <Forms.FormTitle tag="h5">Join the discord!</Forms.FormTitle>
+                <Forms.FormText>Please consider joining the discord for any news on breaking changes, or new bigger updates!</Forms.FormText>
+                <Forms.FormText>You can also donate to me if you'd like to support this project. <Heart /></Forms.FormText>
+
+                <div className={cl("card-buttons")}>
+                    <Button
+                        className="vc-joindiscordbutton vc-settingbuttons"
+                        onClick={async e => {
+                            e.preventDefault();
+                            openInviteModal(invite).catch(() => showToast("Invalid or expired invite"));
+                        }}
+                    >
+                        Join
+                    </Button>
+
+                    <Button
+                        className="vc-donatebutton vc-settingbuttons"
+                        onClick={() => { VencordNative.native.openExternal("https://github.com/sponsors/verticalsync"); }}
+                    >
+                        Donate
+                    </Button>
+                </div>
             </div>
             <img
                 role="presentation"
@@ -257,9 +296,7 @@ function DonateCard({ image }: DonateCardProps) {
                 alt=""
                 height={128}
                 style={{
-                    imageRendering: image === SHIGGY_DONATE_IMAGE ? "pixelated" : void 0,
                     marginLeft: "auto",
-                    transform: image === DEFAULT_DONATE_IMAGE ? "rotate(10deg)" : void 0
                 }}
             />
         </Card>

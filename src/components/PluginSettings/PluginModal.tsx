@@ -287,12 +287,12 @@ export default function PluginModal({ plugin, onRestartNeeded, onClose, transiti
                         <Tooltip text="Reset to default settings" shouldShow={!isObjectEmpty(tempSettings)}>
                             {({ onMouseEnter, onMouseLeave }) => (
                                 <Button
+                                    className="button-danger-background"
                                     size={Button.Sizes.SMALL}
                                     color={Button.Colors.BRAND}
                                     onClick={handleResetClick}
                                     onMouseEnter={onMouseEnter}
                                     onMouseLeave={onMouseLeave}
-                                    style={{ backgroundColor: "var(--button-danger-background)" }}
                                 >
                                     Reset
                                 </Button>
@@ -407,66 +407,60 @@ export function openWarningModal(plugin: Plugin, pluginModalProps: ModalProps, o
             transitionState={warningModalProps.transitionState}
         >
             <ModalHeader separator={false}>
-                <Text style={{ flexGrow: 1, color: "var(--text-danger)", fontSize: "1.4rem", fontWeight: "bold" }}>Warning: Dangerous Action</Text>
-                <ModalCloseButton onClick={warningModalProps.onClose} />
+                <Text className="text-danger">Dangerous Action</Text>
+                <ModalCloseButton onClick={warningModalProps.onClose} className="vc-modal-close-button" />
             </ModalHeader>
             <ModalContent>
                 <Forms.FormSection>
-                    <Flex className="vc-warning-info" style={{ gap: "15px", flexDirection: "column", userSelect: "none" }}>
+                    <Flex className="vc-warning-info">
                         <img
                             src="https://media.tenor.com/Y6DXKZiBCs8AAAAi/stavario-josefbenes.gif"
                             alt="Warning"
-                            style={{ width: "60%", height: "auto", marginBottom: "10px", display: "block", margin: "auto" }}
                         />
-                        <Text style={{ fontSize: "1.2rem", color: "var(--text-normal)" }}>
+                        <Text className="text-normal">
                             You are about to reset all settings for <strong>{plugin.name}</strong> to their default values.
                         </Text>
-                        <Text style={{ fontSize: "1.2rem", color: "var(--text-danger)", fontWeight: "bold" }}>
-                            This action is irreversible.
+                        <Text className="text-danger">
+                            THIS ACTION IS IRREVERSIBLE
                         </Text>
-                        <Text style={{ fontSize: "1.2rem", color: "var(--text-normal)", marginBottom: "10px" }}>
+                        <Text className="text-normal margin-bottom">
                             If you are certain you want to proceed, click <strong>Confirm Reset</strong>. Otherwise, click <strong>Cancel</strong>.
                         </Text>
-                        {!Settings.ignoreResetWarning && (
-                            <Button style={{
-                                fontSize: "0.8rem",
-                                backgroundColor: "transparent",
-                                color: "red",
-                                cursor: "pointer",
-                                margin: "0 auto",
-                                width: "fit-content",
-                                textDecoration: "underline"
-                            }} onClick={() => {
-                                Settings.ignoreResetWarning = true;
-                            }}>
-                                Disable this warning forever
-                            </Button>
-                        )}
                     </Flex>
                 </Forms.FormSection>
             </ModalContent>
-            <ModalFooter>
-                <Flex flexDirection="column" style={{ width: "100%" }}>
-                    <Flex style={{ justifyContent: "space-between" }}>
-                        <Button
-                            size={Button.Sizes.SMALL}
-                            color={Button.Colors.PRIMARY}
-                            onClick={warningModalProps.onClose}
-                            look={Button.Looks.LINK}
-                        >
-                            Cancel
-                        </Button>
+            <ModalFooter className="modal-footer">
+                <Flex className="button-container">
+                    <Button
+                        size={Button.Sizes.SMALL}
+                        color={Button.Colors.PRIMARY}
+                        onClick={warningModalProps.onClose}
+                        look={Button.Looks.LINK}
+                    >
+                        Cancel
+                    </Button>
+                    <Flex className="button-group">
+                        {!Settings.ignoreResetWarning && (
+                            <Button
+                                size={Button.Sizes.SMALL}
+                                className="button-danger-background"
+                                onClick={() => {
+                                    Settings.ignoreResetWarning = true;
+                                }}
+                            >
+                                Disable Warning Forever
+                            </Button>
+                        )}
                         <Tooltip text="This action cannot be undone. Are you sure?" shouldShow={true}>
                             {({ onMouseEnter, onMouseLeave }) => (
                                 <Button
                                     size={Button.Sizes.SMALL}
-                                    color={Button.Colors.BRAND}
                                     onClick={() => {
-                                        resetSettings(plugin, warningModalProps, pluginModalProps, onRestartNeeded);
+                                        resetSettings(plugin, pluginModalProps, pluginModalProps, onRestartNeeded);
                                     }}
                                     onMouseEnter={onMouseEnter}
                                     onMouseLeave={onMouseLeave}
-                                    style={{ marginLeft: "10px", backgroundColor: "var(--button-danger-background)" }}
+                                    className="button-danger-background-no-margin"
                                 >
                                     Confirm Reset
                                 </Button>

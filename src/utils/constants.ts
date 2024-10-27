@@ -18,9 +18,12 @@
 
 export const WEBPACK_CHUNK = "webpackChunkdiscord_app";
 export const REACT_GLOBAL = "Vencord.Webpack.Common.React";
-export const SUPPORT_CHANNEL_ID = "1173342942858055721";
-export const SUPPORT_CHANNEL_IDS = ["1173342942858055721", "1026515880080842772"];
+export const SUPPORT_CHANNEL_ID = "1297590739911573585";
 export const VC_SUPPORT_CHANNEL_ID = "1026515880080842772";
+export const SUPPORT_CHANNEL_IDS = [SUPPORT_CHANNEL_ID, VC_SUPPORT_CHANNEL_ID];
+export const GUILD_ID = "1173279886065029291";
+export const VC_GUILD_ID = "1015060230222131221";
+export const GUILD_IDS = [GUILD_ID, VC_GUILD_ID];
 
 export interface Dev {
     name: string;
@@ -924,6 +927,14 @@ export const EquicordDevs = Object.freeze({
     Leko: {
         name: "Leko",
         id: 108153734541942784n
+    },
+    SomeAspy: {
+        name: "SomeAspy",
+        id: 516750892372852754n
+    },
+    nvhhr: {
+        name: "nvhhr",
+        id: 165098921071345666n
     },
 } satisfies Record<string, Dev>);
 

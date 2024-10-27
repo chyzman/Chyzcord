@@ -16,11 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import "./discord.css";
+
 import { MessageObject } from "@api/MessageEvents";
 import { ChannelStore, ComponentDispatch, Constants, FluxDispatcher, GuildStore, InviteActions, MessageActions, PrivateChannelsStore, RestAPI, SelectedChannelStore, SelectedGuildStore, UserProfileActions, UserProfileStore, UserSettingsActionCreators, UserUtils } from "@webpack/common";
 import { Channel, Guild, Message, User } from "discord-types/general";
+import { Except } from "type-fest";
 
-import { MediaData, MediaModal, openModal } from "./modal";
+import { MediaModalItem, MediaModalProps, openMediaModal } from "./modal";
 
 /**
  * Open the invite modal
@@ -109,22 +112,20 @@ export function sendMessage(
 }
 
 /**
- *
- * @param media The url of the media or its data
- * @param mediaModalProps Additional props for the image modal
+ * You must specify either height or width in the item
  */
-export function openMediaModal(media: string | MediaData, mediaModalProps?: Partial<React.ComponentProps<MediaModal>>): string {
-    media = typeof media === "string" ? { url: media } : media;
-    media.original ??= media.url;
-    media.type ??= "IMAGE";
-    return openModal(modalProps => (
-        <MediaModal
-            {...modalProps}
-            {...mediaModalProps}
-            shouldAnimateCarousel
-            items={[media]}
-        />
-    ));
+export function openImageModal(item: Except<MediaModalItem, "type">, mediaModalProps?: Omit<MediaModalProps, "items">) {
+    return openMediaModal({
+        className: "vc-image-modal",
+        fit: "vc-position-inherit",
+        shouldAnimateCarousel: true,
+        items: [{
+            type: "IMAGE",
+            original: item.original ?? item.url,
+            ...item,
+        }],
+        ...mediaModalProps
+    });
 }
 
 export async function openUserProfile(id: string) {
