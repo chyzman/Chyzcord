@@ -22,6 +22,3 @@ lerna-debug.log*
 
 ExtensionCache/
 settings/
-
-src/equicordplugins/usrpe
-/src/userplugins/
