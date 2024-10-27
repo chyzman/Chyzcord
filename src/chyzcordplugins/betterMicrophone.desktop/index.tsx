@@ -25,39 +25,23 @@ import { openMicrophoneSettingsModal } from "./modals";
 import { MicrophonePatcher } from "./patchers";
 import { initMicrophoneStore } from "./stores";
 
-var microphonePatcher;
-
-// const settings = definePluginSettings({
-//     openSettings: {
-//         description: "",
-//         type: OptionType.COMPONENT,
-//         component: (() => {
-//             return (
-//                 <Button onClick={() => openMicrophoneSettingsModal()}>Open Settings</Button>
-//             );
-//         })
-//     }
-// });
-
 export default definePlugin({
     name: "BetterMicrophone",
     description: "This plugin allows you to further customize your microphone.",
     authors: [Devs.philhk],
     dependencies: ["PhilsPluginLibrary"],
-
-    start() {
+    start(): void {
         initMicrophoneStore();
-        microphonePatcher = new MicrophonePatcher().patch();
+
+        this.microphonePatcher = new MicrophonePatcher().patch();
+
         addSettingsPanelButton({ name: PluginInfo.PLUGIN_NAME, icon: MicrophoneSettingsIcon, tooltipText: "Microphone Settings", onClick: openMicrophoneSettingsModal });
     },
+    stop(): void {
+        this.microphonePatcher?.unpatch();
 
-    stop() {
-        microphonePatcher?.unpatch();
         Emitter.removeAllListeners(PluginInfo.PLUGIN_NAME);
+
         removeSettingsPanelButton(PluginInfo.PLUGIN_NAME);
-    },
-
-    // settings,
+    }
 });
-
-export { microphonePatcher };

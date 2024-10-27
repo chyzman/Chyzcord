@@ -16,8 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { definePluginSettings } from "@api/Settings";
 import { Devs } from "@utils/constants";
-import definePlugin from "@utils/types";
+import definePlugin, { OptionType } from "@utils/types";
 
 import { addSettingsPanelButton, Emitter, removeSettingsPanelButton, ScreenshareSettingsIcon } from "../philsPluginLibrary";
 import { PluginInfo } from "./constants";
@@ -26,31 +27,32 @@ import { ScreenshareAudioPatcher, ScreensharePatcher } from "./patchers";
 import { replacedScreenshareModalComponent } from "./patches";
 import { initScreenshareAudioStore, initScreenshareStore } from "./stores";
 
-var screensharePatcher;
-var screenshareAudioPatcher;
-
 export default definePlugin({
     name: "BetterScreenshare",
     description: "This plugin allows you to further customize your screen sharing.",
-    authors: [Devs.philhk, Devs.walrus],
+    authors: [Devs.philhk],
     dependencies: ["PhilsPluginLibrary"],
-    replacedScreenshareModalComponent: replacedScreenshareModalComponent,
-
     patches: [
         {
             find: "Messages.SCREENSHARE_RELAUNCH",
             replacement: {
-                match: /(function .{1,2}\(.{1,2}\){)(.{1,40}(?=selectGuild).+?(?:]}\)}\)))(})/,
+                match: /((?:.*)(?<=function) .{0,8}?(?={).)(.{0,10000}Z.getVoiceChannelId\(\).{0,10000}]}\)}\))(})/,
                 replace: "$1return $self.replacedScreenshareModalComponent(function(){$2}, this, arguments)$3"
             }
         }
     ],
-
-    start() {
+    settings: definePluginSettings({
+        hideDefaultSettings: {
+            type: OptionType.BOOLEAN,
+            description: "Hide Discord screen sharing settings",
+            default: true,
+        }
+    }),
+    start(): void {
         initScreenshareStore();
         initScreenshareAudioStore();
-        screensharePatcher = new ScreensharePatcher().patch();
-        screenshareAudioPatcher = new ScreenshareAudioPatcher().patch();
+        this.screensharePatcher = new ScreensharePatcher().patch();
+        this.screenshareAudioPatcher = new ScreenshareAudioPatcher().patch();
 
         addSettingsPanelButton({
             name: PluginInfo.PLUGIN_NAME,
@@ -59,13 +61,12 @@ export default definePlugin({
             onClick: openScreenshareModal
         });
     },
-
-    stop() {
-        screensharePatcher?.unpatch();
-        screenshareAudioPatcher?.unpatch();
+    stop(): void {
+        this.screensharePatcher?.unpatch();
+        this.screenshareAudioPatcher?.unpatch();
         Emitter.removeAllListeners(PluginInfo.PLUGIN_NAME);
+
         removeSettingsPanelButton(PluginInfo.PLUGIN_NAME);
     },
+    replacedScreenshareModalComponent
 });
-
-export { screenshareAudioPatcher, screensharePatcher };

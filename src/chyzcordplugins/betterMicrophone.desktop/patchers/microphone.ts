@@ -57,7 +57,6 @@ export class MicrophonePatcher extends Patcher {
         Emitter.addListener(
             this.mediaEngine.emitter,
             "on",
-            // @ts-ignore
             "connection",
             connectionEventFunction,
             PluginInfo.PLUGIN_NAME

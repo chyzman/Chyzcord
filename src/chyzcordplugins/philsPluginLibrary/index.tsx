@@ -16,39 +16,34 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { definePluginSettings } from "@api/Settings";
 import { Devs } from "@utils/constants";
-import definePlugin, { OptionType } from "@utils/types";
+import definePlugin from "@utils/types";
 
 import { replacedUserPanelComponent } from "./patches";
-
-const settings = definePluginSettings({
-    hideDefaultSettings: {
-        type: OptionType.BOOLEAN,
-        description: "Hide Discord screen sharing settings",
-        default: true,
-    }
-});
 
 export default definePlugin({
     name: "PhilsPluginLibrary",
     description: "A library for phil's plugins",
     authors: [Devs.philhk],
-    replacedUserPanelComponent: replacedUserPanelComponent,
-
-    patches: [
-        {
-            find: "Messages.ACCOUNT_A11Y_LABEL",
-            replacement: {
-                match: /(?<=function)( .{0,8}(?={).)(.{0,1000}isFullscreenInContext\(\).+?\)]}\))(})/,
-                replace: "$1return $self.replacedUserPanelComponent(function(){$2}, this, arguments)$3"
-            }
+    patches: [{
+        find: "Messages.ACCOUNT_A11Y_LABEL",
+        replacement: {
+            match: /((?:.*)(?<=function) .{0,8}?(?={).)(.{0,1000}ACCOUNT_PANEL.{0,1000}\)]}\))(})/,
+            replace: "$1return $self.replacedUserPanelComponent(function(){$2}, this, arguments)$3"
         }
-    ],
-
-    settings
+    }, {
+        find: "Unknown frame rate",
+        replacement: [{
+            match: /(switch\((.{0,10})\).{0,1000})(throw Error\(.{0,100}?Unknown resolution.{0,100}?\))(?=})/,
+            replace: "$1return $2"
+        },
+        {
+            match: /(switch\((.{0,10})\).{0,1000})(throw Error\(.{0,100}?Unknown frame rate.{0,100}?\))(?=})/,
+            replace: "$1return $2"
+        }]
+    }],
+    replacedUserPanelComponent,
 });
-
 
 export * from "./components";
 export * from "./discordModules";
