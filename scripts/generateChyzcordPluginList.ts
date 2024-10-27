@@ -16,13 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Dirent, readdirSync, readFileSync, writeFileSync } from "fs";
-import { access, readFile } from "fs/promises";
-import { join, sep } from "path";
-import { normalize as posixNormalize, sep as posixSep } from "path/posix";
-import { BigIntLiteral, createSourceFile, Identifier, isArrayLiteralExpression, isCallExpression, isExportAssignment, isIdentifier, isObjectLiteralExpression, isPropertyAccessExpression, isPropertyAssignment, isSatisfiesExpression, isStringLiteral, isVariableStatement, NamedDeclaration, NodeArray, ObjectLiteralExpression, ScriptTarget, StringLiteral, SyntaxKind } from "typescript";
+import {Dirent, readdirSync, readFileSync, writeFileSync} from "fs";
+import {access, readFile} from "fs/promises";
+import {join, sep} from "path";
+import {normalize as posixNormalize, sep as posixSep} from "path/posix";
+import {BigIntLiteral, createSourceFile, Identifier, isArrayLiteralExpression, isCallExpression, isExportAssignment, isIdentifier, isObjectLiteralExpression, isPropertyAccessExpression, isPropertyAssignment, isSatisfiesExpression, isStringLiteral, isVariableStatement, NamedDeclaration, NodeArray, ObjectLiteralExpression, ScriptTarget, StringLiteral, SyntaxKind} from "typescript";
 
-import { getPluginTarget } from "./utils.mjs";
+import {getPluginTarget} from "./utils.mjs";
 
 interface Dev {
     name: string;
@@ -212,7 +212,7 @@ async function parseFile(fileName: string) {
                     break;
                 case "dependencies":
                     if (!isArrayLiteralExpression(value)) throw fail("dependencies is not an array literal");
-                    const { elements } = value;
+                    const {elements} = value;
                     if (elements.some(e => !isStringLiteral(e))) throw fail("dependencies array contains non-string elements");
                     data.dependencies = (elements as NodeArray<StringLiteral>).map(e => e.text);
                     break;
@@ -240,7 +240,8 @@ async function parseFile(fileName: string) {
         let readme = "";
         try {
             readme = readFileSync(join(fileName, "..", "README.md"), "utf-8");
-        } catch { }
+        } catch {
+        }
         return [data, readme] as const;
     }
 
@@ -256,13 +257,14 @@ async function getEntryPoint(dir: string, dirent: Dirent) {
         try {
             await access(full);
             return full;
-        } catch { }
+        } catch {
+        }
     }
 
     throw new Error(`${dirent.name}: Couldn't find entry point`);
 }
 
-function isPluginFile({ name }: { name: string; }) {
+function isPluginFile({name}: { name: string; }) {
     if (name === "index.ts") return false;
     return !name.startsWith("_") && !name.startsWith(".");
 }
@@ -276,7 +278,7 @@ function isPluginFile({ name }: { name: string; }) {
     const readmes = {} as Record<string, string>;
 
     await Promise.all([].flatMap(dir =>
-        readdirSync(dir, { withFileTypes: true })
+        readdirSync(dir, {withFileTypes: true})
             .filter(isPluginFile)
             .map(async dirent => {
                 const [data, readme] = await parseFile(await getEntryPoint(dir, dirent));
