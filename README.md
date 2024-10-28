@@ -9,14 +9,14 @@ You can't join our [discord server](https://chyz.xyz/box) because we don't have 
 ## Installing / Uninstalling
 
 Windows
-- [GUI](https://github.com/chyzman/ChyzcordInstaller/releases/latest/download/Equilotl.exe)
-- [CLI](https://github.com/chyzman/ChyzcordInstaller/releases/latest/download/EquilotlCli.exe)
+- [GUI](https://github.com/chyzman/ChyzcordInstaller/releases/latest/download/Chyzcord.exe)
+- [CLI](https://github.com/chyzman/ChyzcordInstaller/releases/latest/download/ChyzcordInstaller.exe)
 
 MacOS
-- [GUI](https://github.com/chyzman/ChyzcordInstaller/releases/latest/download/Equilotl.MacOS.zip)
+- [GUI](https://github.com/chyzman/ChyzcordInstaller/releases/latest/download/Chyzcord.MacOS.zip)
 
 Linux
-- [CLI](https://github.com/chyzman/ChyzcordInstaller/releases/latest/download/EquilotlCli-Linux)
+- [CLI](https://github.com/chyzman/ChyzcordInstaller/releases/latest/download/ChyzcordInstaller-Linux)
 
 
 ## Installing Chyczord Devbuild
