@@ -60,12 +60,12 @@ jobs:
                     rm release/package.json
                     rm release/*.map
 
-            -   name: Upload Equicord Stable
+            -   name: Upload Chyzcord Stable
                 if: ${{ github.ref_name == 'main' }}
                 run: |
                     gh release upload latest --clobber dist/release/*
 
-            -   name: Upload Equicord Dev
+            -   name: Upload Chyzcord Dev
                 if: ${{ github.ref_name == 'dev' }}
                 run: |
                     gh release upload devbuild --clobber dist/release/*
