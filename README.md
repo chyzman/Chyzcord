@@ -19,7 +19,7 @@ Linux
 - [CLI](https://github.com/chyzman/ChyzcordInstaller/releases/latest/download/ChyzcordInstaller-Linux)
 
 
-## Installing Chyczord Devbuild
+## Installing Chyzcord Devbuild
 
 ### Dependencies
 [Git](https://git-scm.com/download) and [Node.JS LTS](https://nodejs.dev/en/) are required.
