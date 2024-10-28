@@ -112,7 +112,7 @@ export default definePlugin({
                 className: "vc-plugins"
             },
             {
-                section: "ChyzcordThemes",
+                section: "VencordThemes",
                 label: "Themes",
                 element: require("@components/ThemeSettings/ThemesTab").default,
                 className: "vc-themes"
