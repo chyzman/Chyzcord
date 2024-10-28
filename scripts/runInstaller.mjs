@@ -25,8 +25,8 @@ import { Readable } from "stream";
 import { finished } from "stream/promises";
 import { fileURLToPath } from "url";
 
-const BASE_URL = "https://github.com/chyzman/Chyzcord/releases/latest/download/";
-const INSTALLER_PATH_DARWIN = "Chyzcord.app/Contents/MacOS/Chyzcord";
+const BASE_URL = "https://github.com/chyzman/ChyzcordInstaller/releases/latest/download/";
+const INSTALLER_PATH_DARWIN = "ChyzcordInstaller.app/Contents/MacOS/ChyzcordInstaller";
 
 const BASE_DIR = join(dirname(fileURLToPath(import.meta.url)), "..");
 const FILE_DIR = join(BASE_DIR, "dist", "Installer");
@@ -35,11 +35,11 @@ const ETAG_FILE = join(FILE_DIR, "etag.txt");
 function getFilename() {
     switch (process.platform) {
         case "win32":
-            return "ChyzcordCli.exe";
+            return "ChyzcordInstaller.exe";
         case "darwin":
             return "Chyzcord.MacOS.zip";
         case "linux":
-            return "ChyzcordCli-linux";
+            return "ChyzcordInstaller-linux";
         default:
             throw new Error("Unsupported platform: " + process.platform);
     }
@@ -62,7 +62,7 @@ async function ensureBinary() {
 
     const res = await fetch(BASE_URL + filename, {
         headers: {
-            "User-Agent": "Equicord (https://github.com/chyzman/Chyzcord)",
+            "User-Agent": "Chyzcord (https://github.com/chyzman/Chyzcord)",
             "If-None-Match": etag
         }
     });
