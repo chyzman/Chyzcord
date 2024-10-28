@@ -72,7 +72,7 @@ const globNativesPlugin = {
         });
 
         build.onLoad({ filter, namespace: "import-natives" }, async () => {
-            const pluginDirs = ["plugins", "userplugins", "equicordplugins"];
+            const pluginDirs = ["plugins", "userplugins", "equicordplugins", "chyzcordplugins"];
             let code = "";
             let natives = "\n";
             let i = 0;
