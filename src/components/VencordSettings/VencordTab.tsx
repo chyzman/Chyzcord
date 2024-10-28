@@ -45,7 +45,7 @@ type KeysOfType<Object, Type> = {
 }[keyof Object];
 
 
-function EquicordSettings() {
+function ChyzcordSettings() {
     const [settingsDir, , settingsDirPending] = useAwaiter(VencordNative.settings.getSettingsDir, {
         fallbackValue: "Loading..."
     });
@@ -109,8 +109,7 @@ function EquicordSettings() {
         ];
 
     return (
-        <SettingsTab title="Equicord Settings">
-            <DiscordInviteCard invite={discordInvite} image={donateImage} />
+        <SettingsTab title="Chyzcord Settings">
             <Forms.FormSection title="Quick Actions">
                 <QuickActionCard>
                     <QuickAction
@@ -243,7 +242,7 @@ function EquicordSettings() {
                     serialize={identity} />
             </>}
 
-            <Forms.FormSection className={Margins.top16} title="Equicord Notifications" tag="h5">
+            <Forms.FormSection className={Margins.top16} title="Chyzcord Notifications" tag="h5">
                 <Flex>
                     <Button onClick={openNotificationSettingsModal}>
                         Notification Settings
@@ -303,4 +302,4 @@ function DiscordInviteCard({ invite, image }: DiscordInviteProps) {
     );
 }
 
-export default wrapTab(EquicordSettings, "Equicord Settings");
+export default wrapTab(ChyzcordSettings, "Chyzcord Settings");

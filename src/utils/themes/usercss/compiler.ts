@@ -18,7 +18,7 @@ const preprocessors: { [preprocessor: string]: (text: string, vars: Record<strin
             .map(([name, value]) => `--${name}: ${value}`)
             .join("; ");
 
-        return `/* ==Equicord== */\n:root{${variables}}\n/* ==/Equicord== */${text}`;
+        return `/* ==Chyzcord== */\n:root{${variables}}\n/* ==/Chyzcord== */${text}`;
     },
 
     async uso(text: string, vars: Record<string, string>) {
@@ -68,7 +68,7 @@ export async function compileUsercss(fileName: string) {
     const preprocessorFn = preprocessors[preprocessor];
 
     if (!preprocessorFn) {
-        UserCSSLogger.error("File", fileName, "requires preprocessor", preprocessor, "which isn't known to Equicord");
+        UserCSSLogger.error("File", fileName, "requires preprocessor", preprocessor, "which isn't known to Chyzcord");
         return null;
     }
 

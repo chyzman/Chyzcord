@@ -95,8 +95,8 @@ export async function migrateLegacyToAsar() {
 
         const data = await get(`https://github.com/${gitRemote}/releases/latest/download/desktop.asar`);
 
-        originalWriteFileSync(join(__dirname, "../equicord.asar"), data);
-        originalWriteFileSync(__filename, '// Legacy shim for new asar\n\nrequire("../equicord.asar");');
+        originalWriteFileSync(join(__dirname, "../chyzcord.asar"), data);
+        originalWriteFileSync(__filename, '// Legacy shim for new asar\n\nrequire("../chyzcord.asar");');
 
         app.relaunch();
         app.exit();
@@ -106,7 +106,7 @@ export async function migrateLegacyToAsar() {
         app.whenReady().then(() => {
             dialog.showErrorBox(
                 "Legacy Install",
-                "The way Equicord loaded was changed and the updater failed to migrate. Please reinstall using the Equicord Installer!"
+                "The way Chyzcord loaded was changed and the updater failed to migrate. Please reinstall using the Chyzcord Installer!"
             );
             app.exit(1);
         });

@@ -39,7 +39,7 @@ export async function importSettings(data: string) {
         await VencordNative.settings.set(parsed.settings);
         await VencordNative.quickCss.set(parsed.quickCss);
     } else
-        throw new Error("Invalid Settings. Is this even a Equicord Settings file?");
+        throw new Error("Invalid Settings. Is this even a Chyzcord Settings file?");
 }
 
 export async function exportSettings({ minify }: { minify?: boolean; } = {}) {
@@ -49,7 +49,7 @@ export async function exportSettings({ minify }: { minify?: boolean; } = {}) {
 }
 
 export async function downloadSettingsBackup() {
-    const filename = `equicord-settings-backup-${moment().format("YYYY-MM-DD")}.json`;
+    const filename = `chyzcord-settings-backup-${moment().format("YYYY-MM-DD")}.json`;
     const backup = await exportSettings();
     const data = new TextEncoder().encode(backup);
 
@@ -77,7 +77,7 @@ export async function uploadSettingsBackup(showToast = true): Promise<void> {
     if (IS_DISCORD_DESKTOP) {
         const [file] = await DiscordNative.fileManager.openFiles({
             filters: [
-                { name: "Equicord Settings Backup", extensions: ["json"] },
+                { name: "Chyzcord Settings Backup", extensions: ["json"] },
                 { name: "all", extensions: ["*"] }
             ]
         });

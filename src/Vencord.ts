@@ -60,7 +60,7 @@ async function syncSettings() {
             body: "We've noticed you have cloud integrations enabled in another client! Due to limitations, you will " +
                 "need to re-authenticate to continue using them. Click here to go to the settings page to do so!",
             color: "var(--yellow-360)",
-            onClick: () => SettingsRouter.open("EquicordCloud")
+            onClick: () => SettingsRouter.open("VencordCloud")
         });
         return;
     }
@@ -103,7 +103,7 @@ async function init() {
                 await update();
                 if (Settings.autoUpdateNotification)
                     setTimeout(() => showNotification({
-                        title: "Equicord has been updated!",
+                        title: "Chyzcord has been updated!",
                         body: "Click here to restart",
                         permanent: true,
                         noPersist: true,
@@ -113,7 +113,7 @@ async function init() {
             }
 
             setTimeout(() => showNotification({
-                title: "A Equicord update is available!",
+                title: "A Chyzcord update is available!",
                 body: "Click here to view the update",
                 permanent: true,
                 noPersist: true,

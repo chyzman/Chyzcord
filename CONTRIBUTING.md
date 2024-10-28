@@ -36,13 +36,6 @@ Before starting your plugin:
 - No plugins that require the user to enter their own API key
 - Do not introduce new dependencies unless absolutely necessary and warranted
 
-## Improve Equicord itself
+## Improve Chyzcord itself
 
-If you have any ideas on how to improve Equicord itself, or want to propose a new plugin API, feel free to open a feature request so we can discuss.
-
-Or if you notice any bugs or typos, feel free to fix them!
-
-## Help out users in our Discord community
-
-We have an open support channel in our [Discord community](https://discord.gg/5Xh2W87egW).
-Helping out users there is always appreciated! The more, the merrier.
+If you have any ideas on how to improve Chyzcord itself. PR it then lmk
