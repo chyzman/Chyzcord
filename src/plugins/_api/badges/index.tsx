@@ -22,7 +22,7 @@ import ErrorBoundary from "@components/ErrorBoundary";
 import { Flex } from "@components/Flex";
 import { Heart } from "@components/Heart";
 import { openContributorModal } from "@components/PluginSettings/ContributorModal";
-import { Devs } from "@utils/constants";
+import {ChyzcordDevs, Devs} from "@utils/constants";
 import { Logger } from "@utils/Logger";
 import { Margins } from "@utils/margins";
 import { isChyzcordPluginDev, isEquicordPluginDev, isPluginDev } from "@utils/misc";
@@ -84,7 +84,7 @@ async function loadAllBadges(noCache = false) {
 export default definePlugin({
     name: "BadgeAPI",
     description: "API to add badges to users.",
-    authors: [Devs.Megu, Devs.Ven, Devs.TheSun],
+    authors: [Devs.Megu, Devs.Ven, Devs.TheSun, ChyzcordDevs.chyzman],
     required: true,
     patches: [
         {
@@ -302,7 +302,8 @@ export default definePlugin({
                     borderRadius: "50%",
                     transform: "scale(0.9)" // The image is a bit too big compared to default badges
                 }
-            }
+            },
+            onClick() {}
         }));
     }
 });

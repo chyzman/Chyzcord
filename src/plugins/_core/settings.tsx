@@ -96,47 +96,47 @@ export default definePlugin({
         return [
             {
                 section: SectionTypes.HEADER,
-                label: "Equicord",
+                label: "Chyzcord",
                 className: "vc-settings-header"
             },
             {
-                section: "EquicordSettings",
-                label: "Equicord",
+                section: "VencordSettings",
+                label: "Chyzcord",
                 element: VencordTab,
                 className: "vc-settings"
             },
             {
-                section: "EquicordPlugins",
+                section: "VencordPlugins",
                 label: "Plugins",
                 element: PluginsTab,
                 className: "vc-plugins"
             },
             {
-                section: "EquicordThemes",
+                section: "ChyzcordThemes",
                 label: "Themes",
                 element: require("@components/ThemeSettings/ThemesTab").default,
                 className: "vc-themes"
             },
             !IS_UPDATER_DISABLED && {
-                section: "EquicordUpdater",
+                section: "VencordUpdater",
                 label: "Updater",
                 element: UpdaterTab,
                 className: "vc-updater"
             },
             {
-                section: "EquicordCloud",
+                section: "VencordCloud",
                 label: "Cloud",
                 element: CloudTab,
                 className: "vc-cloud"
             },
             {
-                section: "EquicordSettingsSync",
+                section: "VencordSettingsSync",
                 label: "Backup & Restore",
                 element: BackupAndRestoreTab,
                 className: "vc-backup-restore"
             },
             {
-                section: "EquicordPatchHelper",
+                section: "VencordPatchHelper",
                 label: "Patch Helper",
                 element: PatchHelperTab,
                 className: "vc-patch-helper"
@@ -196,7 +196,7 @@ export default definePlugin({
     options: {
         settingsLocation: {
             type: OptionType.SELECT,
-            description: "Where to put the Equicord settings section",
+            description: "Where to put the Chyzcord settings section",
             options: [
                 { label: "At the very top", value: "top" },
                 { label: "Above the Nitro section", value: "aboveNitro", default: true },
@@ -235,7 +235,7 @@ export default definePlugin({
     getInfoRows() {
         const { electronVersion, chromiumVersion, additionalInfo } = this;
 
-        const rows = [`Equicord ${gitHash}${additionalInfo}`];
+        const rows = [`Vencord ${gitHash}${additionalInfo}`];
 
         if (electronVersion) rows.push(`Electron ${electronVersion}`);
         if (chromiumVersion) rows.push(`Chromium ${chromiumVersion}`);
