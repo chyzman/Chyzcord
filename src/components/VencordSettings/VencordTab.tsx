@@ -61,7 +61,7 @@ type KeysOfType<Object, Type> = {
   [K in keyof Object]: Object[K] extends Type ? K : never;
 }[keyof Object];
 
-function EquicordSettings() {
+function ChyzcordSettings() {
   const [settingsDir, , settingsDirPending] = useAwaiter(
     VencordNative.settings.getSettingsDir,
     {
@@ -142,8 +142,7 @@ function EquicordSettings() {
   ];
 
   return (
-    <SettingsTab title="Equicord Settings">
-      <DiscordInviteCard invite={discordInvite} image={donateImage} />
+    <SettingsTab title="Chyzcord Settings">
       <Forms.FormSection title="Quick Actions">
         <QuickActionCard>
           <QuickAction
@@ -298,7 +297,7 @@ function EquicordSettings() {
 
       <Forms.FormSection
         className={Margins.top16}
-        title="Equicord Notifications"
+        title="Chyzcord Notifications"
         tag="h5"
       >
         <Flex>
@@ -371,4 +370,4 @@ function DiscordInviteCard({ invite, image }: DiscordInviteProps) {
   );
 }
 
-export default wrapTab(EquicordSettings, "Equicord Settings");
+export default wrapTab(ChyzcordSettings, "Chyzcord Settings");
