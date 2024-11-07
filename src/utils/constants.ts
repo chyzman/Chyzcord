@@ -290,6 +290,7 @@ export const EquicordDevs = Object.freeze({
     Leko: { name: "Leko", id: 108153734541942784n },
     SomeAspy: { name: "SomeAspy", id: 516750892372852754n },
     nvhhr: { name: "nvhhr", id: 165098921071345666n },
+    Z1xus: { name: "Z1xus", id: 377450600797044746n },
 } satisfies Record<string, Dev>);
 
 export const ChyzcordDevs = Object.freeze({
