@@ -490,6 +490,14 @@ export default function PluginSettings() {
     const enabledStockPlugins = enabledPlugins.filter(p => !PluginMeta[p].userPlugin).length;
     const enabledUserPlugins = enabledPlugins.filter(p => PluginMeta[p].userPlugin).length;
 
+    const totalEnabledPlugins = enabledPlugins.length;
+    const totalDisabledPlugins = totalPlugins.length - totalEnabledPlugins;
+    const totalNewPlugins = totalPlugins.filter(p => newPlugins?.includes(p)).length;
+    const totalVencordPlugins = totalPlugins.filter(p => PluginMeta[p].directory === "plugins").length;
+    const totalEquicordPlugins = totalPlugins.filter(p => PluginMeta[p].directory === "equicordplugins").length;
+    const totalChyzcordPlugins = totalPlugins.filter(p => PluginMeta[p].directory === "chyzcordplugins").length;
+
+
     return (
         <SettingsTab title="Plugins">
 
@@ -520,13 +528,13 @@ export default function PluginSettings() {
                 <TextInput autoFocus value={searchValue.value} placeholder="Search for a plugin..." onChange={onSearch}/>
                     <SearchableSelect
                         options={[
-                            {label: "Enabled", value: SearchStatus.ENABLED},
-                            {label: "Disabled", value: SearchStatus.DISABLED},
-                            {label: "New", value: SearchStatus.NEW},
-                            {label: "Vencord", value: SearchStatus.VENCORD},
-                            {label: "Equicord", value: SearchStatus.EQUICORD},
-                            {label: "Chyzcord", value: SearchStatus.CHYZCORD},
-                            {label: "UserPlugins", value: SearchStatus.USERPLUGINS}
+                            {label: `Enabled (${totalEnabledPlugins})`, value: SearchStatus.ENABLED},
+                            {label: `Disabled (${totalDisabledPlugins})`, value: SearchStatus.DISABLED},
+                            {label: `New (${totalNewPlugins})`, value: SearchStatus.NEW},
+                            {label: `Vencord (${totalVencordPlugins})`, value: SearchStatus.VENCORD},
+                            {label: `Equicord (${totalEquicordPlugins})`, value: SearchStatus.EQUICORD},
+                            {label: `Chyzcord (${totalChyzcordPlugins})`, value: SearchStatus.CHYZCORD},
+                            {label: `UserPlugins (${totalUserPlugins})`, value: SearchStatus.USERPLUGINS}
                         ]}
                         placeholder={!searchValue.status.length ? "Filter plugins..." : ""}
                         // @ts-ignore
