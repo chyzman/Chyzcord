@@ -123,9 +123,9 @@ try {
         stdio: "inherit",
         env: {
             ...process.env,
-            EQUICORD_USER_DATA_DIR: BASE_DIR,
-            EQUICORD_DIRECTORY: join(BASE_DIR, "dist/desktop"),
-            EQUICORD_DEV_INSTALL: "1"
+            CHYZCORD_USER_DATA_DIR: BASE_DIR,
+            CHYZCORD_DIRECTORY: join(BASE_DIR, "dist/desktop"),
+            CHYZCORD_DEV_INSTALL: "1"
         }
     });
 } catch {
