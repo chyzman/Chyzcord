@@ -63,7 +63,7 @@ export default definePlugin({
                 openThing();
         }
     },
-    name: "_IdlePage",
+    name: "IdlePage",
     description: "Shows a blank page when you go idle",
     patches: [
         {
