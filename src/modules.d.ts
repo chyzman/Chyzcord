@@ -24,6 +24,7 @@ declare module "~plugins" {
     export const PluginMeta: Record<string, {
         folderName: string;
         userPlugin: boolean;
+        directory: string;
     }>;
     export const ExcludedPlugins: Record<string, "web" | "discordDesktop" | "vencordDesktop" | "equicordDesktop" | "desktop" | "dev">;
 }

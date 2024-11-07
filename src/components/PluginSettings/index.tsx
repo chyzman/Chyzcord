@@ -19,30 +19,30 @@
 import "./styles.css";
 
 import * as DataStore from "@api/DataStore";
-import { showNotice } from "@api/Notices";
-import { Settings, useSettings } from "@api/Settings";
-import { classNameFactory } from "@api/Styles";
-import { CogWheel, InfoIcon } from "@components/Icons";
-import { openPluginModal } from "@components/PluginSettings/PluginModal";
-import { AddonCard } from "@components/VencordSettings/AddonCard";
-import { SettingsTab } from "@components/VencordSettings/shared";
-import { ChangeList } from "@utils/ChangeList";
-import { proxyLazy } from "@utils/lazy";
-import { Logger } from "@utils/Logger";
-import { Margins } from "@utils/margins";
-import { classes, isObjectEmpty } from "@utils/misc";
-import { ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalRoot, ModalSize, openModal } from "@utils/modal";
-import { useAwaiter } from "@utils/react";
-import { Plugin } from "@utils/types";
-import { findByPropsLazy } from "@webpack";
-import { Alerts, Button, Card, Flex, Forms, lodash, Parser, React, Select, Text, TextInput, Toasts, Tooltip, useMemo } from "@webpack/common";
+import {showNotice} from "@api/Notices";
+import {Settings, useSettings} from "@api/Settings";
+import {classNameFactory} from "@api/Styles";
+import {CogWheel, InfoIcon} from "@components/Icons";
+import {openPluginModal} from "@components/PluginSettings/PluginModal";
+import {AddonCard} from "@components/VencordSettings/AddonCard";
+import {SettingsTab} from "@components/VencordSettings/shared";
+import {ChangeList} from "@utils/ChangeList";
+import {proxyLazy} from "@utils/lazy";
+import {Logger} from "@utils/Logger";
+import {Margins} from "@utils/margins";
+import {classes, isObjectEmpty} from "@utils/misc";
+import {ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalRoot, ModalSize, openModal} from "@utils/modal";
+import {useAwaiter} from "@utils/react";
+import {Plugin} from "@utils/types";
+import {findByPropsLazy} from "@webpack";
+import {Alerts, Button, Card, Flex, Forms, lodash, Parser, React, SearchableSelect, Select, Text, TextInput, Toasts, Tooltip, useMemo} from "@webpack/common";
 
-import Plugins, { ExcludedPlugins, PluginMeta } from "~plugins";
+import Plugins, {ExcludedPlugins, PluginMeta} from "~plugins";
 
-import { StockPluginsCard, UserPluginsCard } from "./PluginStatCards";
+import {StockPluginsCard, UserPluginsCard} from "./PluginStatCards";
 
 // Avoid circular dependency
-const { startDependenciesRecursive, startPlugin, stopPlugin } = proxyLazy(() => require("../../plugins"));
+const {startDependenciesRecursive, startPlugin, stopPlugin} = proxyLazy(() => require("../../plugins"));
 
 const cl = classNameFactory("vc-plugins-");
 const logger = new Logger("PluginSettings", "#a6d189");
@@ -61,9 +61,9 @@ function showErrorToast(message: string) {
     });
 }
 
-function ReloadRequiredCard({ required, enabledPlugins, openDisablePluginsModal, resetCheckAndDo }) {
+function ReloadRequiredCard({required, enabledPlugins, openDisablePluginsModal, resetCheckAndDo}) {
     return (
-        <Card className={cl("info-card", { "restart-card": required })}>
+        <Card className={cl("info-card", {"restart-card": required})}>
             {required ? (
                 <>
                     <Forms.FormTitle tag="h5">Restart required!</Forms.FormTitle>
@@ -104,11 +104,13 @@ function ReloadRequiredCard({ required, enabledPlugins, openDisablePluginsModal,
 interface PluginCardProps extends React.HTMLProps<HTMLDivElement> {
     plugin: Plugin;
     disabled: boolean;
+
     onRestartNeeded(name: string): void;
+
     isNew?: boolean;
 }
 
-export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, onMouseLeave, isNew }: PluginCardProps) {
+export function PluginCard({plugin, disabled, onRestartNeeded, onMouseEnter, onMouseLeave, isNew}: PluginCardProps) {
     const settings = Settings.plugins[plugin.name];
 
     const isEnabled = () => Vencord.Plugins.isPluginEnabled(plugin.name);
@@ -118,7 +120,7 @@ export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, on
 
         // If we're enabling a plugin, make sure all deps are enabled recursively.
         if (!wasEnabled) {
-            const { restartNeeded, failures } = startDependenciesRecursive(plugin);
+            const {restartNeeded, failures} = startDependenciesRecursive(plugin);
             if (failures.length) {
                 logger.error(`Failed to start dependencies for ${plugin.name}: ${failures.join(", ")}`);
                 showNotice("Failed to start dependencies: " + failures.join(", "), "Close", () => null);
@@ -175,22 +177,25 @@ export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, on
                     className={classes(ButtonClasses.button, cl("info-button"))}
                 >
                     {plugin.options && !isObjectEmpty(plugin.options)
-                        ? <CogWheel />
-                        : <InfoIcon />}
+                        ? <CogWheel/>
+                        : <InfoIcon/>}
                 </button>
             }
         />
     );
 }
 
-const enum SearchStatus {
-    ALL,
+enum SearchStatus {
     ENABLED,
     DISABLED,
-    NEW
+    NEW,
+    VENCORD,
+    EQUICORD,
+    CHYZCORD,
+    USERPLUGINS
 }
 
-function ExcludedPluginsList({ search }: { search: string; }) {
+function ExcludedPluginsList({search}: { search: string; }) {
     const matchingExcludedPlugins = Object.entries(ExcludedPlugins)
         .filter(([name]) => name.toLowerCase().includes(search));
 
@@ -263,24 +268,37 @@ export default function PluginSettings() {
     const sortedPlugins = useMemo(() => Object.values(Plugins)
         .sort((a, b) => a.name.localeCompare(b.name)), []);
 
-    const [searchValue, setSearchValue] = React.useState({ value: "", status: SearchStatus.ALL });
+    const [searchValue, setSearchValue] = React.useState<{ value: string; status: SearchStatus[] }>({value: "", status: []});
 
     const search = searchValue.value.toLowerCase();
-    const onSearch = (query: string) => setSearchValue(prev => ({ ...prev, value: query }));
-    const onStatusChange = (status: SearchStatus) => setSearchValue(prev => ({ ...prev, status }));
+    const onSearch = (query: string) => setSearchValue(prev => ({...prev, value: query}));
+    const onStatusChange = (status: SearchStatus[]) => setSearchValue(prev => ({...prev, status}));
 
     const pluginFilter = (plugin: typeof Plugins[keyof typeof Plugins]) => {
-        const { status } = searchValue;
+        const {status} = searchValue;
         const enabled = Vencord.Plugins.isPluginEnabled(plugin.name);
-        if (enabled && status === SearchStatus.DISABLED) return false;
-        if (!enabled && status === SearchStatus.ENABLED) return false;
-        if (status === SearchStatus.NEW && !newPlugins?.includes(plugin.name)) return false;
-        if (!search.length) return true;
+        if (enabled && !status.includes(SearchStatus.ENABLED) && status.includes(SearchStatus.DISABLED)) return false;
+        if (!enabled && !status.includes(SearchStatus.DISABLED) && status.includes(SearchStatus.ENABLED)) return false;
+        if (status.includes(SearchStatus.NEW) && !newPlugins?.includes(plugin.name)) return false;
+        const typeSum = [status.includes(SearchStatus.VENCORD), status.includes(SearchStatus.EQUICORD), status.includes(SearchStatus.CHYZCORD), status.includes(SearchStatus.USERPLUGINS)].filter(Boolean).length;
+        var passed = false;
+        if (typeSum > 0 && typeSum < 4) {
+            const {directory} = PluginMeta[plugin.name];
+            logger.info(plugin.name + ": " + directory);
+            if (status.includes(SearchStatus.VENCORD) && directory === "plugins") passed = true;
+            if (status.includes(SearchStatus.EQUICORD) && directory === "equicordplugins") passed = true;
+            if (status.includes(SearchStatus.CHYZCORD) && directory === "chyzcordplugins") passed = true;
+            if (status.includes(SearchStatus.USERPLUGINS) && directory === "userplugins") passed = true;
+        } else {
+            passed = true;
+        }
+        if (!search.length) return passed;
 
         return (
-            plugin.name.toLowerCase().includes(search) ||
-            plugin.description.toLowerCase().includes(search) ||
-            plugin.tags?.some(t => t.toLowerCase().includes(search))
+            passed &&
+            (plugin.name.toLowerCase().includes(search) ||
+                plugin.description.toLowerCase().includes(search) ||
+                plugin.tags?.some(t => t.toLowerCase().includes(search)))
         );
     };
 
@@ -290,7 +308,7 @@ export default function PluginSettings() {
         const sortedPluginNames = Object.values(sortedPlugins).map(plugin => plugin.name);
 
         const newPlugins: string[] = [];
-        for (const { name: p } of sortedPlugins) {
+        for (const {name: p} of sortedPlugins) {
             const time = existingTimestamps[p] = cachedPlugins?.[p] ?? now;
             if ((time + 60 * 60 * 24 * 2) > now) {
                 newPlugins.push(p);
@@ -315,12 +333,12 @@ export default function PluginSettings() {
 
         if (isRequired) {
             const tooltipText = p.required || !depMap[p.name]
-                ? "This plugin is required for Equicord to function."
+                ? "This plugin is required for Chyzcord to function."
                 : makeDependencyList(depMap[p.name]?.filter(d => settings.plugins[d].enabled));
 
             requiredPlugins.push(
                 <Tooltip text={tooltipText} key={p.name}>
-                    {({ onMouseLeave, onMouseEnter }) => (
+                    {({onMouseLeave, onMouseEnter}) => (
                         <PluginCard
                             onMouseLeave={onMouseLeave}
                             onMouseEnter={onMouseEnter}
@@ -374,8 +392,8 @@ export default function PluginSettings() {
                 title: "Restart Required",
                 body: (
                     <>
-                        <p style={{ textAlign: "center" }}>Some plugins require a restart to fully disable.</p>
-                        <p style={{ textAlign: "center" }}>Would you like to restart now?</p>
+                        <p style={{textAlign: "center"}}>Some plugins require a restart to fully disable.</p>
+                        <p style={{textAlign: "center"}}>Would you like to restart now?</p>
                     </>
                 ),
                 confirmText: "Restart Now",
@@ -397,7 +415,7 @@ export default function PluginSettings() {
             >
                 <ModalHeader separator={false}>
                     <Text className="text-danger">Dangerous Action</Text>
-                    <ModalCloseButton onClick={warningModalProps.onClose} className="vc-modal-close-button" />
+                    <ModalCloseButton onClick={warningModalProps.onClose} className="vc-modal-close-button"/>
                 </ModalHeader>
                 <ModalContent>
                     <Forms.FormSection>
@@ -441,7 +459,7 @@ export default function PluginSettings() {
                                 </Button>
                             )}
                             <Tooltip text="This action cannot be undone. Are you sure?" shouldShow={true}>
-                                {({ onMouseEnter, onMouseLeave }) => (
+                                {({onMouseEnter, onMouseLeave}) => (
                                     <Button
                                         size={Button.Sizes.SMALL}
                                         className="button-danger-background-no-margin"
@@ -475,7 +493,7 @@ export default function PluginSettings() {
     return (
         <SettingsTab title="Plugins">
 
-            <ReloadRequiredCard required={changes.hasChanges} enabledPlugins={enabledPlugins} openDisablePluginsModal={openDisablePluginsModal} resetCheckAndDo={resetCheckAndDo} />
+            <ReloadRequiredCard required={changes.hasChanges} enabledPlugins={enabledPlugins} openDisablePluginsModal={openDisablePluginsModal} resetCheckAndDo={resetCheckAndDo}/>
 
             <div className={cl("stats-container")} style={{
                 marginTop: "16px",
@@ -499,22 +517,25 @@ export default function PluginSettings() {
             </Forms.FormTitle>
 
             <div className={classes(Margins.bottom20, cl("filter-controls"))}>
-                <TextInput autoFocus value={searchValue.value} placeholder="Search for a plugin..." onChange={onSearch} />
-                <div className={InputStyles.inputWrapper}>
-                    <Select
+                <TextInput autoFocus value={searchValue.value} placeholder="Search for a plugin..." onChange={onSearch}/>
+                    <SearchableSelect
                         options={[
-                            { label: "Show All", value: SearchStatus.ALL, default: true },
-                            { label: "Show Enabled", value: SearchStatus.ENABLED },
-                            { label: "Show Disabled", value: SearchStatus.DISABLED },
-                            { label: "Show New", value: SearchStatus.NEW }
+                            {label: "Enabled", value: SearchStatus.ENABLED},
+                            {label: "Disabled", value: SearchStatus.DISABLED},
+                            {label: "New", value: SearchStatus.NEW},
+                            {label: "Vencord", value: SearchStatus.VENCORD},
+                            {label: "Equicord", value: SearchStatus.EQUICORD},
+                            {label: "Chyzcord", value: SearchStatus.CHYZCORD},
+                            {label: "UserPlugins", value: SearchStatus.USERPLUGINS}
                         ]}
-                        serialize={String}
-                        select={onStatusChange}
-                        isSelected={v => v === searchValue.status}
-                        closeOnSelect={true}
-                        className={InputStyles.inputDefault}
+                        placeholder={!searchValue.status.length ? "Filter plugins..." : ""}
+                        // @ts-ignore
+                        value={searchValue.status}
+                        onChange={onStatusChange}
+                        closeOnSelect={false}
+                        multi={true}
+                        clearable={true}
                     />
-                </div>
             </div>
 
             <Forms.FormTitle className={Margins.top20}>Plugins</Forms.FormTitle>
@@ -528,11 +549,11 @@ export default function PluginSettings() {
                         }
                     </div>
                 )
-                : <ExcludedPluginsList search={search} />
+                : <ExcludedPluginsList search={search}/>
             }
 
 
-            <Forms.FormDivider className={Margins.top20} />
+            <Forms.FormDivider className={Margins.top20}/>
 
             <Forms.FormTitle tag="h5" className={classes(Margins.top20, Margins.bottom8)}>
                 Required Plugins
@@ -543,7 +564,7 @@ export default function PluginSettings() {
                     : <Text variant="text-md/normal">No plugins meet the search criteria.</Text>
                 }
             </div>
-        </SettingsTab >
+        </SettingsTab>
     );
 }
 
