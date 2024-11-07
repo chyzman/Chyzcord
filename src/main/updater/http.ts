@@ -16,17 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { get } from "@main/utils/simpleGet";
-import { IpcEvents } from "@shared/IpcEvents";
-import { VENCORD_USER_AGENT } from "@shared/vencordUserAgent";
-import { app, dialog, ipcMain } from "electron";
-import { writeFileSync as originalWriteFileSync } from "original-fs";
-import { join } from "path";
+import {get} from "@main/utils/simpleGet";
+import {IpcEvents} from "@shared/IpcEvents";
+import {VENCORD_USER_AGENT} from "@shared/vencordUserAgent";
+import {app, dialog, ipcMain} from "electron";
+import {writeFileSync as originalWriteFileSync} from "original-fs";
+import {join} from "path";
 
 import gitHash from "~git-hash";
 import gitRemote from "~git-remote";
 
-import { ASAR_FILE, serializeErrors } from "./common";
+import {ASAR_FILE, serializeErrors} from "./common";
 
 const API_BASE = `https://api.github.com/repos/${gitRemote}`;
 let PendingUpdate: string | null = null;

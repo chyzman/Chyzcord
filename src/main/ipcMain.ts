@@ -20,18 +20,18 @@ import "./updater";
 import "./ipcPlugins";
 import "./settings";
 
-import { debounce } from "@shared/debounce";
-import { IpcEvents } from "@shared/IpcEvents";
-import { BrowserWindow, ipcMain, shell, systemPreferences } from "electron";
+import {debounce} from "@shared/debounce";
+import {IpcEvents} from "@shared/IpcEvents";
+import {BrowserWindow, ipcMain, shell, systemPreferences} from "electron";
 import monacoHtml from "file://monacoWin.html?minify&base64";
-import { FSWatcher, mkdirSync, watch, writeFileSync } from "fs";
-import { open, readdir, readFile } from "fs/promises";
-import { join, normalize } from "path";
+import {FSWatcher, mkdirSync, watch, writeFileSync} from "fs";
+import {open, readdir, readFile} from "fs/promises";
+import {join, normalize} from "path";
 
-import { ALLOWED_PROTOCOLS, QUICKCSS_PATH, THEMES_DIR } from "./utils/constants";
-import { makeLinksOpenExternally } from "./utils/externalLinks";
+import {ALLOWED_PROTOCOLS, QUICKCSS_PATH, THEMES_DIR} from "./utils/constants";
+import {makeLinksOpenExternally} from "./utils/externalLinks";
 
-mkdirSync(THEMES_DIR, { recursive: true });
+mkdirSync(THEMES_DIR, {recursive: true});
 
 export function ensureSafePath(basePath: string, path: string) {
     const normalizedBasePath = normalize(basePath);
@@ -47,7 +47,7 @@ function readCss() {
 function listThemes(): Promise<{ fileName: string; content: string; }[]> {
     return readdir(THEMES_DIR)
         .then(files =>
-            Promise.all(files.map(async fileName => ({ fileName, content: await getThemeData(fileName) }))))
+            Promise.all(files.map(async fileName => ({fileName, content: await getThemeData(fileName)}))))
         .catch(() => []);
 }
 
@@ -62,7 +62,7 @@ ipcMain.handle(IpcEvents.OPEN_QUICKCSS, () => shell.openPath(QUICKCSS_PATH));
 
 ipcMain.handle(IpcEvents.OPEN_EXTERNAL, (_, url) => {
     try {
-        var { protocol } = new URL(url);
+        var {protocol} = new URL(url);
     } catch {
         throw "Malformed URL";
     }
@@ -91,12 +91,13 @@ export function initIpc(mainWindow: BrowserWindow) {
 
     open(QUICKCSS_PATH, "a+").then(fd => {
         fd.close();
-        quickCssWatcher = watch(QUICKCSS_PATH, { persistent: false }, debounce(async () => {
+        quickCssWatcher = watch(QUICKCSS_PATH, {persistent: false}, debounce(async () => {
             mainWindow.webContents.postMessage(IpcEvents.QUICK_CSS_UPDATE, await readCss());
         }, 50));
-    }).catch(() => { });
+    }).catch(() => {
+    });
 
-    const themesWatcher = watch(THEMES_DIR, { persistent: false }, debounce(() => {
+    const themesWatcher = watch(THEMES_DIR, {persistent: false}, debounce(() => {
         mainWindow.webContents.postMessage(IpcEvents.THEME_UPDATE, void 0);
     }));
 

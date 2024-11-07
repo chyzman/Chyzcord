@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import type { MapValue } from "type-fest/source/entry";
+import type {MapValue} from "type-fest/source/entry";
 
 export type Style = MapValue<typeof VencordStyles>;
 

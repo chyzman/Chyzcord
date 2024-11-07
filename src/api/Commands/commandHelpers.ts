@@ -16,13 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { mergeDefaults } from "@utils/mergeDefaults";
-import { findByCodeLazy } from "@webpack";
-import { MessageActions, SnowflakeUtils } from "@webpack/common";
-import { Message } from "discord-types/general";
-import type { PartialDeep } from "type-fest";
+import {mergeDefaults} from "@utils/mergeDefaults";
+import {findByCodeLazy} from "@webpack";
+import {MessageActions, SnowflakeUtils} from "@webpack/common";
+import {Message} from "discord-types/general";
+import type {PartialDeep} from "type-fest";
 
-import { Argument } from "./types";
+import {Argument} from "./types";
 
 const createBotMessage = findByCodeLazy('username:"Clyde"');
 
@@ -37,7 +37,7 @@ export function generateId() {
  * @returns {Message}
  */
 export function sendBotMessage(channelId: string, message: PartialDeep<Message>): Message {
-    const botMessage = createBotMessage({ channelId, content: "", embeds: [] });
+    const botMessage = createBotMessage({channelId, content: "", embeds: []});
 
     MessageActions.receiveMessage(channelId, mergeDefaults(message, botMessage));
 

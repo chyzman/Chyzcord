@@ -16,10 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { findByPropsLazy, findModuleId, proxyLazyWebpack, wreq } from "@webpack";
-import type { ComponentType, PropsWithChildren, ReactNode, Ref } from "react";
+import {findByPropsLazy, findModuleId, proxyLazyWebpack, wreq} from "@webpack";
+import type {ComponentType, PropsWithChildren, ReactNode, Ref} from "react";
 
-import { LazyComponent } from "./react";
+import {LazyComponent} from "./react";
 
 export const enum ModalSize {
     SMALL = "small",
@@ -38,6 +38,7 @@ const enum ModalTransitionState {
 
 export interface ModalProps {
     transitionState: ModalTransitionState;
+
     onClose(): void;
 }
 

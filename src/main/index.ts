@@ -16,26 +16,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { app, protocol, session } from "electron";
-import { join } from "path";
+import {app, protocol, session} from "electron";
+import {join} from "path";
 
-import { ensureSafePath } from "./ipcMain";
-import { RendererSettings } from "./settings";
-import { IS_VANILLA, THEMES_DIR } from "./utils/constants";
-import { installExt } from "./utils/extensions";
+import {ensureSafePath} from "./ipcMain";
+import {RendererSettings} from "./settings";
+import {IS_VANILLA, THEMES_DIR} from "./utils/constants";
+import {installExt} from "./utils/extensions";
 
 if (IS_VESKTOP || !IS_VANILLA) {
     app.whenReady().then(() => {
         // Source Maps! Maybe there's a better way but since the renderer is executed
         // from a string I don't think any other form of sourcemaps would work
-        protocol.registerFileProtocol("vencord", ({ url: unsafeUrl }, cb) => {
+        protocol.registerFileProtocol("vencord", ({url: unsafeUrl}, cb) => {
             let url = unsafeUrl.slice("vencord://".length);
             if (url.endsWith("/")) url = url.slice(0, -1);
             if (url.startsWith("/themes/")) {
                 const theme = url.slice("/themes/".length);
                 const safeUrl = ensureSafePath(THEMES_DIR, theme);
                 if (!safeUrl) {
-                    cb({ statusCode: 403 });
+                    cb({statusCode: 403});
                     return;
                 }
                 cb(safeUrl.replace(/\?v=\d+$/, ""));
@@ -49,18 +49,18 @@ if (IS_VESKTOP || !IS_VANILLA) {
                     cb(join(__dirname, url));
                     break;
                 default:
-                    cb({ statusCode: 403 });
+                    cb({statusCode: 403});
             }
         });
 
-        protocol.registerFileProtocol("equicord", ({ url: unsafeUrl }, cb) => {
+        protocol.registerFileProtocol("equicord", ({url: unsafeUrl}, cb) => {
             let url = unsafeUrl.slice("equicord://".length);
             if (url.endsWith("/")) url = url.slice(0, -1);
             if (url.startsWith("/themes/")) {
                 const theme = url.slice("/themes/".length);
                 const safeUrl = ensureSafePath(THEMES_DIR, theme);
                 if (!safeUrl) {
-                    cb({ statusCode: 403 });
+                    cb({statusCode: 403});
                     return;
                 }
                 cb(safeUrl.replace(/\?v=\d+$/, ""));
@@ -74,7 +74,7 @@ if (IS_VESKTOP || !IS_VANILLA) {
                     cb(join(__dirname, url));
                     break;
                 default:
-                    cb({ statusCode: 403 });
+                    cb({statusCode: 403});
             }
         });
 
@@ -83,7 +83,8 @@ if (IS_VESKTOP || !IS_VANILLA) {
                 installExt("fmkadmapgofadopljbjfkapdkoienihi")
                     .then(() => console.info("[Chyzcord] Installed React Developer Tools"))
                     .catch(err => console.error("[Chyzcord] Failed to install React Developer Tools", err));
-        } catch { }
+        } catch {
+        }
 
 
         const findHeader = (headers: Record<string, string[]>, headerName: Lowercase<string>) => {
@@ -129,7 +130,7 @@ if (IS_VESKTOP || !IS_VANILLA) {
             }
         };
 
-        session.defaultSession.webRequest.onHeadersReceived(({ responseHeaders, resourceType }, cb) => {
+        session.defaultSession.webRequest.onHeadersReceived(({responseHeaders, resourceType}, cb) => {
             if (responseHeaders) {
                 if (resourceType === "mainFrame")
                     patchCsp(responseHeaders);
@@ -143,13 +144,14 @@ if (IS_VESKTOP || !IS_VANILLA) {
                 }
             }
 
-            cb({ cancel: false, responseHeaders });
+            cb({cancel: false, responseHeaders});
         });
 
         // assign a noop to onHeadersReceived to prevent other mods from adding their own incompatible ones.
         // For instance, OpenAsar adds their own that doesn't fix content-type for stylesheets which makes it
         // impossible to load css from github raw despite our fix above
-        session.defaultSession.webRequest.onHeadersReceived = () => { };
+        session.defaultSession.webRequest.onHeadersReceived = () => {
+        };
     });
 }
 

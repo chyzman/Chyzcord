@@ -16,31 +16,35 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { proxyLazy } from "@utils/lazy";
-import { Logger } from "@utils/Logger";
-import { findModuleId, proxyLazyWebpack, wreq } from "@webpack";
+import {proxyLazy} from "@utils/lazy";
+import {Logger} from "@utils/Logger";
+import {findModuleId, proxyLazyWebpack, wreq} from "@webpack";
 
-import { Settings } from "./Settings";
+import {Settings} from "./Settings";
 
 interface UserSettingDefinition<T> {
     /**
      * Get the setting value
      */
     getSetting(): T;
+
     /**
      * Update the setting value
      * @param value The new value
      */
     updateSetting(value: T): Promise<void>;
+
     /**
      * Update the setting value
      * @param value A callback that accepts the old value as the first argument, and returns the new value
      */
     updateSetting(value: (old: T) => T): Promise<void>;
+
     /**
      * Stateful React hook for this setting value
      */
     useSetting(): T;
+
     userSettingDefinitionsAPIGroup: string;
     userSettingDefinitionsAPIName: string;
 }

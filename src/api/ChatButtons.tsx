@@ -7,11 +7,11 @@
 import "./ChatButton.css";
 
 import ErrorBoundary from "@components/ErrorBoundary";
-import { Logger } from "@utils/Logger";
-import { waitFor } from "@webpack";
-import { Button, ButtonLooks, ButtonWrapperClasses, Tooltip } from "@webpack/common";
-import { Channel } from "discord-types/general";
-import { HTMLProps, MouseEventHandler, ReactNode } from "react";
+import {Logger} from "@utils/Logger";
+import {waitFor} from "@webpack";
+import {Button, ButtonLooks, ButtonWrapperClasses, Tooltip} from "@webpack/common";
+import {Channel} from "discord-types/general";
+import {HTMLProps, MouseEventHandler, ReactNode} from "react";
 
 let ChannelTextAreaClasses: Record<"button" | "buttonContainer", string>;
 waitFor(["buttonContainer", "channelTextArea"], m => ChannelTextAreaClasses = m);
@@ -85,7 +85,7 @@ export function _injectButtons(buttons: ReactNode[], props: ChatBarProps) {
     for (const [key, Button] of buttonFactories) {
         buttons.push(
             <ErrorBoundary noop key={key} onError={e => logger.error(`Failed to render ${key}`, e.error)}>
-                <Button {...props} isMainChat={props.type.analyticsName === "normal"} />
+                <Button {...props} isMainChat={props.type.analyticsName === "normal"}/>
             </ErrorBoundary>
         );
     }
@@ -101,10 +101,11 @@ export interface ChatBarButtonProps {
     onContextMenu?: MouseEventHandler<HTMLButtonElement>;
     buttonProps?: Omit<HTMLProps<HTMLButtonElement>, "size" | "onClick" | "onContextMenu">;
 }
+
 export const ChatBarButton = ErrorBoundary.wrap((props: ChatBarButtonProps) => {
     return (
         <Tooltip text={props.tooltip}>
-            {({ onMouseEnter, onMouseLeave }) => (
+            {({onMouseEnter, onMouseLeave}) => (
                 <div className={`expression-picker-chat-input-button ${ChannelTextAreaClasses?.buttonContainer ?? ""} vc-chatbar-button`}>
                     <Button
                         aria-label={props.tooltip}
@@ -125,4 +126,4 @@ export const ChatBarButton = ErrorBoundary.wrap((props: ChatBarButtonProps) => {
             )}
         </Tooltip>
     );
-}, { noop: true });
+}, {noop: true});

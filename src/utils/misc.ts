@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Clipboard, Toasts } from "@webpack/common";
+import {Clipboard, Toasts} from "@webpack/common";
 
-import { ChyzcordDevsById, EquicordDevsById, VencordDevsById } from "./constants";
+import {ChyzcordDevsById, EquicordDevsById, VencordDevsById} from "./constants";
 
 /**
  * Calls .join(" ") on the arguments

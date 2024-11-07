@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { React } from "@webpack/common";
+import {React} from "@webpack/common";
 
-import { cl } from "../";
+import {cl} from "../";
 
 export interface GridProps<ItemT> {
     renderItem: (item: ItemT) => JSX.Element;
@@ -15,7 +15,7 @@ export interface GridProps<ItemT> {
     items: Array<ItemT>;
 }
 
-export default function Grid<ItemT,>({ renderItem, getItemKey, itemKeyPrefix: ikp, items }: GridProps<ItemT>) {
+export default function Grid<ItemT, >({renderItem, getItemKey, itemKeyPrefix: ikp, items}: GridProps<ItemT>) {
     return <div className={cl("sectioned-grid-list-grid")}>
         {items.map(item =>
             <React.Fragment

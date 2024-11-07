@@ -17,7 +17,7 @@ const self = module.exports;
                 if (c) return c(n, !0);
                 throw new Error("Cannot find module '" + n + "'");
             }
-            var r = (a[n] = { exports: {} });
+            var r = (a[n] = {exports: {}});
             o[n][0].call(
                 r.exports,
                 function (t) {
@@ -34,6 +34,7 @@ const self = module.exports;
         }
         return a[n].exports;
     }
+
     for (
         var c = "function" == typeof require && require, t = 0;
         t < s.length;
@@ -50,29 +51,31 @@ const self = module.exports;
                     (t = this),
                         (e = function () {
                             "use strict";
+
                             function u(t) {
                                 return "function" == typeof t;
                             }
+
                             var n = Array.isArray
-                                ? Array.isArray
-                                : function (t) {
-                                    return (
-                                        "[object Array]" ===
-                                        Object.prototype.toString.call(t)
-                                    );
-                                },
+                                    ? Array.isArray
+                                    : function (t) {
+                                        return (
+                                            "[object Array]" ===
+                                            Object.prototype.toString.call(t)
+                                        );
+                                    },
                                 r = 0,
                                 e = void 0,
                                 i = void 0,
                                 a = function (t, e) {
                                     (l[r] = t),
                                         (l[r + 1] = e),
-                                        2 === (r += 2) && (i ? i(d) : g());
+                                    2 === (r += 2) && (i ? i(d) : g());
                                 };
                             var t =
-                                "undefined" != typeof window
-                                    ? window
-                                    : void 0,
+                                    "undefined" != typeof window
+                                        ? window
+                                        : void 0,
                                 o = t || {},
                                 s =
                                     o.MutationObserver ||
@@ -85,13 +88,16 @@ const self = module.exports;
                                     "undefined" != typeof Uint8ClampedArray &&
                                     "undefined" != typeof importScripts &&
                                     "undefined" != typeof MessageChannel;
+
                             function h() {
                                 var t = setTimeout;
                                 return function () {
                                     return t(d, 1);
                                 };
                             }
+
                             var l = new Array(1e3);
+
                             function d() {
                                 for (var t = 0; t < r; t += 2) {
                                     (0, l[t])(l[t + 1]),
@@ -100,11 +106,13 @@ const self = module.exports;
                                 }
                                 r = 0;
                             }
+
                             var p,
                                 v,
                                 A,
                                 m,
                                 g = void 0;
+
                             function w(t, e) {
                                 var n = this,
                                     r = new this.constructor(b);
@@ -118,6 +126,7 @@ const self = module.exports;
                                 } else U(n, r, t, e);
                                 return r;
                             }
+
                             function y(t) {
                                 if (
                                     t &&
@@ -128,6 +137,7 @@ const self = module.exports;
                                 var e = new this(b);
                                 return T(e, t), e;
                             }
+
                             g = c
                                 ? function () {
                                     return G.nextTick(d);
@@ -136,7 +146,7 @@ const self = module.exports;
                                     ? ((v = 0),
                                         (A = new s(d)),
                                         (m = document.createTextNode("")),
-                                        A.observe(m, { characterData: !0 }),
+                                        A.observe(m, {characterData: !0}),
                                         function () {
                                             m.data = v = ++v % 2;
                                         })
@@ -154,8 +164,8 @@ const self = module.exports;
                                                             "vertx"
                                                         );
                                                     return void 0 !==
-                                                        (e =
-                                                            t.runOnLoop || t.runOnContext)
+                                                    (e =
+                                                        t.runOnLoop || t.runOnContext)
                                                         ? function () {
                                                             e(d);
                                                         }
@@ -166,10 +176,14 @@ const self = module.exports;
                                             })()
                                             : h();
                             var _ = Math.random().toString(36).substring(2);
-                            function b() { }
+
+                            function b() {
+                            }
+
                             var E = void 0,
                                 P = 1,
                                 x = 2;
+
                             function N(t, r, i) {
                                 a(function (e) {
                                     var n = !1,
@@ -184,10 +198,10 @@ const self = module.exports;
                                             r,
                                             function (t) {
                                                 n ||
-                                                    ((n = !0),
-                                                        r !== t
-                                                            ? T(e, t)
-                                                            : O(e, t));
+                                                ((n = !0),
+                                                    r !== t
+                                                        ? T(e, t)
+                                                        : O(e, t));
                                             },
                                             function (t) {
                                                 n || ((n = !0), R(e, t));
@@ -197,10 +211,11 @@ const self = module.exports;
                                     !n && t && ((n = !0), R(e, t));
                                 }, t);
                             }
+
                             function C(t, e, n) {
                                 e.constructor === t.constructor &&
-                                    n === w &&
-                                    e.constructor.resolve === y
+                                n === w &&
+                                e.constructor.resolve === y
                                     ? (function (e, t) {
                                         t._state === P
                                             ? O(e, t._result)
@@ -223,6 +238,7 @@ const self = module.exports;
                                             ? N(t, e, n)
                                             : O(t, e);
                             }
+
                             function T(e, t) {
                                 if (e === t)
                                     R(
@@ -249,19 +265,23 @@ const self = module.exports;
                                     C(e, t, n);
                                 } else O(e, t);
                             }
+
                             function B(t) {
                                 t._onerror && t._onerror(t._result), I(t);
                             }
+
                             function O(t, e) {
                                 t._state === E &&
-                                    ((t._result = e),
-                                        (t._state = P),
-                                        0 !== t._subscribers.length && a(I, t));
+                                ((t._result = e),
+                                    (t._state = P),
+                                0 !== t._subscribers.length && a(I, t));
                             }
+
                             function R(t, e) {
                                 t._state === E &&
-                                    ((t._state = x), (t._result = e), a(B, t));
+                                ((t._state = x), (t._result = e), a(B, t));
                             }
+
                             function U(t, e, n, r) {
                                 var i = t._subscribers,
                                     o = i.length;
@@ -269,17 +289,18 @@ const self = module.exports;
                                     (i[o] = e),
                                     (i[o + P] = n),
                                     (i[o + x] = r),
-                                    0 === o && t._state && a(I, t);
+                                0 === o && t._state && a(I, t);
                             }
+
                             function I(t) {
                                 var e = t._subscribers,
                                     n = t._state;
                                 if (0 !== e.length) {
                                     for (
                                         var r = void 0,
-                                        i = void 0,
-                                        o = t._result,
-                                        a = 0;
+                                            i = void 0,
+                                            o = t._result,
+                                            a = 0;
                                         a < e.length;
                                         a += 3
                                     )
@@ -289,6 +310,7 @@ const self = module.exports;
                                     t._subscribers.length = 0;
                                 }
                             }
+
                             function L(t, e, n, r) {
                                 var i = u(n),
                                     o = void 0,
@@ -309,21 +331,24 @@ const self = module.exports;
                                         );
                                 } else o = r;
                                 e._state !== E ||
-                                    (i && s
-                                        ? T(e, o)
-                                        : !1 === s
-                                            ? R(e, a)
-                                            : t === P
-                                                ? O(e, o)
-                                                : t === x && R(e, o));
+                                (i && s
+                                    ? T(e, o)
+                                    : !1 === s
+                                        ? R(e, a)
+                                        : t === P
+                                            ? O(e, o)
+                                            : t === x && R(e, o));
                             }
+
                             var D = 0;
+
                             function j(t) {
                                 (t[_] = D++),
                                     (t._state = void 0),
                                     (t._result = void 0),
                                     (t._subscribers = []);
                             }
+
                             var k =
                                 ((F.prototype._enumerate = function (t) {
                                     for (
@@ -370,12 +395,12 @@ const self = module.exports;
                                     (F.prototype._settledAt = function (t, e, n) {
                                         var r = this.promise;
                                         r._state === E &&
-                                            (this._remaining--,
-                                                t === x
-                                                    ? R(r, n)
-                                                    : (this._result[e] = n)),
-                                            0 === this._remaining &&
-                                            O(r, this._result);
+                                        (this._remaining--,
+                                            t === x
+                                                ? R(r, n)
+                                                : (this._result[e] = n)),
+                                        0 === this._remaining &&
+                                        O(r, this._result);
                                     }),
                                     (F.prototype._willSettleAt = function (t, e) {
                                         var n = this;
@@ -391,10 +416,11 @@ const self = module.exports;
                                         );
                                     }),
                                     F);
+
                             function F(t, e) {
                                 (this._instanceConstructor = t),
                                     (this.promise = new t(b)),
-                                    this.promise[_] || j(this.promise),
+                                this.promise[_] || j(this.promise),
                                     n(e)
                                         ? ((this.length = e.length),
                                             (this._remaining = e.length),
@@ -406,11 +432,11 @@ const self = module.exports;
                                                 : ((this.length =
                                                     this.length || 0),
                                                     this._enumerate(e),
-                                                    0 === this._remaining &&
-                                                    O(
-                                                        this.promise,
-                                                        this._result
-                                                    )))
+                                                0 === this._remaining &&
+                                                O(
+                                                    this.promise,
+                                                    this._result
+                                                )))
                                         : R(
                                             this.promise,
                                             new Error(
@@ -418,6 +444,7 @@ const self = module.exports;
                                             )
                                         );
                             }
+
                             var S =
                                 ((M.prototype.catch = function (t) {
                                     return this.then(null, t);
@@ -444,101 +471,104 @@ const self = module.exports;
                                             : this.then(e, e);
                                     }),
                                     M);
+
                             function M(t) {
                                 (this[_] = D++),
                                     (this._result = this._state = void 0),
                                     (this._subscribers = []),
-                                    b !== t &&
-                                    ("function" != typeof t &&
-                                        (function () {
-                                            throw new TypeError(
-                                                "You must pass a resolver function as the first argument to the promise constructor"
-                                            );
-                                        })(),
-                                        this instanceof M
-                                            ? (function (e, t) {
-                                                try {
-                                                    t(
-                                                        function (t) {
-                                                            T(e, t);
-                                                        },
-                                                        function (t) {
-                                                            R(e, t);
-                                                        }
-                                                    );
-                                                } catch (t) {
-                                                    R(e, t);
-                                                }
-                                            })(this, t)
-                                            : (function () {
-                                                throw new TypeError(
-                                                    "Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function."
+                                b !== t &&
+                                ("function" != typeof t &&
+                                (function () {
+                                    throw new TypeError(
+                                        "You must pass a resolver function as the first argument to the promise constructor"
+                                    );
+                                })(),
+                                    this instanceof M
+                                        ? (function (e, t) {
+                                            try {
+                                                t(
+                                                    function (t) {
+                                                        T(e, t);
+                                                    },
+                                                    function (t) {
+                                                        R(e, t);
+                                                    }
                                                 );
-                                            })());
+                                            } catch (t) {
+                                                R(e, t);
+                                            }
+                                        })(this, t)
+                                        : (function () {
+                                            throw new TypeError(
+                                                "Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function."
+                                            );
+                                        })());
                             }
+
                             return (
                                 (S.prototype.then = w),
-                                (S.all = function (t) {
-                                    return new k(this, t).promise;
-                                }),
-                                (S.race = function (i) {
-                                    var o = this;
-                                    return n(i)
-                                        ? new o(function (t, e) {
-                                            for (
-                                                var n = i.length, r = 0;
-                                                r < n;
-                                                r++
-                                            )
-                                                o.resolve(i[r]).then(t, e);
-                                        })
-                                        : new o(function (t, e) {
-                                            return e(
-                                                new TypeError(
-                                                    "You must pass an array to race."
+                                    (S.all = function (t) {
+                                        return new k(this, t).promise;
+                                    }),
+                                    (S.race = function (i) {
+                                        var o = this;
+                                        return n(i)
+                                            ? new o(function (t, e) {
+                                                for (
+                                                    var n = i.length, r = 0;
+                                                    r < n;
+                                                    r++
                                                 )
-                                            );
-                                        });
-                                }),
-                                (S.resolve = y),
-                                (S.reject = function (t) {
-                                    var e = new this(b);
-                                    return R(e, t), e;
-                                }),
-                                (S._setScheduler = function (t) {
-                                    i = t;
-                                }),
-                                (S._setAsap = function (t) {
-                                    a = t;
-                                }),
-                                (S._asap = a),
-                                (S.polyfill = function () {
-                                    var t = void 0;
-                                    if (void 0 !== q) t = q;
-                                    else if ("undefined" != typeof self)
-                                        t = self;
-                                    else
-                                        try {
-                                            t = Function("return this")();
-                                        } catch (t) {
-                                            throw new Error(
-                                                "polyfill failed because global object is unavailable in this environment"
-                                            );
+                                                    o.resolve(i[r]).then(t, e);
+                                            })
+                                            : new o(function (t, e) {
+                                                return e(
+                                                    new TypeError(
+                                                        "You must pass an array to race."
+                                                    )
+                                                );
+                                            });
+                                    }),
+                                    (S.resolve = y),
+                                    (S.reject = function (t) {
+                                        var e = new this(b);
+                                        return R(e, t), e;
+                                    }),
+                                    (S._setScheduler = function (t) {
+                                        i = t;
+                                    }),
+                                    (S._setAsap = function (t) {
+                                        a = t;
+                                    }),
+                                    (S._asap = a),
+                                    (S.polyfill = function () {
+                                        var t = void 0;
+                                        if (void 0 !== q) t = q;
+                                        else if ("undefined" != typeof self)
+                                            t = self;
+                                        else
+                                            try {
+                                                t = Function("return this")();
+                                            } catch (t) {
+                                                throw new Error(
+                                                    "polyfill failed because global object is unavailable in this environment"
+                                                );
+                                            }
+                                        var e = t.Promise;
+                                        if (e) {
+                                            var n = null;
+                                            try {
+                                                n = Object.prototype.toString.call(
+                                                    e.resolve()
+                                                );
+                                            } catch (t) {
+                                            }
+                                            if ("[object Promise]" === n && !e.cast)
+                                                return;
                                         }
-                                    var e = t.Promise;
-                                    if (e) {
-                                        var n = null;
-                                        try {
-                                            n = Object.prototype.toString.call(
-                                                e.resolve()
-                                            );
-                                        } catch (t) { }
-                                        if ("[object Promise]" === n && !e.cast)
-                                            return;
-                                    }
-                                    t.Promise = S;
-                                }),
-                                (S.Promise = S)
+                                        t.Promise = S;
+                                    }),
+                                    (S.Promise = S)
                             );
                         }),
                         "object" == typeof r && void 0 !== n
@@ -556,12 +586,15 @@ const self = module.exports;
                             : {}
                 );
             },
-            { VCmEsw: 2 },
+            {VCmEsw: 2},
         ],
         2: [
             function (t, e, n) {
                 var r = (e.exports = {});
-                function i() { }
+
+                function i() {
+                }
+
                 (r.nextTick = (function () {
                     var t = "undefined" != typeof window && window.setImmediate,
                         e =
@@ -580,16 +613,16 @@ const self = module.exports;
                                 function (t) {
                                     var e = t.source;
                                     (e !== window && null !== e) ||
-                                        "process-tick" !== t.data ||
-                                        (t.stopPropagation(),
-                                            0 < n.length && n.shift()());
+                                    "process-tick" !== t.data ||
+                                    (t.stopPropagation(),
+                                    0 < n.length && n.shift()());
                                 },
                                 !0
                             ),
-                            function (t) {
-                                n.push(t),
-                                    window.postMessage("process-tick", "*");
-                            }
+                                function (t) {
+                                    n.push(t),
+                                        window.postMessage("process-tick", "*");
+                                }
                         );
                     }
                     return function (t) {
@@ -630,10 +663,10 @@ const self = module.exports;
                         (this.frames = []),
                         (this.play = function () {
                             s ||
-                                u ||
-                                (this.rewind(),
-                                    (s = !0),
-                                    requestAnimationFrame(e));
+                            u ||
+                            (this.rewind(),
+                                (s = !0),
+                                requestAnimationFrame(e));
                         }),
                         (this.rewind = function () {
                             (o = i = 0), (a = null), (u = s = !1);
@@ -653,10 +686,10 @@ const self = module.exports;
                         (this.removeContext = function (t) {
                             var e = c.indexOf(t);
                             -1 !== e &&
-                                (c.splice(e, 1),
-                                    0 === c.length && this.rewind(),
-                                    "_apng_animation" in t &&
-                                    delete t._apng_animation);
+                            (c.splice(e, 1),
+                            0 === c.length && this.rewind(),
+                            "_apng_animation" in t &&
+                            delete t._apng_animation);
                         }),
                         (this.isPlayed = function () {
                             return s;
@@ -693,26 +726,26 @@ const self = module.exports;
                                         );
                                     }),
                                         (a = null),
-                                        2 == n.disposeOp && (n.disposeOp = 1)),
-                                    a && 1 == a.disposeOp
-                                        ? c.forEach(function (t) {
-                                            t.clearRect(
-                                                a.left,
-                                                a.top,
-                                                a.width,
-                                                a.height
-                                            );
-                                        })
-                                        : a &&
-                                        2 == a.disposeOp &&
-                                        c.forEach(function (t) {
-                                            t.putImageData(
-                                                a.iData,
-                                                a.left,
-                                                a.top
-                                            );
-                                        }),
-                                    (a = n).iData = null,
+                                    2 == n.disposeOp && (n.disposeOp = 1)),
+                                        a && 1 == a.disposeOp
+                                            ? c.forEach(function (t) {
+                                                t.clearRect(
+                                                    a.left,
+                                                    a.top,
+                                                    a.width,
+                                                    a.height
+                                                );
+                                            })
+                                            : a &&
+                                            2 == a.disposeOp &&
+                                            c.forEach(function (t) {
+                                                t.putImageData(
+                                                    a.iData,
+                                                    a.left,
+                                                    a.top
+                                                );
+                                            }),
+                                        (a = n).iData = null,
                                     2 == a.disposeOp &&
                                     (a.iData = c[0].getImageData(
                                         n.left,
@@ -729,12 +762,11 @@ const self = module.exports;
                                             n.height
                                         );
                                     }),
-                                    c.forEach(function (t) {
-                                        t.drawImage(n.img, n.left, n.top);
-                                    }),
+                                        c.forEach(function (t) {
+                                            t.drawImage(n.img, n.left, n.top);
+                                        }),
                                     0 == i && (i = t);
                                     t > i + r.playTime;
-
                                 )
                                     i += r.playTime;
                                 i += n.delay;
@@ -755,8 +787,8 @@ const self = module.exports;
                 e.exports = function (t, e, n) {
                     for (
                         var r = -1,
-                        i = (e = e || 0),
-                        o = e + (n = n || t.length - e);
+                            i = (e = e || 0),
+                            o = e + (n = n || t.length - e);
                         i < o;
                         i++
                     )
@@ -791,17 +823,17 @@ const self = module.exports;
                         (i.animateImage = function (s) {
                             return (
                                 s.setAttribute("data-is-apng", "progress"),
-                                i.parseURL(s.src).then(
-                                    function (t) {
-                                        s.setAttribute("data-is-apng", "yes");
-                                        var e =
-                                            document.createElement("canvas");
-                                        (e.width = t.width),
-                                            (e.height = t.height),
-                                            Array.prototype.slice
-                                                .call(s.attributes)
-                                                .forEach(function (t) {
-                                                    -1 ==
+                                    i.parseURL(s.src).then(
+                                        function (t) {
+                                            s.setAttribute("data-is-apng", "yes");
+                                            var e =
+                                                document.createElement("canvas");
+                                            (e.width = t.width),
+                                                (e.height = t.height),
+                                                Array.prototype.slice
+                                                    .call(s.attributes)
+                                                    .forEach(function (t) {
+                                                        -1 ==
                                                         [
                                                             "alt",
                                                             "src",
@@ -814,35 +846,35 @@ const self = module.exports;
                                                         e.setAttributeNode(
                                                             t.cloneNode(!1)
                                                         );
-                                                }),
-                                            e.setAttribute(
-                                                "data-apng-src",
-                                                s.src
-                                            ),
+                                                    }),
+                                                e.setAttribute(
+                                                    "data-apng-src",
+                                                    s.src
+                                                ),
                                             "" != s.alt &&
                                             e.appendChild(
                                                 document.createTextNode(
                                                     s.alt
                                                 )
                                             );
-                                        var n = "",
-                                            r = "",
-                                            i = 0,
-                                            o = "";
-                                        "" != s.style.width &&
+                                            var n = "",
+                                                r = "",
+                                                i = 0,
+                                                o = "";
+                                            "" != s.style.width &&
                                             "auto" != s.style.width
-                                            ? (n = s.style.width)
-                                            : s.hasAttribute("width") &&
-                                            (n =
-                                                s.getAttribute("width") +
-                                                "px"),
-                                            "" != s.style.height &&
-                                                "auto" != s.style.height
-                                                ? (r = s.style.height)
-                                                : s.hasAttribute("height") &&
-                                                (r =
-                                                    s.getAttribute("height") +
+                                                ? (n = s.style.width)
+                                                : s.hasAttribute("width") &&
+                                                (n =
+                                                    s.getAttribute("width") +
                                                     "px"),
+                                                "" != s.style.height &&
+                                                "auto" != s.style.height
+                                                    ? (r = s.style.height)
+                                                    : s.hasAttribute("height") &&
+                                                    (r =
+                                                        s.getAttribute("height") +
+                                                        "px"),
                                             "" != n &&
                                             "" == r &&
                                             ((i = parseFloat(n)),
@@ -859,24 +891,24 @@ const self = module.exports;
                                                     Math.round(
                                                         (e.width * i) / e.height
                                                     ) + o)),
-                                            (e.style.width = n),
-                                            (e.style.height = r);
-                                        var a = s.parentNode;
-                                        a.insertBefore(e, s),
-                                            a.removeChild(s),
-                                            t.addContext(e.getContext("2d")),
-                                            t.play();
-                                    },
-                                    function () {
-                                        s.setAttribute("data-is-apng", "no");
-                                    }
-                                )
+                                                (e.style.width = n),
+                                                (e.style.height = r);
+                                            var a = s.parentNode;
+                                            a.insertBefore(e, s),
+                                                a.removeChild(s),
+                                                t.addContext(e.getContext("2d")),
+                                                t.play();
+                                        },
+                                        function () {
+                                            s.setAttribute("data-is-apng", "no");
+                                        }
+                                    )
                             );
                         }),
                         (i.releaseCanvas = function (t) {
                             var e = t.getContext("2d");
                             "_apng_animation" in e &&
-                                e._apng_animation.removeContext(e);
+                            e._apng_animation.removeContext(e);
                         });
                 }).call(
                     this,
@@ -887,7 +919,7 @@ const self = module.exports;
                             : {}
                 );
             },
-            { "./loader": 6, "./parser": 7, "./support-test": 8 },
+            {"./loader": 6, "./parser": 7, "./support-test": 8},
         ],
         6: [
             function (t, e, n) {
@@ -905,7 +937,7 @@ const self = module.exports;
                     });
                 };
             },
-            { "es6-promise": 1 },
+            {"es6-promise": 1},
         ],
         7: [
             function (t, e, n) {
@@ -958,8 +990,8 @@ const self = module.exports;
                                                 o = _(e, n + 8 + 22);
                                             0 == o && (o = 100),
                                                 (c.delay = (1e3 * i) / o),
-                                                c.delay <= 10 &&
-                                                (c.delay = 100),
+                                            c.delay <= 10 &&
+                                            (c.delay = 100),
                                                 (f.playTime += c.delay),
                                                 (c.disposeOp = b(
                                                     e,
@@ -970,18 +1002,18 @@ const self = module.exports;
                                             break;
                                         case "fdAT":
                                             c &&
-                                                c.dataParts.push(
-                                                    e.subarray(
-                                                        n + 8 + 4,
-                                                        n + 8 + r
-                                                    )
-                                                );
+                                            c.dataParts.push(
+                                                e.subarray(
+                                                    n + 8 + 4,
+                                                    n + 8 + r
+                                                )
+                                            );
                                             break;
                                         case "IDAT":
                                             c &&
-                                                c.dataParts.push(
-                                                    e.subarray(n + 8, n + 8 + r)
-                                                );
+                                            c.dataParts.push(
+                                                e.subarray(n + 8, n + 8 + r)
+                                            );
                                             break;
                                         case "IEND":
                                             s.push(E(e, n, 12 + r));
@@ -990,14 +1022,14 @@ const self = module.exports;
                                             a.push(E(e, n, 12 + r));
                                     }
                                 }),
-                                    c && f.frames.push(c),
-                                    0 != f.frames.length)
+                                c && f.frames.push(c),
+                                0 != f.frames.length)
                             )
                                 for (
                                     var i = 0,
-                                    o = new Blob(a),
-                                    h = new Blob(s),
-                                    l = 0;
+                                        o = new Blob(a),
+                                        h = new Blob(s),
+                                        l = 0;
                                     l < f.frames.length;
                                     l++
                                 ) {
@@ -1012,14 +1044,14 @@ const self = module.exports;
                                         d.push(x("IDAT", c.dataParts[p]));
                                     d.push(h);
                                     var v = URL.createObjectURL(
-                                        new Blob(d, { type: "image/png" })
+                                        new Blob(d, {type: "image/png"})
                                     );
                                     delete c.dataParts,
                                         (d = null),
                                         (c.img = document.createElement("img")),
                                         (c.img.onload = function () {
                                             URL.revokeObjectURL(this.src),
-                                                ++i == f.frames.length && t(f);
+                                            ++i == f.frames.length && t(f);
                                         }),
                                         (c.img.onerror = function () {
                                             e("Image creation error");
@@ -1031,14 +1063,14 @@ const self = module.exports;
                     });
                 };
                 var w = function (t, e) {
-                    var n = 8;
-                    do {
-                        var r = y(t, n),
-                            i = a(t, n + 4, 4),
-                            o = e(i, t, n, r);
-                        n += 12 + r;
-                    } while (!1 !== o && "IEND" != i && n < t.length);
-                },
+                        var n = 8;
+                        do {
+                            var r = y(t, n),
+                                i = a(t, n + 4, 4),
+                                o = e(i, t, n, r);
+                            n += 12 + r;
+                        } while (!1 !== o && "IEND" != i && n < t.length);
+                    },
                     y = function (t, e) {
                         var n = 0;
                         n += (t[0 + e] << 24) >>> 0;
@@ -1089,7 +1121,7 @@ const self = module.exports;
                         return r.set(P(i), n + 4), r;
                     };
             },
-            { "./animation": 3, "./crc32": 4, "es6-promise": 1 },
+            {"./animation": 3, "./crc32": 4, "es6-promise": 1},
         ],
         8: [
             function (o, a, t) {
@@ -1138,16 +1170,16 @@ const self = module.exports;
                         ifNeeded: function (r) {
                             return (
                                 void 0 === r && (r = !1),
-                                i().then(function (t) {
-                                    if (t.APNG && !r) reject();
-                                    else {
-                                        var e = !0;
-                                        for (var n in t)
-                                            t.hasOwnProperty(n) &&
+                                    i().then(function (t) {
+                                        if (t.APNG && !r) reject();
+                                        else {
+                                            var e = !0;
+                                            for (var n in t)
+                                                t.hasOwnProperty(n) &&
                                                 "APNG" != n &&
                                                 (e = e && t[n]);
-                                    }
-                                })
+                                        }
+                                    })
                             );
                         },
                     };
@@ -1160,7 +1192,7 @@ const self = module.exports;
                             : {}
                 );
             },
-            { "es6-promise": 1 },
+            {"es6-promise": 1},
         ],
     },
     {},

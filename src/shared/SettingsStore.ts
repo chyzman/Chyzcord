@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { LiteralUnion } from "type-fest";
+import {LiteralUnion} from "type-fest";
 
 // Resolves a possibly nested prop in the form of "some.nested.prop" to type of T.some.nested.prop
 type ResolvePropDeep<T, P> = P extends `${infer Pre}.${infer Suf}`
     ? Pre extends keyof T
-    ? ResolvePropDeep<T[Pre], Suf>
-    : any
+        ? ResolvePropDeep<T[Pre], Suf>
+        : any
     : P extends keyof T
-    ? T[P]
-    : any;
+        ? T[P]
+        : any;
 
 interface SettingsStoreOptions {
     readOnly?: boolean;
@@ -26,7 +26,8 @@ interface SettingsStoreOptions {
 }
 
 // merges the SettingsStoreOptions type into the class
-export interface SettingsStore<T extends object> extends SettingsStoreOptions { }
+export interface SettingsStore<T extends object> extends SettingsStoreOptions {
+}
 
 /**
  * The SettingsStore allows you to easily create a mutable store that

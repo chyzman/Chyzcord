@@ -16,20 +16,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { _getBadges, BadgePosition, BadgeUserArgs, ProfileBadge } from "@api/Badges";
+import {_getBadges, BadgePosition, BadgeUserArgs, ProfileBadge} from "@api/Badges";
 import DonateButton from "@components/DonateButton";
 import ErrorBoundary from "@components/ErrorBoundary";
-import { Flex } from "@components/Flex";
-import { Heart } from "@components/Heart";
-import { openContributorModal } from "@components/PluginSettings/ContributorModal";
-import { ChyzcordDevs, Devs } from "@utils/constants";
-import { Logger } from "@utils/Logger";
-import { Margins } from "@utils/margins";
-import { isChyzcordPluginDev, isEquicordPluginDev, isPluginDev } from "@utils/misc";
-import { closeModal, Modals, openModal } from "@utils/modal";
+import {Flex} from "@components/Flex";
+import {Heart} from "@components/Heart";
+import {openContributorModal} from "@components/PluginSettings/ContributorModal";
+import {ChyzcordDevs, Devs} from "@utils/constants";
+import {Logger} from "@utils/Logger";
+import {Margins} from "@utils/margins";
+import {isChyzcordPluginDev, isEquicordPluginDev, isPluginDev} from "@utils/misc";
+import {closeModal, Modals, openModal} from "@utils/modal";
 import definePlugin from "@utils/types";
-import { Forms, Toasts, UserStore } from "@webpack/common";
-import { User } from "discord-types/general";
+import {Forms, Toasts, UserStore} from "@webpack/common";
+import {User} from "discord-types/general";
 
 const CONTRIBUTOR_BADGE = "https://vencord.dev/assets/favicon.png";
 const EQUICORD_CONTRIBUTOR_BADGE = "https://i.imgur.com/57ATLZu.png";
@@ -39,24 +39,24 @@ const ContributorBadge: ProfileBadge = {
     description: "Vencord Contributor",
     image: CONTRIBUTOR_BADGE,
     position: BadgePosition.START,
-    shouldShow: ({ userId }) => isPluginDev(userId),
-    onClick: (_, { userId }) => openContributorModal(UserStore.getUser(userId))
+    shouldShow: ({userId}) => isPluginDev(userId),
+    onClick: (_, {userId}) => openContributorModal(UserStore.getUser(userId))
 };
 
 const EquicordContributorBadge: ProfileBadge = {
     description: "Equicord Contributor",
     image: EQUICORD_CONTRIBUTOR_BADGE,
     position: BadgePosition.START,
-    shouldShow: ({ userId }) => isEquicordPluginDev(userId),
-    onClick: (_, { userId }) => openContributorModal(UserStore.getUser(userId))
+    shouldShow: ({userId}) => isEquicordPluginDev(userId),
+    onClick: (_, {userId}) => openContributorModal(UserStore.getUser(userId))
 };
 
 const ChyzcordContributorBadge: ProfileBadge = {
     description: "Chyzcord Contributor",
     image: CHYZCORD_CONTRIBUTOR_BADGE,
     position: BadgePosition.START,
-    shouldShow: ({ userId }) => isChyzcordPluginDev(userId),
-    onClick: (_, { userId }) => openContributorModal(UserStore.getUser(userId))
+    shouldShow: ({userId}) => isChyzcordPluginDev(userId),
+    onClick: (_, {userId}) => openContributorModal(UserStore.getUser(userId))
 };
 
 let DonorBadges = {} as Record<string, Array<Record<"tooltip" | "badge", string>>>;
@@ -150,7 +150,7 @@ export default definePlugin({
     renderBadgeComponent: ErrorBoundary.wrap((badge: ProfileBadge & BadgeUserArgs) => {
         const Component = badge.component!;
         return <Component {...badge} />;
-    }, { noop: true }),
+    }, {noop: true}),
 
 
     getDonorBadges(userId: string) {
@@ -172,7 +172,7 @@ export default definePlugin({
                     }}>
                         <Modals.ModalRoot {...props}>
                             <Modals.ModalHeader>
-                                <Flex style={{ width: "100%", justifyContent: "center" }}>
+                                <Flex style={{width: "100%", justifyContent: "center"}}>
                                     <Forms.FormTitle
                                         tag="h2"
                                         style={{
@@ -181,7 +181,7 @@ export default definePlugin({
                                             margin: 0
                                         }}
                                     >
-                                        <Heart />
+                                        <Heart/>
                                         Vencord Donor
                                     </Forms.FormTitle>
                                 </Flex>
@@ -192,16 +192,16 @@ export default definePlugin({
                                         role="presentation"
                                         src="https://cdn.discordapp.com/emojis/1026533070955872337.png"
                                         alt=""
-                                        style={{ margin: "auto" }}
+                                        style={{margin: "auto"}}
                                     />
                                     <img
                                         role="presentation"
                                         src="https://cdn.discordapp.com/emojis/1026533090627174460.png"
                                         alt=""
-                                        style={{ margin: "auto" }}
+                                        style={{margin: "auto"}}
                                     />
                                 </Flex>
-                                <div style={{ padding: "1em" }}>
+                                <div style={{padding: "1em"}}>
                                     <Forms.FormText>
                                         This Badge is a special perk for Vencord Donors
                                     </Forms.FormText>
@@ -211,8 +211,8 @@ export default definePlugin({
                                 </div>
                             </Modals.ModalContent>
                             <Modals.ModalFooter>
-                                <Flex style={{ width: "100%", justifyContent: "center" }}>
-                                    <DonateButton />
+                                <Flex style={{width: "100%", justifyContent: "center"}}>
+                                    <DonateButton/>
                                 </Flex>
                             </Modals.ModalFooter>
                         </Modals.ModalRoot>
@@ -242,7 +242,7 @@ export default definePlugin({
                     }}>
                         <Modals.ModalRoot {...props}>
                             <Modals.ModalHeader>
-                                <Flex style={{ width: "100%", justifyContent: "center" }}>
+                                <Flex style={{width: "100%", justifyContent: "center"}}>
                                     <Forms.FormTitle
                                         tag="h2"
                                         style={{
@@ -251,7 +251,7 @@ export default definePlugin({
                                             margin: 0
                                         }}
                                     >
-                                        <Heart />
+                                        <Heart/>
                                         Equicord Donor
                                     </Forms.FormTitle>
                                 </Flex>
@@ -262,16 +262,16 @@ export default definePlugin({
                                         role="presentation"
                                         src="https://cdn.discordapp.com/emojis/1026533070955872337.png"
                                         alt=""
-                                        style={{ margin: "auto" }}
+                                        style={{margin: "auto"}}
                                     />
                                     <img
                                         role="presentation"
                                         src="https://cdn.discordapp.com/emojis/1026533090627174460.png"
                                         alt=""
-                                        style={{ margin: "auto" }}
+                                        style={{margin: "auto"}}
                                     />
                                 </Flex>
-                                <div style={{ padding: "1em" }}>
+                                <div style={{padding: "1em"}}>
                                     <Forms.FormText>
                                         This Badge is a special perk for Equicord (Not Vencord) Donors
                                     </Forms.FormText>
@@ -281,8 +281,8 @@ export default definePlugin({
                                 </div>
                             </Modals.ModalContent>
                             <Modals.ModalFooter>
-                                <Flex style={{ width: "100%", justifyContent: "center" }}>
-                                    <DonateButton />
+                                <Flex style={{width: "100%", justifyContent: "center"}}>
+                                    <DonateButton/>
                                 </Flex>
                             </Modals.ModalFooter>
                         </Modals.ModalRoot>
@@ -303,7 +303,8 @@ export default definePlugin({
                     transform: "scale(0.9)" // The image is a bit too big compared to default badges
                 }
             },
-            onClick() {}
+            onClick() {
+            }
         }));
     }
 });

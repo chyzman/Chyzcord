@@ -16,22 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { type BrowserWindow, shell } from "electron";
+import {type BrowserWindow, shell} from "electron";
 
 export function makeLinksOpenExternally(win: BrowserWindow) {
-    win.webContents.setWindowOpenHandler(({ url }) => {
+    win.webContents.setWindowOpenHandler(({url}) => {
         switch (url) {
             case "about:blank":
             case "https://discord.com/popout":
             case "https://ptb.discord.com/popout":
             case "https://canary.discord.com/popout":
-                return { action: "allow" };
+                return {action: "allow"};
         }
 
         try {
-            var { protocol } = new URL(url);
+            var {protocol} = new URL(url);
         } catch {
-            return { action: "deny" };
+            return {action: "deny"};
         }
 
         switch (protocol) {
@@ -43,6 +43,6 @@ export function makeLinksOpenExternally(win: BrowserWindow) {
                 shell.openExternal(url);
         }
 
-        return { action: "deny" };
+        return {action: "deny"};
     });
 }

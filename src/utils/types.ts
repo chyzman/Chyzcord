@@ -16,10 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Command } from "@api/Commands";
-import { NavContextMenuPatchCallback } from "@api/ContextMenu";
-import { FluxEvents } from "@webpack/types";
-import { Promisable } from "type-fest";
+import {Command} from "@api/Commands";
+import {NavContextMenuPatchCallback} from "@api/ContextMenu";
+import {FluxEvents} from "@webpack/types";
+import {Promisable} from "type-fest";
 
 // exists to export default definePlugin({...})
 export default function definePlugin<P extends PluginDef>(p: P & Record<string, any>) {
@@ -33,6 +33,7 @@ export interface PatchReplacement {
     match: string | RegExp;
     /** The replacement string or function which returns the string for the patch replacement */
     replace: string | ReplaceFn;
+
     /** A function which returns whether this patch replacement should be applied */
     predicate?(): boolean;
 }
@@ -49,6 +50,7 @@ export interface Patch {
     noWarn?: boolean;
     /** Only apply this set of replacements if all of them succeed. Use this if your replacements depend on each other */
     group?: boolean;
+
     /** A function which returns whether this patch should be applied */
     predicate?(): boolean;
 }
@@ -68,8 +70,11 @@ export interface PluginDef {
     name: string;
     description: string;
     authors: PluginAuthor[];
+
     start?(): void;
+
     stop?(): void;
+
     patches?: Omit<Patch, "plugin">[];
     /**
      * List of commands that your plugin wants to register
@@ -112,16 +117,19 @@ export interface PluginDef {
      * Optionally provide settings that the user can configure in the Plugins tab of settings.
      */
     settings?: DefinedSettings;
+
     /**
      * Check that this returns true before allowing a save to complete.
      * If a string is returned, show the error to the user.
      */
     beforeSave?(options: Record<string, any>): Promisable<true | string>;
+
     /**
      * Check that this returns true after allowing a save to complete.
      * If a string is returned, show the error to the user.
      */
     afterSave?(): void;
+
     /**
      * Allows you to specify a custom Component that will be rendered in your
      * plugin's settings page
@@ -177,7 +185,7 @@ export const enum OptionType {
 export type SettingsDefinition = Record<string, PluginSettingDef>;
 export type SettingsChecks<D extends SettingsDefinition> = {
     [K in keyof D]?: D[K] extends PluginSettingComponentDef ? IsDisabled<DefinedSettings<D>> :
-    (IsDisabled<DefinedSettings<D>> & IsValid<PluginSettingType<D[K]>, DefinedSettings<D>>);
+        (IsDisabled<DefinedSettings<D>> & IsValid<PluginSettingType<D[K]>, DefinedSettings<D>>);
 };
 
 export type PluginSettingDef = (
@@ -188,12 +196,14 @@ export type PluginSettingDef = (
     | PluginSettingSliderDef
     | PluginSettingComponentDef
     | PluginSettingBigIntDef
-) & PluginSettingCommon;
+    ) & PluginSettingCommon;
 
 export interface PluginSettingCommon {
     description: string;
     placeholder?: string;
+
     onChange?(newValue: any): void;
+
     /**
      * Whether changing this setting requires a restart
      */
@@ -208,12 +218,14 @@ export interface PluginSettingCommon {
      */
     target?: "WEB" | "DESKTOP" | "BOTH";
 }
+
 interface IsDisabled<D = unknown> {
     /**
      * Checks if this setting should be disabled
      */
     disabled?(this: D): boolean;
 }
+
 interface IsValid<T, D = unknown> {
     /**
      * Prevents the user from saving settings if this is false or a string
@@ -225,14 +237,17 @@ export interface PluginSettingStringDef {
     type: OptionType.STRING;
     default?: string;
 }
+
 export interface PluginSettingNumberDef {
     type: OptionType.NUMBER;
     default?: number;
 }
+
 export interface PluginSettingBigIntDef {
     type: OptionType.BIGINT;
     default?: BigInt;
 }
+
 export interface PluginSettingBooleanDef {
     type: OptionType.BOOLEAN;
     default?: boolean;
@@ -242,6 +257,7 @@ export interface PluginSettingSelectDef {
     type: OptionType.SELECT;
     options: readonly PluginSettingSelectOption[];
 }
+
 export interface PluginSettingSelectOption {
     label: string;
     value: string | number | boolean;
@@ -271,6 +287,7 @@ export interface IPluginOptionComponentProps {
      * NOTE: The user will still need to click save to apply these changes.
      */
     setValue(newValue: any): void;
+
     /**
      * Set to true to prevent the user from saving.
      *
@@ -278,6 +295,7 @@ export interface IPluginOptionComponentProps {
      * Make sure to show the error in your component.
      */
     setError(error: boolean): void;
+
     /**
      * The options object
      */
@@ -292,15 +310,15 @@ export interface PluginSettingComponentDef {
 /** Maps a `PluginSettingDef` to its value type */
 type PluginSettingType<O extends PluginSettingDef> = O extends PluginSettingStringDef ? string :
     O extends PluginSettingNumberDef ? number :
-    O extends PluginSettingBigIntDef ? BigInt :
-    O extends PluginSettingBooleanDef ? boolean :
-    O extends PluginSettingSelectDef ? O["options"][number]["value"] :
-    O extends PluginSettingSliderDef ? number :
-    O extends PluginSettingComponentDef ? any :
-    never;
+        O extends PluginSettingBigIntDef ? BigInt :
+            O extends PluginSettingBooleanDef ? boolean :
+                O extends PluginSettingSelectDef ? O["options"][number]["value"] :
+                    O extends PluginSettingSliderDef ? number :
+                        O extends PluginSettingComponentDef ? any :
+                            never;
 type PluginSettingDefaultType<O extends PluginSettingDef> = O extends PluginSettingSelectDef ? (
     O["options"] extends { default?: boolean; }[] ? O["options"][number]["value"] : undefined
-) : O extends { default: infer T; } ? T : undefined;
+    ) : O extends { default: infer T; } ? T : undefined;
 
 type SettingsStore<D extends SettingsDefinition> = {
     [K in keyof D]: PluginSettingType<D[K]> | PluginSettingDefaultType<D[K]>;
@@ -316,11 +334,13 @@ export interface DefinedSettings<
     store: SettingsStore<Def> & PrivateSettings;
     /** Shorthand for `Vencord.PlainSettings.plugins.PluginName`, but with typings */
     plain: SettingsStore<Def> & PrivateSettings;
+
     /**
      * React hook for getting the settings for this plugin
      * @param filter optional filter to avoid rerenders for irrelevent settings
      */
     use<F extends Extract<keyof Def | keyof PrivateSettings, string>>(filter?: F[]): Pick<SettingsStore<Def> & PrivateSettings, F>;
+
     /** Definitions of each setting */
     def: Def;
     /** Setting methods with return values that could rely on other settings */
@@ -360,6 +380,6 @@ export type PluginOptionComponent = PluginSettingComponentDef & PluginSettingCom
 export type PluginNative<PluginExports extends Record<string, (event: Electron.IpcMainInvokeEvent, ...args: any[]) => any>> = {
     [key in keyof PluginExports]:
     PluginExports[key] extends (event: Electron.IpcMainInvokeEvent, ...args: infer Args) => infer Return
-    ? (...args: Args) => Return extends Promise<any> ? Return : Promise<Return>
-    : never;
+        ? (...args: Args) => Return extends Promise<any> ? Return : Promise<Return>
+        : never;
 };

@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Channel, Guild } from "discord-types/general";
-import { Promisable } from "type-fest";
+import {Channel, Guild} from "discord-types/general";
+import {Promisable} from "type-fest";
 
 export interface CommandContext {
     channel: Channel;
@@ -100,6 +100,7 @@ export interface Command {
     displayDescription?: string;
 
     options?: Option[];
+
     predicate?(ctx: CommandContext): boolean;
 
     execute(args: Argument[], ctx: CommandContext): Promisable<void | CommandReturnValue>;

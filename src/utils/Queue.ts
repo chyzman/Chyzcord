@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Promisable } from "type-fest";
+import {Promisable} from "type-fest";
 
 /**
  * A queue that can be used to run tasks consecutively.
@@ -27,7 +27,8 @@ export class Queue {
      * @param maxSize The maximum amount of functions that can be queued at once.
      *                If the queue is full, the oldest function will be removed.
      */
-    constructor(public readonly maxSize = Infinity) { }
+    constructor(public readonly maxSize = Infinity) {
+    }
 
     private queue = [] as Array<() => Promisable<unknown>>;
 

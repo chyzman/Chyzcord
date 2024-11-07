@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { IpcEvents } from "@shared/IpcEvents";
-import { ipcMain } from "electron";
+import {IpcEvents} from "@shared/IpcEvents";
+import {ipcMain} from "electron";
 
 import PluginNatives from "~pluginNatives";
 

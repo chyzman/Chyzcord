@@ -16,11 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Logger } from "@utils/Logger";
-import { MessageStore } from "@webpack/common";
-import { CustomEmoji } from "@webpack/types";
-import type { Channel, Message } from "discord-types/general";
-import type { Promisable } from "type-fest";
+import {Logger} from "@utils/Logger";
+import {MessageStore} from "@webpack/common";
+import {CustomEmoji} from "@webpack/types";
+import type {Channel, Message} from "discord-types/general";
+import type {Promisable} from "type-fest";
 
 const MessageEventsLogger = new Logger("MessageEvents", "#e5c890");
 
@@ -117,6 +117,7 @@ export function addPreSendListener(listener: SendListener) {
     sendListeners.add(listener);
     return listener;
 }
+
 /**
  * Note: This event fires off before a message's edit is applied, allowing you to further edit the message.
  */
@@ -124,9 +125,11 @@ export function addPreEditListener(listener: EditListener) {
     editListeners.add(listener);
     return listener;
 }
+
 export function removePreSendListener(listener: SendListener) {
     return sendListeners.delete(listener);
 }
+
 export function removePreEditListener(listener: EditListener) {
     return editListeners.delete(listener);
 }

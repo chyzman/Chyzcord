@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Logger } from "@utils/Logger";
-import { Menu, React } from "@webpack/common";
-import type { ReactElement } from "react";
+import {Logger} from "@utils/Logger";
+import {Menu, React} from "@webpack/common";
+import type {ReactElement} from "react";
 
 /**
  * @param children The rendered context menu elements

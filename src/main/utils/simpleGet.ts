@@ -21,7 +21,7 @@ import https from "https";
 export function get(url: string, options: https.RequestOptions = {}) {
     return new Promise<Buffer>((resolve, reject) => {
         https.get(url, options, res => {
-            const { statusCode, statusMessage, headers } = res;
+            const {statusCode, statusMessage, headers} = res;
             if (statusCode! >= 400)
                 return void reject(`${statusCode}: ${statusMessage} - ${url}`);
             if (statusCode! >= 300)

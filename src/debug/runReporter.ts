@@ -4,15 +4,16 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { Logger } from "@utils/Logger";
+import {Logger} from "@utils/Logger";
 import * as Webpack from "@webpack";
-import { patches } from "plugins";
-import { initWs } from "plugins/devCompanion/initWs";
+import {patches} from "plugins";
+import {initWs} from "plugins/devCompanion/initWs";
 
-import { loadLazyChunks } from "./loadLazyChunks";
-import { reporterData } from "./reporterData";
+import {loadLazyChunks} from "./loadLazyChunks";
+import {reporterData} from "./reporterData";
 
 const ReporterLogger = new Logger("Reporter");
+
 async function runReporter() {
     try {
         ReporterLogger.log("Starting test...");
@@ -72,8 +73,7 @@ async function runReporter() {
                     const failedMappings = Object.keys(args[1]).filter(key => result?.[key] == null);
 
                     logMessage += `("${args[0]}", {\n${failedMappings.map(mapping => `\t${mapping}: ${args[1][mapping].toString().slice(0, 147)}...`).join(",\n")}\n})`;
-                }
-                else logMessage += `(${args.map(arg => `"${arg}"`).join(", ")})`;
+                } else logMessage += `(${args.map(arg => `"${arg}"`).join(", ")})`;
                 if (IS_COMPANION_TEST)
                     reporterData.failedWebpack[method].push(args.map(a => String(a)));
                 ReporterLogger.log("Webpack Find Fail:", logMessage);

@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { Logger } from "@utils/Logger";
-import { parse as originalParse, UserstyleHeader } from "usercss-meta";
+import {Logger} from "@utils/Logger";
+import {parse as originalParse, UserstyleHeader} from "usercss-meta";
 
 const UserCSSLogger = new Logger("UserCSS", "#d2acf5");
 
 export async function usercssParse(text: string, fileName: string): Promise<UserstyleHeader> {
-    const { metadata, errors } = originalParse(text.replace(/\r/g, ""), {
+    const {metadata, errors} = originalParse(text.replace(/\r/g, ""), {
         allowErrors: true,
         unknownKey: "assign"
     });

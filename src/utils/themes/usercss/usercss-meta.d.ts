@@ -5,40 +5,40 @@
  */
 
 declare module "usercss-meta" {
-    import { Simplify } from "type-fest";
+    import {Simplify} from "type-fest";
 
     export type UserCSSVariable = Simplify<{ name: string; label: string; } & (
         | {
-            type: "text";
-            default: string;
-        }
+        type: "text";
+        default: string;
+    }
         | {
-            type: "color";
-            // Hex, rgb(), rgba()
-            default: string;
-        }
+        type: "color";
+        // Hex, rgb(), rgba()
+        default: string;
+    }
         | {
-            type: "checkbox";
-            default: string;
-        }
+        type: "checkbox";
+        default: string;
+    }
         | {
-            type: "range";
-            default: number;
-            min?: number;
-            max?: number;
-            step?: number;
-            units?: string;
-        }
+        type: "range";
+        default: number;
+        min?: number;
+        max?: number;
+        step?: number;
+        units?: string;
+    }
         | {
-            type: "number";
-            default: number;
-        }
+        type: "number";
+        default: number;
+    }
         | {
-            type: "select";
-            default: string;
-            options: { name: string; label: string; value: string; }[];
-        }
-    )>;
+        type: "select";
+        default: string;
+        options: { name: string; label: string; value: string; }[];
+    }
+        )>;
 
     export interface UserstyleHeader {
         /**

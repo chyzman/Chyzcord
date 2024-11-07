@@ -16,7 +16,7 @@
     border-radius: 0;
 }
 
-@media(width <= 485px) {
+@media (width <= 485px) {
     .vc-image-modal {
         display: relative;
         overflow: visible;

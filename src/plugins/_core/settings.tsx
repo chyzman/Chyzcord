@@ -16,17 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Settings } from "@api/Settings";
+import {Settings} from "@api/Settings";
 import BackupAndRestoreTab from "@components/VencordSettings/BackupAndRestoreTab";
 import CloudTab from "@components/VencordSettings/CloudTab";
 import PatchHelperTab from "@components/VencordSettings/PatchHelperTab";
 import PluginsTab from "@components/VencordSettings/PluginsTab";
 import UpdaterTab from "@components/VencordSettings/UpdaterTab";
 import VencordTab from "@components/VencordSettings/VencordTab";
-import { Devs } from "@utils/constants";
-import { getIntlMessage } from "@utils/discord";
-import definePlugin, { OptionType } from "@utils/types";
-import { React } from "@webpack/common";
+import {Devs} from "@utils/constants";
+import {getIntlMessage} from "@utils/discord";
+import definePlugin, {OptionType} from "@utils/types";
+import {React} from "@webpack/common";
 
 import gitHash from "~git-hash";
 
@@ -149,12 +149,12 @@ export default definePlugin({
         ].filter(Boolean);
     },
 
-    isRightSpot({ header, settings }: { header?: string; settings?: string[]; }) {
+    isRightSpot({header, settings}: { header?: string; settings?: string[]; }) {
         const firstChild = settings?.[0];
         // lowest two elements... sanity backup
         if (firstChild === "LOGOUT" || firstChild === "SOCIAL_LINKS") return true;
 
-        const { settingsLocation } = Settings.plugins.Settings;
+        const {settingsLocation} = Settings.plugins.Settings;
 
         if (settingsLocation === "bottom") return firstChild === "LOGOUT";
         if (settingsLocation === "belowActivity") return firstChild === "CHANGELOG";
@@ -204,12 +204,12 @@ export default definePlugin({
             type: OptionType.SELECT,
             description: "Where to put the Chyzcord settings section",
             options: [
-                { label: "At the very top", value: "top" },
-                { label: "Above the Nitro section", value: "aboveNitro", default: true },
-                { label: "Below the Nitro section", value: "belowNitro" },
-                { label: "Above Activity Settings", value: "aboveActivity" },
-                { label: "Below Activity Settings", value: "belowActivity" },
-                { label: "At the very bottom", value: "bottom" },
+                {label: "At the very top", value: "top"},
+                {label: "Above the Nitro section", value: "aboveNitro", default: true},
+                {label: "Below the Nitro section", value: "belowNitro"},
+                {label: "Above Activity Settings", value: "aboveActivity"},
+                {label: "Below Activity Settings", value: "belowActivity"},
+                {label: "At the very bottom", value: "bottom"},
             ]
         },
     },
@@ -239,7 +239,7 @@ export default definePlugin({
     },
 
     getInfoRows() {
-        const { electronVersion, chromiumVersion, additionalInfo } = this;
+        const {electronVersion, chromiumVersion, additionalInfo} = this;
 
         const rows = [`Chyzcord ${gitHash}${additionalInfo}`];
 

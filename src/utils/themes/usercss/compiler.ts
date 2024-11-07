@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { Settings } from "@api/Settings";
-import { getLess, getStylus } from "@utils/dependencies";
-import { Logger } from "@utils/Logger";
+import {Settings} from "@api/Settings";
+import {getLess, getStylus} from "@utils/dependencies";
+import {Logger} from "@utils/Logger";
 
-import { usercssParse } from ".";
+import {usercssParse} from ".";
 
 const UserCSSLogger = new Logger("UserCSS:Compiler", "#d2acf5");
 
@@ -63,7 +63,7 @@ export async function compileUsercss(fileName: string) {
     // - use the preprocessor defined
     // - if variables are set, `uso`
     // - otherwise, `default`
-    const { vars = {}, preprocessor = Object.keys(vars).length > 0 ? "uso" : "default", id } = await usercssParse(themeData, fileName);
+    const {vars = {}, preprocessor = Object.keys(vars).length > 0 ? "uso" : "default", id} = await usercssParse(themeData, fileName);
 
     const preprocessorFn = preprocessors[preprocessor];
 

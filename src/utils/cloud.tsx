@@ -17,12 +17,12 @@
 */
 
 import * as DataStore from "@api/DataStore";
-import { showNotification } from "@api/Notifications";
-import { Settings } from "@api/Settings";
-import { OAuth2AuthorizeModal, UserStore } from "@webpack/common";
+import {showNotification} from "@api/Notifications";
+import {Settings} from "@api/Settings";
+import {OAuth2AuthorizeModal, UserStore} from "@webpack/common";
 
-import { Logger } from "./Logger";
-import { openModal } from "./modal";
+import {Logger} from "./Logger";
+import {openModal} from "./modal";
 
 export const cloudLogger = new Logger("Cloud", "#39b7e0");
 export const getCloudUrl = () => new URL(Settings.cloud.url);
@@ -80,7 +80,7 @@ export async function authorizeCloud() {
 
     try {
         const oauthConfiguration = await fetch(new URL("/v1/oauth/settings", getCloudUrl()));
-        var { clientId, redirectUri } = await oauthConfiguration.json();
+        var {clientId, redirectUri} = await oauthConfiguration.json();
     } catch {
         showNotification({
             title: "Cloud Integration",
@@ -98,7 +98,7 @@ export async function authorizeCloud() {
         permissions={0n}
         clientId={clientId}
         cancelCompletesFlow={false}
-        callback={async ({ location }: any) => {
+        callback={async ({location}: any) => {
             if (!location) {
                 Settings.cloud.authenticated = false;
                 return;
@@ -106,9 +106,9 @@ export async function authorizeCloud() {
 
             try {
                 const res = await fetch(location, {
-                    headers: { Accept: "application/json" }
+                    headers: {Accept: "application/json"}
                 });
-                const { secret } = await res.json();
+                const {secret} = await res.json();
                 if (secret) {
                     cloudLogger.info("Authorized with secret");
                     await setAuthorization(secret);

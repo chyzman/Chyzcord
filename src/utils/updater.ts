@@ -18,9 +18,9 @@
 
 import gitHash from "~git-hash";
 
-import { Logger } from "./Logger";
-import { relaunch } from "./native";
-import { IpcRes } from "./types";
+import {Logger} from "./Logger";
+import {relaunch} from "./native";
+import {IpcRes} from "./types";
 
 export const UpdateLogger = /* #__PURE__*/ new Logger("Updater", "white");
 export let isOutdated = false;

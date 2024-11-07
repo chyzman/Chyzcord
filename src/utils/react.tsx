@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { React, useEffect, useMemo, useReducer, useState } from "@webpack/common";
+import {React, useEffect, useMemo, useReducer, useState} from "@webpack/common";
 
-import { checkIntersecting } from "./misc";
+import {checkIntersecting} from "./misc";
 
 export * from "./lazyReact";
 
@@ -66,12 +66,16 @@ export const useIntersection = (intersectOnly = false): [
 };
 
 type AwaiterRes<T> = [T, any, boolean];
+
 interface AwaiterOpts<T> {
     fallbackValue: T;
     deps?: unknown[];
+
     onError?(e: any): void;
+
     onSuccess?(value: T): void;
 }
+
 /**
  * Await a promise
  * @param factory Factory
@@ -94,17 +98,17 @@ export function useAwaiter<T>(factory: () => Promise<T>, providedOpts?: AwaiterO
 
     useEffect(() => {
         let isAlive = true;
-        if (!state.pending) setState({ ...state, pending: true });
+        if (!state.pending) setState({...state, pending: true});
 
         factory()
             .then(value => {
                 if (!isAlive) return;
-                setState({ value, error: null, pending: false });
+                setState({value, error: null, pending: false});
                 opts.onSuccess?.(value);
             })
             .catch(error => {
                 if (!isAlive) return;
-                setState({ value: null, error, pending: false });
+                setState({value: null, error, pending: false});
                 opts.onError?.(error);
             });
 
@@ -129,7 +133,7 @@ interface TimerOpts {
     deps?: unknown[];
 }
 
-export function useTimer({ interval = 1000, deps = [] }: TimerOpts) {
+export function useTimer({interval = 1000, deps = []}: TimerOpts) {
     const [time, setTime] = useState(0);
     const start = useMemo(() => Date.now(), deps);
 
@@ -150,7 +154,7 @@ interface FixedTimerOpts {
     initialTime?: number;
 }
 
-export function useFixedTimer({ interval = 1000, initialTime = Date.now() }: FixedTimerOpts) {
+export function useFixedTimer({interval = 1000, initialTime = Date.now()}: FixedTimerOpts) {
     const [time, setTime] = useState(Date.now() - initialTime);
 
     useEffect(() => {

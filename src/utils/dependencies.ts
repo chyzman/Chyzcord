@@ -19,7 +19,7 @@
 import type StylusRenderer = require("stylus/lib/renderer");
 import type LessStatic from "less";
 
-import { makeLazy } from "./lazy";
+import {makeLazy} from "./lazy";
 
 /*
     Add dynamically loaded dependencies for plugins here.
@@ -51,6 +51,7 @@ export const enum ApngBlendOp {
     SOURCE,
     OVER
 }
+
 export interface ApngFrame {
     left: number;
     top: number;
@@ -88,7 +89,7 @@ export const getStylus = /* #__PURE__*/ makeLazy(async () => {
 
 export const getLess = /* #__PURE__*/ makeLazy(async () => {
     const lessScript = await fetch("https://unpkg.com/less@4.2.0/dist/less.min.js").then(r => r.text());
-    const module = { exports: {} };
+    const module = {exports: {}};
     Function("module", "exports", lessScript)(module, module.exports);
     return module.exports as LessStatic;
 });

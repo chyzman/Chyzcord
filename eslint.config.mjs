@@ -68,7 +68,6 @@ export default tseslint.config(
             "@stylistic/semi-style": ["error", "last"],
             "@stylistic/space-in-parens": ["error", "never"],
             "@stylistic/block-spacing": ["error", "always"],
-            "@stylistic/object-curly-spacing": ["error", "always"],
             "@stylistic/spaced-comment": ["error", "always", { "markers": ["!"] }],
             "@stylistic/no-extra-semi": "error",
 
@@ -117,7 +116,6 @@ export default tseslint.config(
             // Plugin Rules
             "simple-import-sort/imports": "error",
             "simple-import-sort/exports": "error",
-            "unused-imports/no-unused-imports": "error",
         }
     }
 );

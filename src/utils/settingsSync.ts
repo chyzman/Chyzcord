@@ -16,15 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { showNotification } from "@api/Notifications";
-import { PlainSettings, Settings } from "@api/Settings";
-import { moment, Toasts } from "@webpack/common";
-import { deflateSync, inflateSync } from "fflate";
+import {showNotification} from "@api/Notifications";
+import {PlainSettings, Settings} from "@api/Settings";
+import {moment, Toasts} from "@webpack/common";
+import {deflateSync, inflateSync} from "fflate";
 
-import { getCloudAuth, getCloudUrl } from "./cloud";
-import { Logger } from "./Logger";
-import { relaunch } from "./native";
-import { chooseFile, saveFile } from "./web";
+import {getCloudAuth, getCloudUrl} from "./cloud";
+import {Logger} from "./Logger";
+import {relaunch} from "./native";
+import {chooseFile, saveFile} from "./web";
 
 export async function importSettings(data: string) {
     try {
@@ -42,10 +42,10 @@ export async function importSettings(data: string) {
         throw new Error("Invalid Settings. Is this even a Chyzcord Settings file?");
 }
 
-export async function exportSettings({ minify }: { minify?: boolean; } = {}) {
+export async function exportSettings({minify}: { minify?: boolean; } = {}) {
     const settings = VencordNative.settings.get();
     const quickCss = await VencordNative.quickCss.get();
-    return JSON.stringify({ settings, quickCss }, null, minify ? undefined : 4);
+    return JSON.stringify({settings, quickCss}, null, minify ? undefined : 4);
 }
 
 export async function downloadSettingsBackup() {
@@ -56,7 +56,7 @@ export async function downloadSettingsBackup() {
     if (IS_DISCORD_DESKTOP) {
         DiscordNative.fileManager.saveWithDialog(data, filename);
     } else {
-        saveFile(new File([data], filename, { type: "application/json" }));
+        saveFile(new File([data], filename, {type: "application/json"}));
     }
 }
 
@@ -77,8 +77,8 @@ export async function uploadSettingsBackup(showToast = true): Promise<void> {
     if (IS_DISCORD_DESKTOP) {
         const [file] = await DiscordNative.fileManager.openFiles({
             filters: [
-                { name: "Chyzcord Settings Backup", extensions: ["json"] },
-                { name: "all", extensions: ["*"] }
+                {name: "Chyzcord Settings Backup", extensions: ["json"]},
+                {name: "all", extensions: ["*"]}
             ]
         });
 
@@ -113,7 +113,7 @@ export async function uploadSettingsBackup(showToast = true): Promise<void> {
 const cloudSettingsLogger = new Logger("Cloud:Settings", "#39b7e0");
 
 export async function putCloudSettings(manual?: boolean) {
-    const settings = await exportSettings({ minify: true });
+    const settings = await exportSettings({minify: true});
 
     try {
         const res = await fetch(new URL("/v1/settings", getCloudUrl()), {
@@ -135,7 +135,7 @@ export async function putCloudSettings(manual?: boolean) {
             return;
         }
 
-        const { written } = await res.json();
+        const {written} = await res.json();
         PlainSettings.cloud.settingsSyncVersion = written;
         VencordNative.settings.set(PlainSettings);
 
@@ -251,7 +251,7 @@ export async function deleteCloudSettings() {
     try {
         const res = await fetch(new URL("/v1/settings", getCloudUrl()), {
             method: "DELETE",
-            headers: { Authorization: await getCloudAuth() },
+            headers: {Authorization: await getCloudAuth()},
         });
 
         if (!res.ok) {

@@ -17,7 +17,7 @@
 */
 
 import ErrorBoundary from "@components/ErrorBoundary";
-import { ComponentType, HTMLProps } from "react";
+import {ComponentType, HTMLProps} from "react";
 
 import Plugins from "~plugins";
 
@@ -34,10 +34,13 @@ export interface ProfileBadge {
     /** The custom image to use */
     image?: string;
     link?: string;
+
     /** Action to perform when you click the badge */
     onClick?(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, props: BadgeUserArgs): void;
+
     /** Should the user display this badge? */
     shouldShow?(userInfo: BadgeUserArgs): boolean;
+
     /** Optional props (e.g. style) for the badge, ignored for component badges */
     props?: HTMLProps<HTMLImageElement>;
     /** Insert at start or end? */
@@ -58,7 +61,7 @@ const Badges = new Set<ProfileBadge>();
  * @param badge The badge to register
  */
 export function addBadge(badge: ProfileBadge) {
-    badge.component &&= ErrorBoundary.wrap(badge.component, { noop: true });
+    badge.component &&= ErrorBoundary.wrap(badge.component, {noop: true});
     Badges.add(badge);
 }
 
@@ -80,10 +83,10 @@ export function _getBadges(args: BadgeUserArgs) {
         if (!badge.shouldShow || badge.shouldShow(args)) {
             const b = badge.getBadges
                 ? badge.getBadges(args).map(b => {
-                    b.component &&= ErrorBoundary.wrap(b.component, { noop: true });
+                    b.component &&= ErrorBoundary.wrap(b.component, {noop: true});
                     return b;
                 })
-                : [{ ...badge, ...args }];
+                : [{...badge, ...args}];
 
             badge.position === BadgePosition.START
                 ? badges.unshift(...b)

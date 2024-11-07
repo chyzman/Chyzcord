@@ -16,20 +16,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { session } from "electron";
-import { unzip } from "fflate";
-import { constants as fsConstants } from "fs";
-import { access, mkdir, rm, writeFile } from "fs/promises";
-import { join } from "path";
+import {session} from "electron";
+import {unzip} from "fflate";
+import {constants as fsConstants} from "fs";
+import {access, mkdir, rm, writeFile} from "fs/promises";
+import {join} from "path";
 
-import { DATA_DIR } from "./constants";
-import { crxToZip } from "./crxToZip";
-import { get } from "./simpleGet";
+import {DATA_DIR} from "./constants";
+import {crxToZip} from "./crxToZip";
+import {get} from "./simpleGet";
 
 const extensionCacheDir = join(DATA_DIR, "ExtensionCache");
 
 async function extract(data: Buffer, outDir: string) {
-    await mkdir(outDir, { recursive: true });
+    await mkdir(outDir, {recursive: true});
     return new Promise<void>((resolve, reject) => {
         unzip(data, (err, files) => {
             if (err) return void reject(err);
@@ -39,7 +39,7 @@ async function extract(data: Buffer, outDir: string) {
                 // _metadata. Filenames starting with "_" are reserved for use by the system.';
                 if (f.startsWith("_metadata/")) return;
 
-                if (f.endsWith("/")) return void mkdir(join(outDir, f), { recursive: true });
+                if (f.endsWith("/")) return void mkdir(join(outDir, f), {recursive: true});
 
                 const pathElements = f.split("/");
                 const name = pathElements.pop()!;
@@ -47,14 +47,14 @@ async function extract(data: Buffer, outDir: string) {
                 const dir = join(outDir, directories);
 
                 if (directories) {
-                    await mkdir(dir, { recursive: true });
+                    await mkdir(dir, {recursive: true});
                 }
 
                 await writeFile(join(dir, name), files[f]);
             }))
                 .then(() => resolve())
                 .catch(err => {
-                    rm(outDir, { recursive: true, force: true });
+                    rm(outDir, {recursive: true, force: true});
                     reject(err);
                 });
         });

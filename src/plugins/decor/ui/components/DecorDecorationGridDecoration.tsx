@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { ContextMenuApi } from "@webpack/common";
-import type { HTMLProps } from "react";
+import {ContextMenuApi} from "@webpack/common";
+import type {HTMLProps} from "react";
 
-import { Decoration } from "../../lib/api";
-import { decorationToAvatarDecoration } from "../../lib/utils/decoration";
-import { DecorationGridDecoration } from ".";
+import {Decoration} from "../../lib/api";
+import {decorationToAvatarDecoration} from "../../lib/utils/decoration";
+import {DecorationGridDecoration} from ".";
 import DecorationContextMenu from "./DecorationContextMenu";
 
 interface DecorDecorationGridDecorationProps extends HTMLProps<HTMLDivElement> {
@@ -19,7 +19,7 @@ interface DecorDecorationGridDecorationProps extends HTMLProps<HTMLDivElement> {
 }
 
 export default function DecorDecorationGridDecoration(props: DecorDecorationGridDecorationProps) {
-    const { decoration } = props;
+    const {decoration} = props;
 
     return <DecorationGridDecoration
         {...props}

@@ -25,7 +25,7 @@ import { findByPropsLazy } from "@webpack";
 import { Forms, MessageStore, UserStore } from "@webpack/common";
 import { Channel, Message } from "discord-types/general";
 
-import { loggedMessages } from "../messageLoggerEnhanced/LoggedMessageManager";
+import {loggedMessages} from "../messageLoggerEnhanced/LoggedMessageManager";
 
 const MessageActions = findByPropsLazy("deleteMessage", "startEditMessage");
 

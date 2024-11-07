@@ -16,10 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { definePluginSettings } from "@api/Settings";
-import { Devs } from "@utils/constants";
-import { Logger } from "@utils/Logger";
-import definePlugin, { OptionType, StartAt } from "@utils/types";
+import {definePluginSettings} from "@api/Settings";
+import {Devs} from "@utils/constants";
+import {Logger} from "@utils/Logger";
+import definePlugin, {OptionType, StartAt} from "@utils/types";
 
 const settings = definePluginSettings({
     disableAnalytics: {
@@ -91,7 +91,7 @@ export default definePlugin({
 
                 // Ensure this is most likely the Sentry WebpackInstance.
                 // Function.g is a very generic property and is not uncommon for another WebpackInstance (or even a React component: <g></g>) to include it
-                const { stack } = new Error();
+                const {stack} = new Error();
                 if (!(stack?.includes("discord.com") || stack?.includes("discordapp.com")) || !String(this).includes("exports:{}") || this.c != null) {
                     return;
                 }

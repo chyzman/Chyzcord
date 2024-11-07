@@ -16,14 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Logger } from "@utils/Logger";
+import {Logger} from "@utils/Logger";
 
 if (IS_DEV || IS_REPORTER) {
     var traces = {} as Record<string, [number, any[]]>;
     var logger = new Logger("Tracer", "#FFD166");
 }
 
-const noop = function () { };
+const noop = function () {
+};
 
 export const beginTrace = !(IS_DEV || IS_REPORTER) ? noop :
     function beginTrace(name: string, ...args: any[]) {
