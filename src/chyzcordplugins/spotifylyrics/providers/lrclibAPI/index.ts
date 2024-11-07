@@ -5,7 +5,6 @@
  */
 
 import { Track } from "../../../../plugins/spotifyControls/SpotifyStore";
-
 import { LyricsData, Provider } from "../types";
 
 const baseUrlLrclib = "https://lrclib.net/api/get";

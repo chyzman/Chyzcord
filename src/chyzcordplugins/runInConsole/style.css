@@ -14,8 +14,7 @@
 }
 
 .vc-ric-modal-header {
-    justify-content: space-between;
-    align-content: center;
+    place-content: center space-between;
 }
 
 .vc-ric-modal-header h1 {

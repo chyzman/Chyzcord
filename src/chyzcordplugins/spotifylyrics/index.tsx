@@ -10,8 +10,8 @@ import { Settings } from "@api/Settings";
 import ErrorBoundary from "@components/ErrorBoundary";
 import { Devs } from "@utils/constants";
 import definePlugin from "@utils/types";
-import { Player } from "../../plugins/spotifyControls/PlayerComponent";
 
+import { Player } from "../../plugins/spotifyControls/PlayerComponent";
 import { migrateOldLyrics } from "./api";
 import { Lyrics } from "./components/lyrics";
 import settings from "./settings";

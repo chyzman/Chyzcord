@@ -30,7 +30,6 @@ import gradientbuttons from "./css/gradientbuttons.css?managed";
 import nitrothemesfix from "./css/nitrothemesfix.css?managed";
 import settingsicons from "./css/settingsicons.css?managed";
 import userreimagined from "./css/userreimagined.css?managed";
-import {Promisable} from "type-fest";
 
 // Forcing restartNeeded: true to not overcomplicate the live update of the settings using FluxDispatcher and making it complex
 const settings = definePluginSettings({

@@ -165,6 +165,7 @@ export const Devs = /* #__PURE__*/ Object.freeze({
     Antti: { name: "Antti", id: 312974985876471810n },
     Joona: { name: "Joona", id: 297410829589020673n },
     sadan: { name: "sadan", id: 521819891141967883n },
+    vei: { name: "Vei", id: 239414094799699968n },
     Kylie: { name: "Cookie", id: 721853658941227088n },
     AshtonMemer: { name: "AshtonMemer", id: 373657230530052099n },
     surgedevs: { name: "Chloe", id: 1084592643784331324n },
@@ -199,6 +200,7 @@ export const Devs = /* #__PURE__*/ Object.freeze({
     vappster: { name: "vappster", id: 747192967311261748n },
     redbaron2k7: { name: "redbaron2k7", id: 1142923640778797157n },
     ryanamay: { name: "ryanamay", id: 1262793452236570667n },
+    domiBtnr: { name: "domi.btnr", id: 354191516979429376n }
 } satisfies Record<string, Dev>);
 
 export const EquicordDevs = Object.freeze({

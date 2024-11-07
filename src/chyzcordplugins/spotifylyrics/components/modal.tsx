@@ -7,8 +7,8 @@
 import { openImageModal } from "@utils/discord";
 import { ModalContent, ModalHeader, ModalProps, ModalRoot } from "@utils/modal";
 import { React, Text } from "@webpack/common";
-import { SpotifyStore, Track } from "../../../plugins/spotifyControls/SpotifyStore";
 
+import { SpotifyStore, Track } from "../../../plugins/spotifyControls/SpotifyStore";
 import { cl, NoteSvg, scrollClasses, useLyrics } from "./util";
 
 const formatTime = (time: number) => {

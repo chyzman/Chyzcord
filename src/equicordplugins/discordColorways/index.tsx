@@ -10,13 +10,13 @@ import { addServerListElement, removeServerListElement, ServerListRenderPosition
 import { disableStyle, enableStyle } from "@api/Styles";
 import { Flex } from "@components/Flex";
 import { Devs } from "@utils/constants";
+import { getIntlMessage } from "@utils/discord";
 import { ModalProps, openModal } from "@utils/modal";
 import definePlugin from "@utils/types";
 import {
     Button,
     Clipboard,
     Forms,
-    i18n,
     SettingsRouter,
     Toasts
 } from "@webpack/common";
@@ -198,10 +198,10 @@ export default definePlugin({
         if (!header) return;
 
         const names = {
-            top: i18n.Messages.USER_SETTINGS,
-            aboveNitro: i18n.Messages.BILLING_SETTINGS,
-            belowNitro: i18n.Messages.APP_SETTINGS,
-            aboveActivity: i18n.Messages.ACTIVITY_SETTINGS
+            top: getIntlMessage("USER_SETTINGS"),
+            aboveNitro: getIntlMessage("BILLING_SETTINGS"),
+            belowNitro: getIntlMessage("APP_SETTINGS"),
+            aboveActivity: getIntlMessage("ACTIVITY_SETTINGS")
         };
         return header === names[settingsLocation];
     },

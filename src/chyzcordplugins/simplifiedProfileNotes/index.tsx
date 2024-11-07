@@ -6,9 +6,10 @@
 
 import { definePluginSettings } from "@api/Settings";
 import { Devs } from "@utils/constants";
+import { getIntlMessage } from "@utils/discord";
 import definePlugin, { OptionType } from "@utils/types";
 import { extractAndLoadChunksLazy, findByCodeLazy, findByPropsLazy, findComponentByCodeLazy } from "@webpack";
-import { i18n, useEffect, useState } from "@webpack/common";
+import { useEffect, useState } from "@webpack/common";
 import { User } from "discord-types/general";
 
 const useNote = findByCodeLazy(".getNote(");
@@ -60,7 +61,7 @@ function NotesSection(props: NoteHook & NotesSectionProps) {
     }, []);
     if (!props.visible || !loaded) return null;
     return <Section
-        title={i18n.Messages.NOTE}
+        title={getIntlMessage("NOTE")}
         scrollIntoView={props.autoFocus}
         headingColor={props.headingColor}
     >

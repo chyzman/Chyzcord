@@ -22,7 +22,7 @@ import ErrorBoundary from "@components/ErrorBoundary";
 import { Flex } from "@components/Flex";
 import { Heart } from "@components/Heart";
 import { openContributorModal } from "@components/PluginSettings/ContributorModal";
-import {ChyzcordDevs, Devs} from "@utils/constants";
+import { ChyzcordDevs, Devs } from "@utils/constants";
 import { Logger } from "@utils/Logger";
 import { Margins } from "@utils/margins";
 import { isChyzcordPluginDev, isEquicordPluginDev, isPluginDev } from "@utils/misc";

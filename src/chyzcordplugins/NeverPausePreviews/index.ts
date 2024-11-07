@@ -24,21 +24,21 @@ export default definePlugin({
     description: "Prevents in-call/PiP previews (screenshare, streams, etc) from pausing even if the client loses focus",
     authors: [Devs.vappster],
     patches: [
-        {   //picture-in-picture player patch
+        { // picture-in-picture player patch
             find: "streamerPaused()",
             replacement: {
                 match: /return null![^}]+/,
                 replace: "return false"
             }
         },
-        {   //in-call player patch #1 (keep stream playing)
+        { // in-call player patch #1 (keep stream playing)
             find: "onSpinnerStarted():null",
             replacement: {
                 match: /paused:\i([^=])/,
                 replace: "paused:false$1"
             }
         },
-        {   //in-call player patch #2 (disable "your stream is still running" text overlay)
+        { // in-call player patch #2 (disable "your stream is still running" text overlay)
             find: "let{mainText:",
             replacement: {
                 match: /let{[^;]+/,
