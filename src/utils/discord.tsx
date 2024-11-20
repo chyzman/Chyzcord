@@ -18,14 +18,14 @@
 
 import "./discord.css";
 
-import {MessageObject} from "@api/MessageEvents";
-import {ChannelStore, ComponentDispatch, Constants, FluxDispatcher, GuildStore, i18n, InviteActions, MessageActions, PrivateChannelsStore, RestAPI, SelectedChannelStore, SelectedGuildStore, UserProfileActions, UserProfileStore, UserSettingsActionCreators, UserUtils} from "@webpack/common";
-import {Channel, Guild, Message, User} from "discord-types/general";
-import {Except} from "type-fest";
+import { MessageObject } from "@api/MessageEvents";
+import { ChannelStore, ComponentDispatch, Constants, FluxDispatcher, GuildStore, i18n, IconUtils, InviteActions, MessageActions, PrivateChannelsStore, RestAPI, SelectedChannelStore, SelectedGuildStore, UserProfileActions, UserProfileStore, UserSettingsActionCreators, UserUtils } from "@webpack/common";
+import { Channel, Guild, Message, User } from "discord-types/general";
+import { Except } from "type-fest";
 
-import {runtimeHashMessageKey} from "./intlHash";
-import {Logger} from "./Logger";
-import {MediaModalItem, MediaModalProps, openMediaModal} from "./modal";
+import { runtimeHashMessageKey } from "./intlHash";
+import { Logger } from "./Logger";
+import { MediaModalItem, MediaModalProps, openMediaModal } from "./modal";
 
 const IntlManagerLogger = new Logger("IntlManager");
 
@@ -58,7 +58,7 @@ export function getIntlMessageFromHash(hashedKey: string, values?: Record<Proper
  * @returns Whether the invite was accepted
  */
 export async function openInviteModal(code: string) {
-    const {invite} = await InviteActions.resolveInvite(code, "Desktop Modal");
+    const { invite } = await InviteActions.resolveInvite(code, "Desktop Modal");
     if (!invite) throw new Error("Invalid invite: " + code);
 
     FluxDispatcher.dispatch({
@@ -186,9 +186,9 @@ export async function fetchUserProfile(id: string, options?: FetchUserProfileOpt
     const cached = UserProfileStore.getUserProfile(id);
     if (cached) return cached;
 
-    FluxDispatcher.dispatch({type: "USER_PROFILE_FETCH_START", userId: id});
+    FluxDispatcher.dispatch({ type: "USER_PROFILE_FETCH_START", userId: id });
 
-    const {body} = await RestAPI.get({
+    const { body } = await RestAPI.get({
         url: Constants.Endpoints.USER_PROFILE(id),
         query: {
             with_mutual_guilds: false,
@@ -198,10 +198,10 @@ export async function fetchUserProfile(id: string, options?: FetchUserProfileOpt
         oldFormErrors: true,
     });
 
-    FluxDispatcher.dispatch({type: "USER_UPDATE", user: body.user});
-    await FluxDispatcher.dispatch({type: "USER_PROFILE_FETCH_SUCCESS", ...body});
+    FluxDispatcher.dispatch({ type: "USER_UPDATE", user: body.user });
+    await FluxDispatcher.dispatch({ type: "USER_PROFILE_FETCH_SUCCESS", ...body });
     if (options?.guild_id && body.guild_member)
-        FluxDispatcher.dispatch({type: "GUILD_MEMBER_PROFILE_UPDATE", guildId: options.guild_id, guildMember: body.guild_member});
+        FluxDispatcher.dispatch({ type: "GUILD_MEMBER_PROFILE_UPDATE", guildId: options.guild_id, guildMember: body.guild_member });
 
     return UserProfileStore.getUserProfile(id);
 }
@@ -211,4 +211,15 @@ export async function fetchUserProfile(id: string, options?: FetchUserProfileOpt
  */
 export function getUniqueUsername(user: User) {
     return user.discriminator === "0" ? user.username : user.tag;
+}
+
+/**
+ *  Get the URL for an emoji. This function always returns a gif URL for animated emojis, instead of webp
+ * @param id The emoji id
+ * @param animated Whether the emoji is animated
+ * @param size The size for the emoji
+ */
+export function getEmojiURL(id: string, animated: boolean, size: number) {
+    const url = IconUtils.getEmojiURL({ id, animated, size });
+    return animated ? url.replace(".webp", ".gif") : url;
 }

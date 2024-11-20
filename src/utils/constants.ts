@@ -208,6 +208,7 @@ export const Devs = /* #__PURE__*/ Object.freeze({
     cooper: {name: "Cooper", id: 594864203102158859n},
     rattles: {name: "Rattles", id: 1141097452741591140n},
     zastix: {name: "zastix", id: 253302259696271360n},
+    jamesbt365: {name: "jamesbt365", id: 158567567487795200n},
 } satisfies Record<string, Dev>);
 
 export const EquicordDevs = Object.freeze({
@@ -308,11 +309,11 @@ export const ChyzcordDevs = Object.freeze({
 
 // iife so #__PURE__ works correctly
 export const VencordDevsById = /* #__PURE__*/ (() =>
-        Object.freeze(Object.fromEntries(
-            Object.entries(Devs)
-                .filter(d => d[1].id !== 0n)
-                .map(([_, v]) => [v.id, v] as const)
-        ))
+    Object.freeze(Object.fromEntries(
+        Object.entries(Devs)
+            .filter(d => d[1].id !== 0n)
+            .map(([_, v]) => [v.id, v] as const)
+    ))
 )() as Record<string, Dev>;
 
 export const EquicordDevsById = /* #__PURE__*/ (() =>
