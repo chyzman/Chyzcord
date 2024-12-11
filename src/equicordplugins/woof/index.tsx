@@ -26,7 +26,6 @@ export default definePlugin({
     name: "Woof",
     description: "Adds a chatbar button to woof in chat",
     authors: [Devs.Samwich],
-    dependencies: ["ChatInputButtonAPI"],
-    start: () => addChatBarButton("vc-woof", ChatBarIcon),
-    stop: () => removeChatBarButton("vc-woof")
+    start: () => addChatBarButton("Woof", ChatBarIcon),
+    stop: () => removeChatBarButton("Woof")
 });

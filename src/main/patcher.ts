@@ -16,13 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {onceDefined} from "@shared/onceDefined";
-import electron, {app, BrowserWindowConstructorOptions, Menu, nativeTheme} from "electron";
-import {dirname, join} from "path";
+import { onceDefined } from "@shared/onceDefined";
+import electron, { app, BrowserWindowConstructorOptions, Menu, nativeTheme } from "electron";
+import { dirname, join } from "path";
 
-import {initIpc} from "./ipcMain";
-import {RendererSettings} from "./settings";
-import {IS_VANILLA} from "./utils/constants";
+import { initIpc } from "./ipcMain";
+import { RendererSettings } from "./settings";
+import { IS_VANILLA } from "./utils/constants";
 
 console.log("[Chyzcord] Starting up...");
 
@@ -56,7 +56,7 @@ if (!IS_VANILLA && !isLegacyNonAsarVencord) {
             const originalBuild = Menu.buildFromTemplate;
             Menu.buildFromTemplate = function (template) {
                 if (template[0]?.label === "&File") {
-                    const {submenu} = template[0];
+                    const { submenu } = template[0];
                     if (Array.isArray(submenu)) {
                         submenu.push({
                             label: "Quit (Hidden)",
@@ -105,28 +105,14 @@ if (!IS_VANILLA && !isLegacyNonAsarVencord) {
 
                 super(options);
                 initIpc(this);
-
-                // Workaround for https://github.com/electron/electron/issues/43367. Vesktop also has its own workaround
-                // @TODO: Remove this when the issue is fixed
-                if (IS_DISCORD_DESKTOP) {
-                    this.webContents.on("devtools-opened", () => {
-                        if (!nativeTheme.shouldUseDarkColors) return;
-
-                        nativeTheme.themeSource = "light";
-                        setTimeout(() => {
-                            nativeTheme.themeSource = "dark";
-                        }, 100);
-                    });
-                }
             } else super(options);
         }
     }
-
     Object.assign(BrowserWindow, electron.BrowserWindow);
     // esbuild may rename our BrowserWindow, which leads to it being excluded
     // from getFocusedWindow(), so this is necessary
     // https://github.com/discord/electron/blob/13-x-y/lib/browser/api/browser-window.ts#L60-L62
-    Object.defineProperty(BrowserWindow, "name", {value: "BrowserWindow", configurable: true});
+    Object.defineProperty(BrowserWindow, "name", { value: "BrowserWindow", configurable: true });
 
     // Replace electrons exports with our custom BrowserWindow
     const electronPath = require.resolve("electron");
