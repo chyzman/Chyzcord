@@ -13,6 +13,7 @@ import { identity } from "@utils/misc";
 import definePlugin, { OptionType } from "@utils/types";
 import { findByPropsLazy } from "@webpack";
 import { FluxDispatcher, Forms, Select, Slider, Text, useEffect, useState } from "@webpack/common";
+
 import { Settings } from "../../Vencord";
 
 const configModule = findByPropsLazy("getOutputVolume");
