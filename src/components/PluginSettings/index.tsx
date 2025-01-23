@@ -19,30 +19,31 @@
 import "./styles.css";
 
 import * as DataStore from "@api/DataStore";
-import {showNotice} from "@api/Notices";
-import {Settings, useSettings} from "@api/Settings";
-import {classNameFactory} from "@api/Styles";
-import {CogWheel, InfoIcon} from "@components/Icons";
-import {openPluginModal} from "@components/PluginSettings/PluginModal";
-import {AddonCard} from "@components/VencordSettings/AddonCard";
-import {SettingsTab} from "@components/VencordSettings/shared";
-import {ChangeList} from "@utils/ChangeList";
-import {proxyLazy} from "@utils/lazy";
-import {Logger} from "@utils/Logger";
-import {Margins} from "@utils/margins";
-import {classes, isObjectEmpty} from "@utils/misc";
-import {ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalRoot, ModalSize, openModal} from "@utils/modal";
-import {useAwaiter} from "@utils/react";
-import {Plugin} from "@utils/types";
-import {findByPropsLazy} from "@webpack";
+import { showNotice } from "@api/Notices";
+import { Settings, useSettings } from "@api/Settings";
+import { classNameFactory } from "@api/Styles";
+import { CogWheel, InfoIcon } from "@components/Icons";
+import { openPluginModal } from "@components/PluginSettings/PluginModal";
+import { AddonCard } from "@components/VencordSettings/AddonCard";
+import { SettingsTab } from "@components/VencordSettings/shared";
+import { ChangeList } from "@utils/ChangeList";
+import { proxyLazy } from "@utils/lazy";
+import { Logger } from "@utils/Logger";
+import { Margins } from "@utils/margins";
+import { classes, isObjectEmpty } from "@utils/misc";
+import { ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalRoot, ModalSize, openModal } from "@utils/modal";
+import { useAwaiter } from "@utils/react";
+import { Plugin } from "@utils/types";
+import { findByPropsLazy } from "@webpack";
 import {Alerts, Button, Card, Flex, Forms, lodash, Parser, React, SearchableSelect, Select, Text, TextInput, Toasts, Tooltip, useMemo} from "@webpack/common";
+import { JSX } from "react";
 
-import Plugins, {ExcludedPlugins, PluginMeta} from "~plugins";
+import Plugins, { ExcludedPlugins, PluginMeta } from "~plugins";
 
-import {StockPluginsCard, UserPluginsCard} from "./PluginStatCards";
+import { StockPluginsCard, UserPluginsCard } from "./PluginStatCards";
 
 // Avoid circular dependency
-const {startDependenciesRecursive, startPlugin, stopPlugin} = proxyLazy(() => require("../../plugins"));
+const { startDependenciesRecursive, startPlugin, stopPlugin } = proxyLazy(() => require("../../plugins"));
 
 const cl = classNameFactory("vc-plugins-");
 const logger = new Logger("PluginSettings", "#a6d189");
@@ -61,9 +62,9 @@ function showErrorToast(message: string) {
     });
 }
 
-function ReloadRequiredCard({required, enabledPlugins, openDisablePluginsModal, resetCheckAndDo}) {
+function ReloadRequiredCard({ required, enabledPlugins, openDisablePluginsModal, resetCheckAndDo }) {
     return (
-        <Card className={cl("info-card", {"restart-card": required})}>
+        <Card className={cl("info-card", { "restart-card": required })}>
             {required ? (
                 <>
                     <Forms.FormTitle tag="h5">Restart required!</Forms.FormTitle>
@@ -104,13 +105,11 @@ function ReloadRequiredCard({required, enabledPlugins, openDisablePluginsModal, 
 interface PluginCardProps extends React.HTMLProps<HTMLDivElement> {
     plugin: Plugin;
     disabled: boolean;
-
     onRestartNeeded(name: string): void;
-
     isNew?: boolean;
 }
 
-export function PluginCard({plugin, disabled, onRestartNeeded, onMouseEnter, onMouseLeave, isNew}: PluginCardProps) {
+export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, onMouseLeave, isNew }: PluginCardProps) {
     const settings = Settings.plugins[plugin.name];
 
     const isEnabled = () => Vencord.Plugins.isPluginEnabled(plugin.name);
@@ -120,7 +119,7 @@ export function PluginCard({plugin, disabled, onRestartNeeded, onMouseEnter, onM
 
         // If we're enabling a plugin, make sure all deps are enabled recursively.
         if (!wasEnabled) {
-            const {restartNeeded, failures} = startDependenciesRecursive(plugin);
+            const { restartNeeded, failures } = startDependenciesRecursive(plugin);
             if (failures.length) {
                 logger.error(`Failed to start dependencies for ${plugin.name}: ${failures.join(", ")}`);
                 showNotice("Failed to start dependencies: " + failures.join(", "), "Close", () => null);
@@ -177,8 +176,8 @@ export function PluginCard({plugin, disabled, onRestartNeeded, onMouseEnter, onM
                     className={classes(ButtonClasses.button, cl("info-button"))}
                 >
                     {plugin.options && !isObjectEmpty(plugin.options)
-                        ? <CogWheel/>
-                        : <InfoIcon/>}
+                        ? <CogWheel />
+                        : <InfoIcon />}
                 </button>
             }
         />

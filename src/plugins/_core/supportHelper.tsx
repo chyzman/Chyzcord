@@ -16,27 +16,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {addAccessory} from "@api/MessageAccessories";
-import {definePluginSettings} from "@api/Settings";
-import {getUserSettingLazy} from "@api/UserSettings";
+import { addAccessory } from "@api/MessageAccessories";
+import { definePluginSettings } from "@api/Settings";
+import { getUserSettingLazy } from "@api/UserSettings";
 import ErrorBoundary from "@components/ErrorBoundary";
-import {Flex} from "@components/Flex";
-import {Link} from "@components/Link";
-import {openUpdaterModal} from "@components/VencordSettings/UpdaterTab";
-import {Devs, GUILD_ID, SUPPORT_CHANNEL_ID, SUPPORT_CHANNEL_IDS, VC_GUILD_ID, VC_SUPPORT_CHANNEL_ID} from "@utils/constants";
-import {sendMessage} from "@utils/discord";
-import {Logger} from "@utils/Logger";
-import {Margins} from "@utils/margins";
-import {isEquicordPluginDev, isPluginDev, tryOrElse} from "@utils/misc";
-import {relaunch} from "@utils/native";
-import {onlyOnce} from "@utils/onlyOnce";
-import {makeCodeblock} from "@utils/text";
+import { Flex } from "@components/Flex";
+import { Link } from "@components/Link";
+import { openUpdaterModal } from "@components/VencordSettings/UpdaterTab";
+import { Devs, GUILD_ID, SUPPORT_CHANNEL_ID, SUPPORT_CHANNEL_IDS, VC_GUILD_ID, VC_SUPPORT_CHANNEL_ID } from "@utils/constants";
+import { sendMessage } from "@utils/discord";
+import { Logger } from "@utils/Logger";
+import { Margins } from "@utils/margins";
+import { isEquicordPluginDev, isPluginDev, tryOrElse } from "@utils/misc";
+import { relaunch } from "@utils/native";
+import { onlyOnce } from "@utils/onlyOnce";
+import { makeCodeblock } from "@utils/text";
 import definePlugin from "@utils/types";
-import {checkForUpdates, isOutdated, update} from "@utils/updater";
-import {Alerts, Button, Card, ChannelStore, Forms, GuildMemberStore, Parser, RelationshipStore, showToast, Text, Toasts, UserStore} from "@webpack/common";
+import { checkForUpdates, isOutdated, update } from "@utils/updater";
+import { Alerts, Button, Card, ChannelStore, Forms, GuildMemberStore, Parser, RelationshipStore, showToast, Text, Toasts, UserStore } from "@webpack/common";
+import { JSX } from "react";
 
 import gitHash from "~git-hash";
-import plugins, {PluginMeta} from "~plugins";
+import plugins, { PluginMeta } from "~plugins";
 
 import SettingsPlugin from "./settings";
 
@@ -54,8 +55,7 @@ const TrustedRolesIds = [
     "1173343399470964856", // Vencord Contributor
 ];
 
-const AsyncFunction = async function () {
-}.constructor;
+const AsyncFunction = async function () { }.constructor;
 
 const ShowCurrentGame = getUserSettingLazy<boolean>("status", "showCurrentGame")!;
 
@@ -70,7 +70,7 @@ async function forceUpdate() {
 }
 
 async function generateDebugInfoMessage() {
-    const {RELEASE_CHANNEL} = window.GLOBAL_ENV;
+    const { RELEASE_CHANNEL } = window.GLOBAL_ENV;
 
     const client = (() => {
         if (IS_DISCORD_DESKTOP) return `Discord Desktop v${DiscordNative.app.getVersion()}`;
@@ -86,7 +86,7 @@ async function generateDebugInfoMessage() {
     const info = {
         Equicord:
             `v${VERSION} • [${gitHash}](<https://github.com/Equicord/Equicord/commit/${gitHash}>)` +
-            `${SettingsPlugin.additionalInfo} - ${Intl.DateTimeFormat("en-GB", {dateStyle: "medium"}).format(BUILD_TIMESTAMP)}`,
+            `${SettingsPlugin.additionalInfo} - ${Intl.DateTimeFormat("en-GB", { dateStyle: "medium" }).format(BUILD_TIMESTAMP)}`,
         Client: `${RELEASE_CHANNEL} ~ ${client}`,
         Platform: window.navigator.platform
     };
@@ -161,19 +161,19 @@ export default definePlugin({
             description: "Send Equicord debug info",
             // @ts-ignore
             predicate: ctx => isPluginDev(UserStore.getCurrentUser()?.id) || isEquicordPluginDev(UserStore.getCurrentUser()?.id) || GUILD_ID === ctx?.guild?.id,
-            execute: async () => ({content: await generateDebugInfoMessage()})
+            execute: async () => ({ content: await generateDebugInfoMessage() })
         },
         {
             name: "equicord-plugins",
             description: "Send Equicord plugin list",
             // @ts-ignore
             predicate: ctx => isPluginDev(UserStore.getCurrentUser()?.id) || isEquicordPluginDev(UserStore.getCurrentUser()?.id) || GUILD_ID === ctx?.guild?.id,
-            execute: () => ({content: generatePluginList()})
+            execute: () => ({ content: generatePluginList() })
         }
     ],
 
     flux: {
-        async CHANNEL_SELECT({channelId}) {
+        async CHANNEL_SELECT({ channelId }) {
             if (!SUPPORT_CHANNEL_IDS.includes(channelId)) return;
 
             const selfId = UserStore.getCurrentUser()?.id;
@@ -186,7 +186,7 @@ export default definePlugin({
                         <style>
                             {'[class*="backdrop_"][style*="backdrop-filter"]{backdrop-filter:blur(16px) brightness(0.25) !important;}'}
                         </style>
-                        <img src="https://media.tenor.com/QtGqjwBpRzwAAAAi/wumpus-dancing.gif"/>
+                        <img src="https://media.tenor.com/QtGqjwBpRzwAAAAi/wumpus-dancing.gif" />
                         <Forms.FormText>Before you ask for help,</Forms.FormText>
                         <Forms.FormText>Check for updates and if this</Forms.FormText>
                         <Forms.FormText>issue could be caused by Equicord!</Forms.FormText>
@@ -198,8 +198,7 @@ export default definePlugin({
             }
 
             if (!IS_UPDATER_DISABLED) {
-                await checkForUpdatesOnce().catch(() => {
-                });
+                await checkForUpdatesOnce().catch(() => { });
 
                 if (isOutdated) {
                     return Alerts.show({
@@ -257,7 +256,7 @@ export default definePlugin({
         }
     },
 
-    renderContributorDmWarningCard: ErrorBoundary.wrap(({channel}) => {
+    renderContributorDmWarningCard: ErrorBoundary.wrap(({ channel }) => {
         const userId = channel.getRecipientId();
         if (!isPluginDev(userId) || !isEquicordPluginDev(userId)) return null;
         if (RelationshipStore.isFriend(userId) || isPluginDev(UserStore.getCurrentUser()?.id) || isEquicordPluginDev(UserStore.getCurrentUser()?.id)) return null;
@@ -265,12 +264,12 @@ export default definePlugin({
         return (
             <Card className={`vc-plugins-restart-card ${Margins.top8}`}>
                 Please do not private message plugin developers for support!
-                <br/>
+                <br />
                 Instead, use the support channel: {Parser.parse("https://discord.com/channels/1173279886065029291/1173342942858055721")}
                 {!ChannelStore.getChannel(SUPPORT_CHANNEL_ID) && " (Click the link to join)"}
             </Card>
         );
-    }, {noop: true}),
+    }, { noop: true }),
 
     start() {
         addAccessory("equicord-debug", props => {
@@ -311,13 +310,13 @@ export default definePlugin({
                     buttons.push(
                         <Button
                             key="vc-dbg"
-                            onClick={async () => sendMessage(props.channel.id, {content: await generateDebugInfoMessage()})}
+                            onClick={async () => sendMessage(props.channel.id, { content: await generateDebugInfoMessage() })}
                         >
                             Run /equicord-debug
                         </Button>,
                         <Button
                             key="vc-plg-list"
-                            onClick={async () => sendMessage(props.channel.id, {content: generatePluginList()})}
+                            onClick={async () => sendMessage(props.channel.id, { content: generatePluginList() })}
                         >
                             Run /equicord-plugins
                         </Button>

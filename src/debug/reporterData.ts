@@ -7,19 +7,17 @@
 /**
  * this file is needed to avoid an import of plugins in ./runReporter.ts
  */
-import {Patch} from "@utils/types";
-import {TypeWebpackSearchHistory} from "@webpack";
+import { Patch } from "@utils/types";
+import { TypeWebpackSearchHistory } from "@webpack";
 
 interface EvaledPatch extends Patch {
     id: number | string;
 }
-
 interface ErroredPatch extends EvaledPatch {
     oldModule: string,
     newModule: string;
 }
-
-interface ReporterData {
+export interface ReporterData {
     failedPatches: {
         foundNoModule: Patch[];
         hadNoEffect: EvaledPatch[];
@@ -28,7 +26,6 @@ interface ReporterData {
     };
     failedWebpack: Record<TypeWebpackSearchHistory, string[][]>;
 }
-
 export const reporterData: ReporterData = {
     failedPatches: {
         foundNoModule: [],

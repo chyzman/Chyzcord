@@ -16,19 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {debounce} from "@shared/debounce";
-import {SettingsStore as SettingsStoreClass} from "@shared/SettingsStore";
-import {localStorage} from "@utils/localStorage";
-import {Logger} from "@utils/Logger";
-import {mergeDefaults} from "@utils/mergeDefaults";
-import {putCloudSettings} from "@utils/settingsSync";
-import {DefinedSettings, OptionType, SettingsChecks, SettingsDefinition} from "@utils/types";
-import {React} from "@webpack/common";
+import { debounce } from "@shared/debounce";
+import { SettingsStore as SettingsStoreClass } from "@shared/SettingsStore";
+import { localStorage } from "@utils/localStorage";
+import { Logger } from "@utils/Logger";
+import { mergeDefaults } from "@utils/mergeDefaults";
+import { putCloudSettings } from "@utils/settingsSync";
+import { DefinedSettings, OptionType, SettingsChecks, SettingsDefinition } from "@utils/types";
+import { React, useEffect } from "@webpack/common";
 
 import plugins from "~plugins";
 
 const logger = new Logger("Settings");
-
 export interface Settings {
     autoUpdate: boolean;
     autoUpdateNotification: boolean;
@@ -42,19 +41,19 @@ export interface Settings {
     updateRelaunch: boolean;
     winCtrlQ: boolean;
     macosVibrancyStyle:
-        | "content"
-        | "fullscreen-ui"
-        | "header"
-        | "hud"
-        | "menu"
-        | "popover"
-        | "selection"
-        | "sidebar"
-        | "titlebar"
-        | "tooltip"
-        | "under-page"
-        | "window"
-        | undefined;
+    | "content"
+    | "fullscreen-ui"
+    | "header"
+    | "hud"
+    | "menu"
+    | "popover"
+    | "selection"
+    | "sidebar"
+    | "titlebar"
+    | "tooltip"
+    | "under-page"
+    | "window"
+    | undefined;
     disableMinSize: boolean;
     winNativeTitleBar: boolean;
     plugins: {
@@ -137,10 +136,10 @@ const saveSettingsOnFrequentAction = debounce(async () => {
 export const SettingsStore = new SettingsStoreClass(settings, {
     readOnly: true,
     getDefaultValue({
-                        target,
-                        key,
-                        path
-                    }) {
+        target,
+        key,
+        path
+    }) {
         const v = target[key];
         if (!plugins) return v; // plugins not initialised yet. this means this path was reached by being called on the top level
 
@@ -209,7 +208,7 @@ export const Settings = SettingsStore.store;
 export function useSettings(paths?: UseSettings<Settings>[]) {
     const [, forceUpdate] = React.useReducer(() => ({}), {});
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (paths) {
             paths.forEach(p => SettingsStore.addChangeListener(p, forceUpdate));
             return () => paths.forEach(p => SettingsStore.removeChangeListener(p, forceUpdate));
@@ -217,13 +216,13 @@ export function useSettings(paths?: UseSettings<Settings>[]) {
             SettingsStore.addGlobalChangeListener(forceUpdate);
             return () => SettingsStore.removeGlobalChangeListener(forceUpdate);
         }
-    }, []);
+    }, [paths]);
 
     return SettingsStore.store;
 }
 
 export function migratePluginSettings(name: string, ...oldNames: string[]) {
-    const {plugins} = SettingsStore.plain;
+    const { plugins } = SettingsStore.plain;
     if (name in plugins) return;
 
     for (const oldName of oldNames) {
@@ -271,9 +270,9 @@ type UseSettings<T extends object> = ResolveUseSettings<T>[keyof T];
 type ResolveUseSettings<T extends object> = {
     [Key in keyof T]:
     Key extends string
-        ? T[Key] extends Record<string, unknown>
-            // @ts-ignore "Type instantiation is excessively deep and possibly infinite"
-            ? UseSettings<T[Key]> extends string ? `${Key}.${UseSettings<T[Key]>}` : never
-            : Key
-        : never;
+    ? T[Key] extends Record<string, unknown>
+    // @ts-ignore "Type instantiation is excessively deep and possibly infinite"
+    ? UseSettings<T[Key]> extends string ? `${Key}.${UseSettings<T[Key]>}` : never
+    : Key
+    : never;
 };

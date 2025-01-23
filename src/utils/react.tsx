@@ -16,9 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {React, useEffect, useMemo, useReducer, useState} from "@webpack/common";
+import { React, useEffect, useMemo, useReducer, useState } from "@webpack/common";
+import { ActionDispatch } from "react";
 
-import {checkIntersecting} from "./misc";
+import { checkIntersecting } from "./misc";
 
 export * from "./lazyReact";
 
@@ -66,16 +67,12 @@ export const useIntersection = (intersectOnly = false): [
 };
 
 type AwaiterRes<T> = [T, any, boolean];
-
 interface AwaiterOpts<T> {
     fallbackValue: T;
     deps?: unknown[];
-
     onError?(e: any): void;
-
     onSuccess?(value: T): void;
 }
-
 /**
  * Await a promise
  * @param factory Factory
@@ -98,17 +95,17 @@ export function useAwaiter<T>(factory: () => Promise<T>, providedOpts?: AwaiterO
 
     useEffect(() => {
         let isAlive = true;
-        if (!state.pending) setState({...state, pending: true});
+        if (!state.pending) setState({ ...state, pending: true });
 
         factory()
             .then(value => {
                 if (!isAlive) return;
-                setState({value, error: null, pending: false});
+                setState({ value, error: null, pending: false });
                 opts.onSuccess?.(value);
             })
             .catch(error => {
                 if (!isAlive) return;
-                setState({value: null, error, pending: false});
+                setState({ value: null, error, pending: false });
                 opts.onError?.(error);
             });
 
@@ -121,8 +118,8 @@ export function useAwaiter<T>(factory: () => Promise<T>, providedOpts?: AwaiterO
 /**
  * Returns a function that can be used to force rerender react components
  */
-export function useForceUpdater(): () => void;
-export function useForceUpdater(withDep: true): [unknown, () => void];
+export function useForceUpdater(): ActionDispatch<[]>;
+export function useForceUpdater(withDep: true): [any, ActionDispatch<[]>];
 export function useForceUpdater(withDep?: true) {
     const r = useReducer(x => x + 1, 0);
     return withDep ? r : r[1];
@@ -133,7 +130,7 @@ interface TimerOpts {
     deps?: unknown[];
 }
 
-export function useTimer({interval = 1000, deps = []}: TimerOpts) {
+export function useTimer({ interval = 1000, deps = [] }: TimerOpts) {
     const [time, setTime] = useState(0);
     const start = useMemo(() => Date.now(), deps);
 
@@ -154,7 +151,7 @@ interface FixedTimerOpts {
     initialTime?: number;
 }
 
-export function useFixedTimer({interval = 1000, initialTime = Date.now()}: FixedTimerOpts) {
+export function useFixedTimer({ interval = 1000, initialTime = Date.now() }: FixedTimerOpts) {
     const [time, setTime] = useState(Date.now() - initialTime);
 
     useEffect(() => {

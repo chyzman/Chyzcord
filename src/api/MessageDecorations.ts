@@ -16,7 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {Channel, Message} from "discord-types/general/index.js";
+import { Channel, Message } from "discord-types/general/index.js";
+import { JSX } from "react";
 
 interface DecorationProps {
     author: {
@@ -42,10 +43,8 @@ interface DecorationProps {
         1: JSX.Element[];
     };
     message: Message;
-
     [key: string]: any;
 }
-
 export type Decoration = (props: DecorationProps) => JSX.Element | null;
 
 export const decorations = new Map<string, Decoration>();
