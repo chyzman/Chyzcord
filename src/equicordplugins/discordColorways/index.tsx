@@ -363,6 +363,7 @@ export default definePlugin({
         ).customSections;
 
         const i = customSettingsSections.findIndex(
+            // @ts-ignore
             section => section({}).id === ("ColorwaysSelector" || "ColorwaysSettings" || "ColorwaysSourceManager" || "ColorwaysOnDemand" || "ColorwaysStore")
         );
 
