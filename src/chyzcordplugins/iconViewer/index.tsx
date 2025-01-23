@@ -34,10 +34,7 @@ export default definePlugin({
     },
     stop() {
         // @ts-ignore
-        Vencord.Plugins.plugins.Settings.customSections =
-            // @ts-ignore
-            Vencord.Plugins.plugins.Settings.customSections.filter(
-                x => x !== this.insertSettings
-            );
+        const { customSections } = Vencord.Plugins.plugins.Settings;
+        customSections.splice(customSections.indexOf(this.insertSettings), 1);
     },
 });

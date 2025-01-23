@@ -13,22 +13,22 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
     { ignores: ["dist", "browser", "packages/vencord-types"] },
-    {
-        files: ["src/**/*.{tsx,ts,mts,mjs,js,jsx}", "eslint.config.mjs"],
-        settings: {
-            react: {
-                version: "18"
-            }
-        },
-        ...react.configs.flat.recommended,
-        rules: {
-            ...react.configs.flat.recommended.rules,
-            "react/react-in-jsx-scope": "off",
-            "react/prop-types": "off",
-            "react/display-name": "off",
-            "react/no-unescaped-entities": "off",
-        }
-    },
+    // {
+    //     files: ["src/**/*.{tsx,ts,mts,mjs,js,jsx}", "eslint.config.mjs"],
+    //     settings: {
+    //         react: {
+    //             version: "18"
+    //         }
+    //     },
+    //     ...react.configs.flat.recommended,
+    //     rules: {
+    //         ...react.configs.flat.recommended.rules,
+    //         "react/react-in-jsx-scope": "off",
+    //         "react/prop-types": "off",
+    //         "react/display-name": "off",
+    //         "react/no-unescaped-entities": "off",
+    //     }
+    // },
     {
         files: ["src/**/*.{tsx,ts,mts,mjs,js,jsx}", "eslint.config.mjs"],
         plugins: {
