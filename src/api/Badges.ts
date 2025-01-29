@@ -17,7 +17,7 @@
 */
 
 import ErrorBoundary from "@components/ErrorBoundary";
-import {ComponentType, HTMLProps} from "react";
+import { ComponentType, HTMLProps } from "react";
 
 import Plugins from "~plugins";
 
@@ -34,13 +34,10 @@ export interface ProfileBadge {
     /** The custom image to use */
     image?: string;
     link?: string;
-
     /** Action to perform when you click the badge */
     onClick?(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, props: BadgeUserArgs): void;
-
     /** Should the user display this badge? */
     shouldShow?(userInfo: BadgeUserArgs): boolean;
-
     /** Optional props (e.g. style) for the badge, ignored for component badges */
     props?: HTMLProps<HTMLImageElement>;
     /** Insert at start or end? */
@@ -60,8 +57,8 @@ const Badges = new Set<ProfileBadge>();
  * Register a new badge with the Badges API
  * @param badge The badge to register
  */
-export function addBadge(badge: ProfileBadge) {
-    badge.component &&= ErrorBoundary.wrap(badge.component, {noop: true});
+export function addProfileBadge(badge: ProfileBadge) {
+    badge.component &&= ErrorBoundary.wrap(badge.component, { noop: true });
     Badges.add(badge);
 }
 
@@ -69,7 +66,7 @@ export function addBadge(badge: ProfileBadge) {
  * Unregister a badge from the Badges API
  * @param badge The badge to remove
  */
-export function removeBadge(badge: ProfileBadge) {
+export function removeProfileBadge(badge: ProfileBadge) {
     return Badges.delete(badge);
 }
 
@@ -83,10 +80,10 @@ export function _getBadges(args: BadgeUserArgs) {
         if (!badge.shouldShow || badge.shouldShow(args)) {
             const b = badge.getBadges
                 ? badge.getBadges(args).map(b => {
-                    b.component &&= ErrorBoundary.wrap(b.component, {noop: true});
+                    b.component &&= ErrorBoundary.wrap(b.component, { noop: true });
                     return b;
                 })
-                : [{...badge, ...args}];
+                : [{ ...badge, ...args }];
 
             badge.position === BadgePosition.START
                 ? badges.unshift(...b)
@@ -106,21 +103,4 @@ export function _getBadges(args: BadgeUserArgs) {
 export interface BadgeUserArgs {
     userId: string;
     guildId: string;
-}
-
-interface ConnectedAccount {
-    type: string;
-    id: string;
-    name: string;
-    verified: boolean;
-}
-
-interface Profile {
-    connectedAccounts: ConnectedAccount[];
-    premiumType: number;
-    premiumSince: string;
-    premiumGuildSince?: any;
-    lastFetched: number;
-    profileFetchFailed: boolean;
-    application?: any;
 }
