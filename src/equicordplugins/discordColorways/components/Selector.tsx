@@ -12,7 +12,6 @@ import { ModalContent, ModalFooter, ModalHeader, ModalProps, ModalRoot, openModa
 import { findByProps } from "@webpack";
 import {
     Button,
-    ButtonLooks,
     Clipboard,
     Forms,
     Menu,
@@ -354,7 +353,7 @@ export default function ({
                         </Button>}
                     </Tooltip>
                     {isSettings ? <Select
-                        className={"colorwaySelector-sources " + ButtonLooks.OUTLINED + " colorwaySelector-sources_settings"}
+                        className={"colorwaySelector-sources " + Button.Looks.OUTLINED + " colorwaySelector-sources_settings"}
                         look={1}
                         popoutClassName="colorwaySelector-sourceSelect"
                         options={filters.map(filter => ({ label: filter.name, value: (filter.id as string) }))}
@@ -822,7 +821,7 @@ export default function ({
                     Close
                 </Button>
                 <Select
-                    className={"colorwaySelector-sources " + ButtonLooks.OUTLINED}
+                    className={"colorwaySelector-sources " + Button.Looks.OUTLINED}
                     look={1}
                     popoutClassName="colorwaySelector-sourceSelect"
                     options={filters.map(filter => { return { label: filter.name, value: (filter.id as string) }; })}

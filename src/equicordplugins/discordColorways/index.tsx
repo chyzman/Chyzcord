@@ -5,7 +5,7 @@
  */
 
 import * as DataStore from "@api/DataStore";
-import { addAccessory, removeAccessory } from "@api/MessageAccessories";
+import { addMessageAccessory, removeMessageAccessory } from "@api/MessageAccessories";
 import { addServerListElement, removeServerListElement, ServerListRenderPosition } from "@api/ServerList";
 import { disableStyle, enableStyle } from "@api/Styles";
 import { Flex } from "@components/Flex";
@@ -256,7 +256,7 @@ export default definePlugin({
         enableStyle(style);
         ColorwayCSS.set((await DataStore.get("activeColorwayObject") as ColorwayObject).css || "");
 
-        addAccessory("colorways-btn", props => {
+        addMessageAccessory("colorways-btn", props => {
             if (String(props.message.content).match(/colorway:[0-9a-f]{0,100}/)) {
                 return <Flex flexDirection="column">
                     {String(props.message.content).match(/colorway:[0-9a-f]{0,100}/g)?.map((colorID: string) => {
@@ -355,7 +355,7 @@ export default definePlugin({
         removeServerListElement(ServerListRenderPosition.In, this.ColorwaysButton);
         disableStyle(style);
         ColorwayCSS.remove();
-        removeAccessory("colorways-btn");
+        removeMessageAccessory("colorways-btn");
         const customSettingsSections = (
             Vencord.Plugins.plugins.Settings as any as {
                 customSections: ((ID: Record<string, unknown>) => any)[];

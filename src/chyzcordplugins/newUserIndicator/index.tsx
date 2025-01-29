@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { addBadge, BadgePosition, ProfileBadge, removeBadge } from "@api/Badges";
-import { addDecorator, removeDecorator } from "@api/MemberListDecorators";
-import { addDecoration, removeDecoration } from "@api/MessageDecorations";
+import { addProfileBadge, BadgePosition, ProfileBadge, removeProfileBadge } from "@api/Badges";
+import { addMemberListDecorator, removeMemberListDecorator } from "@api/MemberListDecorators";
+import { addMessageDecoration, removeMessageDecoration } from "@api/MessageDecorations";
 import { definePluginSettings } from "@api/Settings";
 import ErrorBoundary from "@components/ErrorBoundary";
 import { Devs } from "@utils/constants";
@@ -77,13 +77,13 @@ export default definePlugin({
     patches: [],
     settings,
     start() {
-        addBadge(badge);
-        addDecoration("newuser-indicator", props =>
+        addProfileBadge(badge);
+        addMessageDecoration("newuser-indicator", props =>
             <ErrorBoundary noop>
                 {checkUser(props.message.author, "decorations")}
             </ErrorBoundary>
         );
-        addDecorator("newuser-indicator", props =>
+        addMemberListDecorator("newuser-indicator", props =>
             <ErrorBoundary noop>
                 {checkUser(props.user, "decorators")}
             </ErrorBoundary>
@@ -91,9 +91,9 @@ export default definePlugin({
 
     },
     stop() {
-        removeDecoration("newuser-indicator");
-        removeDecorator("newuser-indicator");
-        removeBadge(badge);
+        removeMessageDecoration("newuser-indicator");
+        removeMemberListDecorator("newuser-indicator");
+        removeProfileBadge(badge);
     },
 
 });

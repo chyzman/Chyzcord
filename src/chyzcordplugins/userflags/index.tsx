@@ -6,7 +6,7 @@
 
 import { ApplicationCommandInputType, ApplicationCommandOptionType, Argument, CommandContext, findOption, sendBotMessage } from "@api/Commands";
 import { DataStore } from "@api/index";
-import { addAccessory } from "@api/MessageAccessories";
+import { addMessageAccessory } from "@api/MessageAccessories";
 import { Devs } from "@utils/constants";
 import definePlugin from "@utils/types";
 import { Parser, React, Text } from "@webpack/common";
@@ -90,7 +90,7 @@ export default definePlugin({
                 userFlags = new Map<string, Flag>(savedFlags);
             }
         }
-        addAccessory("flag", (props: Record<string, any>) => (
+        addMessageAccessory("flag", (props: Record<string, any>) => (
             <Flag id={props.message.author.id} />
         ), 4);
     },

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { addChatBarButton, ChatBarButton, removeChatBarButton } from "@api/ChatButtons";
+import {addChatBarButton, ChatBarButton, ChatBarButtonFactory, removeChatBarButton} from "@api/ChatButtons";
 import { findGroupChildrenByChildId, NavContextMenuPatchCallback } from "@api/ContextMenu";
 import { definePluginSettings } from "@api/Settings";
 import { Devs } from "@utils/constants";
@@ -47,7 +47,7 @@ const ContextMenuPatch: NavContextMenuPatchCallback = (children, props: any) => 
     }
 };
 
-const ComposeModeToggleButton: ChatBarButton = ({ isMainChat }) => {
+const ComposeModeToggleButton: ChatBarButtonFactory = ({ isMainChat }) => {
     const { isEnabled, showIcon } = settings.use(["isEnabled", "showIcon"]);
 
     if (!isMainChat || !showIcon) return null;

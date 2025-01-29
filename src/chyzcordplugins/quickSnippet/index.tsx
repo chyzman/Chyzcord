@@ -10,7 +10,7 @@ import { definePluginSettings } from "@api/Settings";
 import { Devs } from "@utils/constants";
 import definePlugin, { OptionType } from "@utils/types";
 import { findByPropsLazy } from "@webpack";
-import { Button, ButtonLooks, MessageStore, useState } from "@webpack/common";
+import { Button, MessageStore, useState } from "@webpack/common";
 
 const MarkdownRules = findByPropsLazy("RULES", "PROFILE_BIO_RULES");
 
@@ -60,7 +60,7 @@ function AppendButton(props: { code: CodeBlock; context: Context; }) {
     const [appended, setAppended] = useState(false);
 
     return <Button
-        look={ButtonLooks.INVERTED}
+        look={Button.Looks.INVERTED}
         onClick={() => {
             let trimedMessage = "";
             if (context.channelId && context.messageId) {

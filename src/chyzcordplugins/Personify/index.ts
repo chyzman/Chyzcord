@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { addPreSendListener, removePreSendListener,SendListener, } from "@api/MessageEvents";
+import { addMessagePreSendListener, MessageSendListener,removeMessagePreSendListener } from "@api/MessageEvents";
 import { definePluginSettings } from "@api/Settings";
 import { Devs } from "@utils/constants";
 import definePlugin, { OptionType } from "@utils/types";
@@ -51,7 +51,7 @@ const settings = definePluginSettings({
     }
 });
 
-const messagePatch : SendListener = async (channelId, msg) => {
+const messagePatch : MessageSendListener = async (channelId, msg) => {
     msg.content = await textProcessing(msg.content);
 };
 
@@ -62,11 +62,11 @@ export default definePlugin({
     dependencies: ["MessageEventsAPI"],
     start()
     {
-        this.preSend = addPreSendListener(messagePatch);
+        this.preSend = addMessagePreSendListener(messagePatch);
     },
     stop()
     {
-        this.preSend = removePreSendListener(messagePatch);
+        this.preSend = removeMessagePreSendListener(messagePatch);
     },
     settings
 });

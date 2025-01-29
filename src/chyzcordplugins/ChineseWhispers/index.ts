@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { addPreSendListener, removePreSendListener,SendListener, } from "@api/MessageEvents";
+import { addMessagePreSendListener, MessageSendListener,removeMessagePreSendListener, } from "@api/MessageEvents";
 import { definePluginSettings } from "@api/Settings";
 import { Devs } from "@utils/constants";
 import definePlugin, { OptionType } from "@utils/types";
@@ -172,7 +172,7 @@ async function translateText(sourceLang: string, targetLang: string, text: strin
     return translatedText;
 }
 
-const presendObject : SendListener = async (channelId, msg) =>
+const presendObject : MessageSendListener = async (channelId, msg) =>
 {
     msg.content = await comedicChineseWhispers(msg.content, languages.slice(0, settings.store.intensity));
 };
@@ -184,11 +184,11 @@ export default definePlugin({
     dependencies: ["MessageEventsAPI"],
     start()
     {
-        addPreSendListener(presendObject);
+        addMessagePreSendListener(presendObject);
     },
     stop()
     {
-        removePreSendListener(presendObject);
+        removeMessagePreSendListener(presendObject);
     },
     settings
 });
