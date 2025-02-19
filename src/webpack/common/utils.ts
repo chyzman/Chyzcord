@@ -72,7 +72,7 @@ waitFor("parseTopic", m => Parser = m);
 export let Alerts: t.Alerts;
 waitFor(["show", "close"], m => Alerts = m);
 
-const ToastType = {
+export const ToastType = {
     MESSAGE: "message",
     SUCCESS: "success",
     FAILURE: "failure",
