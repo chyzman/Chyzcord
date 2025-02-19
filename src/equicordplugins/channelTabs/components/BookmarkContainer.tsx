@@ -8,6 +8,7 @@ import { classNameFactory } from "@api/Styles";
 import { getIntlMessage } from "@utils/discord";
 import { classes } from "@utils/misc";
 import { closeModal, openModal } from "@utils/modal";
+import { findComponentByCodeLazy } from "@webpack";
 import { Avatar, ChannelStore, ContextMenuApi, FluxDispatcher, GuildStore, Menu, ReadStateStore, ReadStateUtils, Text, Tooltip, useDrag, useDrop, useEffect, useRef, UserStore } from "@webpack/common";
 
 import { BasicChannelTabsProps, Bookmark, BookmarkFolder, BookmarkProps, CircleQuestionIcon, isBookmarkFolder, settings, switchChannel, useBookmarks } from "../util";
@@ -16,23 +17,7 @@ import { BookmarkContextMenu, EditModal } from "./ContextMenus";
 
 const cl = classNameFactory("vc-channeltabs-");
 
-function StarIcon({ className = "", ...props }) {
-    return <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className={className}
-        {...props}
-    >
-        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg >;
-}
+const StarIcon = findComponentByCodeLazy(".73-2.25h6.12l1.9-5.83Z");
 
 function FolderIcon({ fill }: { fill: string; }) {
     return (
@@ -99,59 +84,71 @@ function BookmarkFolderOpenMenu(props: BookmarkProps) {
             onClose={() => FluxDispatcher.dispatch({ type: "CONTEXT_MENU_CLOSE" })}
             aria-label="Bookmark Folder Menu"
         >
-            {bookmark.bookmarks.map((b, i) => <><Menu.MenuItem
-                key={`bookmark-folder-entry-${b.channelId}`}
-                id={`bookmark-folder-entry-${b.channelId}`}
-                label={<div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.25rem"
-                }}>
-                    <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-                        {b.name}
-                    </span>
-                    {bookmarkNotificationDot && <NotificationDot channelIds={[b.channelId]} />}
-                </div>}
-                icon={() => <BookmarkIcon bookmark={b} />}
-                showIconFirst={true}
-                action={() => switchChannel(b)} /><span>
-                    (
-                    bookmarkNotificationDot && <Menu.MenuGroup>
-                        <Menu.MenuItem
-                            key="mark-as-read"
-                            id="mark-as-read"
-                            label={getIntlMessage("MARK_AS_READ")}
-                            disabled={!ReadStateStore.hasUnread(b.channelId)}
-                            action={() => ReadStateUtils.ackChannel(ChannelStore.getChannel(b.channelId))} />
-                    </Menu.MenuGroup>
-                    )
-                </span><span>
+            {bookmark.bookmarks.map((b, i) => (
+                <Menu.MenuItem
+                    key={`bookmark-folder-entry-${b.channelId}`}
+                    id={`bookmark-folder-entry-${b.channelId}`}
+                    label={
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "0.25rem"
+                            }}>
+                            <span
+                                style={{
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis"
+                                }}>
+                                {b.name}
+                            </span>
+                            {bookmarkNotificationDot && <NotificationDot channelIds={[b.channelId]} />}
+                        </div>
+                    }
+                    icon={() => <BookmarkIcon bookmark={b} />}
+                    showIconFirst={true}
+                    action={() => switchChannel(b)}
+                >
+                    {bookmarkNotificationDot && (
+                        <Menu.MenuGroup>
+                            <Menu.MenuItem
+                                key="mark-as-read"
+                                id="mark-as-read"
+                                label={getIntlMessage("MARK_AS_READ")}
+                                disabled={!ReadStateStore.hasUnread(b.channelId)}
+                                action={() => ReadStateUtils.ackChannel(ChannelStore.getChannel(b.channelId))}
+                            />
+                        </Menu.MenuGroup>
+                    )}
                     <Menu.MenuGroup key="bookmarks">
-
                         <Menu.MenuItem
                             key="edit-bookmark"
                             id="edit-bookmark"
                             label="Edit Bookmark"
                             action={() => {
-                                const key = openModal(modalProps => <EditModal
-                                    modalProps={modalProps}
-                                    modalKey={key}
-                                    bookmark={b}
-                                    onSave={name => {
-                                        const newBookmarks = [...bookmark.bookmarks];
-                                        newBookmarks[i].name = name;
-                                        methods.editBookmark(index, { bookmarks: newBookmarks });
-                                        closeModal(key);
-                                    }} />
+                                const key = openModal(modalProps =>
+                                    <EditModal
+                                        modalProps={modalProps}
+                                        modalKey={key}
+                                        bookmark={b}
+                                        onSave={name => {
+                                            const newBookmarks = [...bookmark.bookmarks];
+                                            newBookmarks[i].name = name;
+                                            methods.editBookmark(index, { bookmarks: newBookmarks });
+                                            closeModal(key);
+                                        }}
+                                    />
                                 );
-                            }} />
+                            }}
+                        />
                         <Menu.MenuItem
                             key="delete-bookmark"
                             id="delete-bookmark"
                             label="Delete Bookmark"
                             action={() => {
                                 methods.deleteBookmark(i, index);
-                            }} />
+                            }}
+                        />
                         <Menu.MenuItem
                             key="remove-bookmark-from-folder"
                             id="remove-bookmark-from-folder"
@@ -159,14 +156,14 @@ function BookmarkFolderOpenMenu(props: BookmarkProps) {
                             action={() => {
                                 const newBookmarks = [...bookmark.bookmarks];
                                 newBookmarks.splice(i, 1);
-
                                 methods.addBookmark(b);
                                 methods.editBookmark(index, { bookmarks: newBookmarks });
-                            }} />
+                            }}
+                        />
                     </Menu.MenuGroup>
-                </span>
-            </>)}
-        </Menu.Menu >
+                </Menu.MenuItem>
+            ))}
+        </Menu.Menu>
     );
 }
 
@@ -304,8 +301,9 @@ export default function BookmarkContainer(props: BasicChannelTabsProps & { userI
                 }}
                 >
                     <StarIcon
-                        className={isCurrentChannelBookmarked ? cl("bookmark-star-checked") : cl("bookmark-star")}
-                    />
+                        height={20}
+                        width={20}
+                        colorClass={isCurrentChannelBookmarked ? cl("bookmark-star-checked") : cl("bookmark-star")} />
                 </button>}
             </Tooltip>
         </div>

@@ -1,69 +1,88 @@
 name: Release
 on:
     push:
+        tags:
+            - v*
         branches:
             - main
             - dev
 env:
     FORCE_COLOR: true
     GITHUB_TOKEN: ${{ secrets.ETOKEN }}
+    REPO: chyzman/Chyzbored
+    USERNAME: GitHub-Actions
+
+permissions: write-all
 
 jobs:
     Build:
-        name: Build Equicord
+        name: Build Chyzcord
         runs-on: ubuntu-latest
 
         steps:
-            -   uses: actions/checkout@v4
+            - uses: actions/checkout@v4
 
-            -   uses: pnpm/action-setup@v3 # Install pnpm using packageManager key in package.json
+            - uses: pnpm/action-setup@v3
 
-            -   name: Use Node.js 20
-                uses: actions/setup-node@v4
-                with:
-                    node-version: 20
-                    cache: "pnpm"
+            - name: Use Node.js 20
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: "pnpm"
 
-            -   name: Install dependencies
-                run: pnpm install --frozen-lockfile
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
 
-            -   name: Build web
-                run: pnpm buildWebStandalone
+            - name: Build web
+              run: pnpm buildWebStandalone
 
-            -   name: Build
-                run: pnpm buildStandalone
+            - name: Build
+              run: pnpm buildStandalone
+
+            - name: Generate plugin list
+              run: pnpm generatePluginJson dist/vencordplugins.json
+
+            - name: Generate Equicord plugin list
+              run: pnpm generateEquicordPluginJson dist/equicordplugins.json
+
+            - name: Generate Chyzcord plugin list
+              run: pnpm generateChyzcordPluginJson dist/chyzcordplugins.json
 
             -   name: Collect files to be released
-                run: |
-                    cd dist
-                    mkdir release
+              run: |
+                  cd dist
+                  mkdir release
 
-                    cp browser/browser.* release
-                    cp Vencord.user.{js,js.LEGAL.txt} release
+                  cp browser/browser.* release
+                  cp Vencord.user.{js,js.LEGAL.txt} release
 
-                    # copy the extension zips and the desktop/vesktop asars
-                    cp *.{zip,asar} release
+                  # copy the plugin data jsons, the extension zips and the desktop/vesktop asars
+                  cp *.{json,zip,asar} release
 
-                    # legacy un-asared files
-                    # FIXME: remove at some point
-                    cp desktop/* release
-                    for file in vesktop/*; do
-                      filename=$(basename "$file")
-                      cp "$file" "release/vencordDesktop${filename^}"
-                    done
-                    for file in equibop/*; do
-                      filename=$(basename "$file")
-                      cp "$file" "release/equicordDesktop${filename^}"
-                    done
+                  # legacy un-asared files
+                  cp desktop/* release
+                  for file in chyzbop/*; do
+                    filename=$(basename "$file")
+                    cp "$file" "release/chyzcordDesktop${filename^}"
+                  done
 
-                    find release -size 0 -delete
-                    rm release/package.json
-                    rm release/*.map
+                  find release -size 0 -delete
+                  rm release/package.json
+                  rm release/*.map
 
-            -   name: Upload Chyzcord Stable
-                if: ${{ github.ref_name == 'main' }}
-                run: |
-                    gh release upload latest --clobber dist/release/*
+            - name: get-npm-version
+              id: package-version
+              uses: martinbeentjes/npm-get-version-action@v1.3.1
+
+            - name: Upload Chyzcord Tagged
+              if: startsWith(github.ref, 'refs/tags/')
+              run: |
+                  gh release upload v${{ steps.package-version.outputs.current-version}} --clobber dist/release/*
+
+            - name: Upload Chyzcord Stable
+              if: ${{ github.ref_name == 'main' }}
+              run: |
+                  gh release upload latest --clobber dist/release/*
 
             -   name: Upload Chyzcord Dev
                 if: ${{ github.ref_name == 'dev' }}
