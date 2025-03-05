@@ -328,9 +328,11 @@ export const EquicordDevs = Object.freeze({
     ExoDev: {name: "ExoDev", id: 1325655837003223137n},
     voidbbg: {name: "voidbbg", id: 117126234588184582n},
     OIRNOIR: {name: "OIRNOIR", id: 720842469024989195n},
-    mochienya: {name: "mochie", id: 1043599230247374869n,},
-    okiso: {name: "okiso", id: 274178934143451137n,},
-    port22exposed: {name: "port", id: 1318383159645311009n,},
+    mochienya: {name: "mochie", id: 1043599230247374869n},
+    okiso: {name: "okiso", id: 274178934143451137n},
+    port22exposed: {name: "port", id: 1318383159645311009n},
+    PhoenixAceVFX: {name: "PhoenixAceVFX", id: 1016895892055396484n,},
+    TheArmagan: {name: "TheArmagan", id: 707309693449535599n},
 } satisfies Record<string, Dev>);
 
 export const ChyzcordDevs = Object.freeze({
