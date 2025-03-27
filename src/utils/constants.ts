@@ -333,6 +333,10 @@ export const EquicordDevs = Object.freeze({
     port22exposed: {name: "port", id: 1318383159645311009n},
     PhoenixAceVFX: {name: "PhoenixAceVFX", id: 1016895892055396484n,},
     TheArmagan: {name: "TheArmagan", id: 707309693449535599n},
+    seth: {name: "S€th", id: 1273447359417942128n},
+    SteelTech: {name: "SteelTech", id: 1344190786476183643n},
+    talhakf: {name: "talhakf", id: 1140716160560676976n},
+    omaw: {name: "omaw", id: 1155026301791514655n},
 } satisfies Record<string, Dev>);
 
 export const ChyzcordDevs = Object.freeze({

@@ -8,7 +8,7 @@ import "./styles.css";
 
 import { NavContextMenuPatchCallback } from "@api/ContextMenu";
 import { get } from "@api/DataStore";
-import { definePluginSettings, migratePluginSettings, Settings } from "@api/Settings";
+import { definePluginSettings, Settings } from "@api/Settings";
 import { EquicordDevs } from "@utils/constants";
 import { openModal } from "@utils/modal";
 import definePlugin, { OptionType } from "@utils/types";
@@ -69,8 +69,6 @@ const settings = definePluginSettings({
     }
 });
 
-
-migratePluginSettings("CustomUserColors", "customUserColors");
 export default definePlugin({
     name: "CustomUserColors",
     description: "Lets you add a custom color to any user, anywhere! Highly recommend to use with typingTweaks and roleColorEverywhere",
@@ -92,16 +90,30 @@ export default definePlugin({
         },
         {
             predicate: () => settings.store.dmList,
-            find: "!1,wrapContent",
+            find: "PrivateChannel.renderAvatar",
             replacement: {
-                match: /(nameAndDecorators,)/,
-                replace: "$1style:{color:$self.colorDMList(arguments[0])},"
+                match: /(highlighted:\i,)/,
+                replace: "$1style:{color:`${$self.colorDMList(arguments[0])}`},"
             },
+        },
+        {
+            predicate: () => settings.store.dmList,
+            find: "!1,wrapContent",
+            replacement: [
+                {
+                    match: /(\}=\i)/,
+                    replace: ",style$1"
+                },
+                {
+                    match: /(?<=nameAndDecorators,)/,
+                    replace: "style:style||{},"
+                },
+            ],
         },
     ],
 
     colorDMList(a: any): string | undefined {
-        const userId = a?.subText?.props?.user?.id;
+        const userId = a?.user?.id;
         if (!userId) return;
         const colorString = getCustomColorString(userId, true);
         if (colorString) return colorString;

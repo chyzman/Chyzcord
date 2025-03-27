@@ -25,6 +25,7 @@ import { Flex } from "@components/Flex";
 import { Heart } from "@components/Heart";
 import { openContributorModal } from "@components/PluginSettings/ContributorModal";
 import { ChyzcordDevs,Devs} from "@utils/constants";
+import { isEquicordDonor } from "@components/VencordSettings/VencordTab";
 import { Logger } from "@utils/Logger";
 import { Margins } from "@utils/margins";
 import { isChyzcordPluginDev, isEquicordPluginDev, isPluginDev } from "@utils/misc";
@@ -34,7 +35,7 @@ import { Forms, Toasts, UserStore } from "@webpack/common";
 import { User } from "discord-types/general";
 
 const CONTRIBUTOR_BADGE = "https://vencord.dev/assets/favicon.png";
-const EQUICORD_CONTRIBUTOR_BADGE = "https://i.imgur.com/57ATLZu.png";
+const EQUICORD_DONOR_BADGE = "https://cdn.nest.rip/uploads/78cb1e77-b7a6-4242-9089-e91f866159bf.png";
 const CHYZCORD_CONTRIBUTOR_BADGE = "https://discord.com/assets/030484501acb33086115.svg";
 
 const ContributorBadge: ProfileBadge = {
@@ -51,6 +52,17 @@ const EquicordContributorBadge: ProfileBadge = {
     position: BadgePosition.START,
     shouldShow: ({userId}) => isEquicordPluginDev(userId),
     onClick: (_, {userId}) => openContributorModal(UserStore.getUser(userId))
+};
+
+const EquicordDonorBadge: ProfileBadge = {
+    description: "Equicord Donor",
+    image: EQUICORD_DONOR_BADGE,
+    position: BadgePosition.START,
+    shouldShow: ({ userId }) => {
+        const donorBadges = EquicordDonorBadges[userId]?.map(badge => badge.badge);
+        const hasDonorBadge = donorBadges?.includes("https://cdn.nest.rip/uploads/78cb1e77-b7a6-4242-9089-e91f866159bf.png");
+        return isEquicordDonor(userId) && !hasDonorBadge;
+    }
 };
 
 const ChyzcordContributorBadge: ProfileBadge = {
@@ -74,7 +86,7 @@ async function loadBadges(url: string, noCache = false) {
 
 async function loadAllBadges(noCache = false) {
     const vencordBadges = await loadBadges("https://badges.vencord.dev/badges.json", noCache);
-    const equicordBadges = await loadBadges("https://raw.githubusercontent.com/Equicord/Equibored/main/badges.json", noCache);
+    const equicordBadges = await loadBadges("https://equicord.org/badges", noCache);
     const chyzcordBadges = await loadBadges("https://raw.githubusercontent.com/chyzman/Chyzcord/main/badges.json", noCache);
 
     DonorBadges = vencordBadges;
@@ -100,7 +112,7 @@ export default definePlugin({
             find: "#{intl::PROFILE_USER_BADGES}",
             replacement: [
                 {
-                    match: /(alt:" ","aria-hidden":!0,src:)(.{0,20}(\i)\.icon\))/,
+                    match: /(alt:" ","aria-hidden":!0,src:)(.+?)(?=,)(?<=href:(\i)\.link.+?)/,
                     replace: (_, rest, originalSrc, badge) => `...${badge}.props,${rest}${badge}.image??(${originalSrc})`
                 },
                 {
@@ -132,6 +144,7 @@ export default definePlugin({
         Vencord.Api.Badges.addProfileBadge(EquicordContributorBadge);
         Vencord.Api.Badges.addProfileBadge(ChyzcordContributorBadge);
 
+        Vencord.Api.Badges.addProfileBadge(EquicordDonorBadge);
         await loadAllBadges();
     },
 

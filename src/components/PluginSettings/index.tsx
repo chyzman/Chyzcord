@@ -198,8 +198,8 @@ function ExcludedPluginsList({search}: { search: string; }) {
     const ExcludedReasons: Record<"web" | "discordDesktop" | "vencordDesktop" | "equicordDesktop" | "desktop" | "dev", string> = {
         desktop: "Discord Desktop app or Vesktop",
         discordDesktop: "Discord Desktop app",
-        vencordDesktop: "Vesktop app & Equibop app",
-        equicordDesktop: "Vesktop app & Equibop app",
+        vencordDesktop: "Vesktop Equibop apps",
+        equicordDesktop: "Vesktop & Equibop apps",
         web: "Vesktop & Equibop apps as well as the Web version of Discord",
         dev: "Developer version of Chyzcord"
     };
@@ -292,7 +292,7 @@ export default function PluginSettings() {
 
         return (
             passed &&
-            (plugin.name.toLowerCase().includes(search) ||
+            (plugin.name.toLowerCase().includes(search.replace(/\s+/g, "")) ||
                 plugin.description.toLowerCase().includes(search) ||
                 plugin.tags?.some(t => t.toLowerCase().includes(search)))
         );
@@ -304,7 +304,7 @@ export default function PluginSettings() {
         const sortedPluginNames = Object.values(sortedPlugins).map(plugin => plugin.name);
 
         const newPlugins: string[] = [];
-        for (const {name: p} of sortedPlugins) {
+        for (const { name: p } of sortedPlugins) {
             const time = existingTimestamps[p] = cachedPlugins?.[p] ?? now;
             if ((time + 60 * 60 * 24 * 2) > now) {
                 newPlugins.push(p);
@@ -388,8 +388,8 @@ export default function PluginSettings() {
                 title: "Restart Required",
                 body: (
                     <>
-                        <p style={{textAlign: "center"}}>Some plugins require a restart to fully disable.</p>
-                        <p style={{textAlign: "center"}}>Would you like to restart now?</p>
+                        <p style={{ textAlign: "center" }}>Some plugins require a restart to fully disable.</p>
+                        <p style={{ textAlign: "center" }}>Would you like to restart now?</p>
                     </>
                 ),
                 confirmText: "Restart Now",
@@ -411,7 +411,7 @@ export default function PluginSettings() {
             >
                 <ModalHeader separator={false}>
                     <Text className="text-danger">Dangerous Action</Text>
-                    <ModalCloseButton onClick={warningModalProps.onClose} className="vc-modal-close-button"/>
+                    <ModalCloseButton onClick={warningModalProps.onClose} className="vc-modal-close-button" />
                 </ModalHeader>
                 <ModalContent>
                     <Forms.FormSection>
@@ -455,7 +455,7 @@ export default function PluginSettings() {
                                 </Button>
                             )}
                             <Tooltip text="This action cannot be undone. Are you sure?" shouldShow={true}>
-                                {({onMouseEnter, onMouseLeave}) => (
+                                {({ onMouseEnter, onMouseLeave }) => (
                                     <Button
                                         size={Button.Sizes.SMALL}
                                         className="button-danger-background-no-margin"
