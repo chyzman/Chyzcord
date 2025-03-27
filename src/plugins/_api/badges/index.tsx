@@ -24,8 +24,8 @@ import ErrorBoundary from "@components/ErrorBoundary";
 import { Flex } from "@components/Flex";
 import { Heart } from "@components/Heart";
 import { openContributorModal } from "@components/PluginSettings/ContributorModal";
-import { ChyzcordDevs,Devs} from "@utils/constants";
 import { isEquicordDonor } from "@components/VencordSettings/VencordTab";
+import { ChyzcordDevs,Devs} from "@utils/constants";
 import { Logger } from "@utils/Logger";
 import { Margins } from "@utils/margins";
 import { isChyzcordPluginDev, isEquicordPluginDev, isPluginDev } from "@utils/misc";
@@ -35,6 +35,7 @@ import { Forms, Toasts, UserStore } from "@webpack/common";
 import { User } from "discord-types/general";
 
 const CONTRIBUTOR_BADGE = "https://vencord.dev/assets/favicon.png";
+const EQUICORD_CONTRIBUTOR_BADGE = "https://i.imgur.com/57ATLZu.png";
 const EQUICORD_DONOR_BADGE = "https://cdn.nest.rip/uploads/78cb1e77-b7a6-4242-9089-e91f866159bf.png";
 const CHYZCORD_CONTRIBUTOR_BADGE = "https://discord.com/assets/030484501acb33086115.svg";
 
