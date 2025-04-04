@@ -56,7 +56,7 @@ export default definePlugin({
         {
             find: ".gifts)",
             replacement: {
-                match: /,.{0,5}\(null===\(\w=\w\.stickers\)\|\|void 0.*?(\w)\.push\((\(0,\w\.jsx\))\((.+?),{disabled:\w,type:(\w)},"sticker"\)\)\)/,
+                match: /,.{0,5}\(null==\(\i=\i\.stickers\)\?void 0.*?(\i)\.push\((\(0,\w\.jsx\))\((.+?),{disabled:\i,type:(\i)},"sticker"\)\)\)/,
                 replace: (m, _, jsx, compo, type) => {
                     const c = "arguments[0].type";
                     return `${m},${c}?.submit?.button&&${_}.push(${jsx}(${compo},{disabled:!${c}?.submit?.button,type:${type},stickersType:"stickers+"},"stickers+"))`;
@@ -103,12 +103,11 @@ export default definePlugin({
                 onClick={onClick}
                 style={{ backgroundColor: "transparent" }}
             >
-                {
-                /* Icon taken from: https://github.com/Pitu/Magane/blob/0ebb09acf9901933ebebe19fbd473ec08cf917b3/src/Button.svelte#L29 */}
+                {/* Icon taken from: https://github.com/Pitu/Magane/blob/0ebb09acf9901933ebebe19fbd473ec08cf917b3/src/Button.svelte#L29 */}
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
+                    width="20"
+                    height="20"
                     preserveAspectRatio="xMidYMid meet"
                     viewBox="0 0 24 24"
                     className={cl("icon", { "icon-active": isActive })}

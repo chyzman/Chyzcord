@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import {Flex} from "@components/Flex";
-import {findByCodeLazy} from "@webpack";
-import {Button, useEffect} from "@webpack/common";
+import { Flex } from "@components/Flex";
+import { findComponentByCodeLazy } from "@webpack";
+import { Button, useEffect } from "@webpack/common";
 
-import {useAuthorizationStore} from "../../lib/stores/AuthorizationStore";
-import {useCurrentUserDecorationsStore} from "../../lib/stores/CurrentUserDecorationsStore";
-import {cl} from "../";
-import {openChangeDecorationModal} from "../modals/ChangeDecorationModal";
+import { useAuthorizationStore } from "../../lib/stores/AuthorizationStore";
+import { useCurrentUserDecorationsStore } from "../../lib/stores/CurrentUserDecorationsStore";
+import { cl } from "../";
+import { openChangeDecorationModal } from "../modals/ChangeDecorationModal";
 
-const CustomizationSection = findByCodeLazy(".customizationSectionBackground");
+const CustomizationSection = findComponentByCodeLazy(".customizationSectionBackground");
 
 export interface DecorSectionProps {
     hideTitle?: boolean;
@@ -21,9 +21,9 @@ export interface DecorSectionProps {
     noMargin?: boolean;
 }
 
-export default function DecorSection({hideTitle = false, hideDivider = false, noMargin = false}: DecorSectionProps) {
+export default function DecorSection({ hideTitle = false, hideDivider = false, noMargin = false }: DecorSectionProps) {
     const authorization = useAuthorizationStore();
-    const {selectedDecoration, select: selectDecoration, fetch: fetchDecorations} = useCurrentUserDecorationsStore();
+    const { selectedDecoration, select: selectDecoration, fetch: fetchDecorations } = useCurrentUserDecorationsStore();
 
     useEffect(() => {
         if (authorization.isAuthorized()) fetchDecorations();
