@@ -55,7 +55,7 @@ interface ContextMenuProps {
 }
 
 const ArrowsLeftRightIcon = findComponentByCodeLazy("18.58V3a1");
-const XSmallIcon = findComponentByCodeLazy("12l4.94-4.94a1.5")
+const XSmallIcon = findComponentByCodeLazy("12l4.94-4.94a1.5");
 
 function MakeContextCallback(name: "user" | "channel"): NavContextMenuPatchCallback {
     return (children, { user, channel, guildId }: ContextMenuProps) => {

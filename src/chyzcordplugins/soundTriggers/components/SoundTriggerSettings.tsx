@@ -7,8 +7,9 @@
 import "./styles.css";
 
 import { Flex } from "@components/Flex";
+import { copyToClipboard } from "@utils/clipboard";
 import { openModal } from "@utils/modal";
-import { Button, Clipboard, Forms } from "@webpack/common";
+import { Button, Forms } from "@webpack/common";
 
 import { classFactory, settings } from "../index";
 import { successToast } from "../util";
@@ -46,7 +47,7 @@ export function SoundTriggerSettings() {
                         disabled={!settingsExist}
                         onClick={() => {
                             const json = JSON.stringify(settings.store.soundTriggers);
-                            Clipboard.copy(json);
+                            copyToClipboard(json);
                             successToast("Sound triggers exported and copied to clipboard.");
                         }}>
                         Export
