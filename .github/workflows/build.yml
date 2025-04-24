@@ -1,71 +1,62 @@
-name: Release
+name: Test
 on:
     push:
         branches:
             - main
             - dev
-env:
-    FORCE_COLOR: true
-    GITHUB_TOKEN: ${{ secrets.ETOKEN }}
+    pull_request:
+        branches:
+            - main
+            - dev
 
 jobs:
-    Build:
-        name: Build Equicord
-        runs-on: self-hosted
+    Test:
+        name: Test For Pushes
+        if: ${{ github.event_name == 'push' }}
+        runs-on: ubuntu-latest
 
         steps:
-            -   uses: actions/checkout@v4
+            - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v3 # Install pnpm using packageManager key in package.json
 
-            -   uses: pnpm/action-setup@v3 # Install pnpm using packageManager key in package.json
+            - name: Use Node.js 20
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: "pnpm"
 
-            -   name: Use Node.js 20
-                uses: actions/setup-node@v4
-                with:
-                    node-version: 20
-                    cache: "pnpm"
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
 
-            -   name: Install dependencies
-                run: pnpm install --frozen-lockfile
+            - name: Lint & Test if desktop version compiles
+              run: pnpm test
 
-            -   name: Build web
-                run: pnpm buildWebStandalone
+            - name: Test if web version compiles
+              run: pnpm buildWeb
 
-            -   name: Build
-                run: pnpm buildStandalone
+            - name: Test if plugin structure is valid
+              run: pnpm generatePluginJson
 
-            -   name: Collect files to be released
-                run: |
-                    cd dist
-                    mkdir release
+    TestForPRs:
+        name: Test For Pull Requests
+        if: ${{ github.event_name == 'pull_request' }}
+        runs-on: ubuntu-latest
 
-                    cp browser/browser.* release
-                    cp Vencord.user.{js,js.LEGAL.txt} release
+        steps:
+            - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v3 # Install pnpm using packageManager key in package.json
 
-                    # copy the extension zips and the desktop/vesktop asars
-                    cp *.{zip,asar} release
+            - name: Use Node.js 20
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: "pnpm"
 
-                    # legacy un-asared files
-                    # FIXME: remove at some point
-                    cp desktop/* release
-                    for file in vesktop/*; do
-                      filename=$(basename "$file")
-                      cp "$file" "release/vencordDesktop${filename^}"
-                    done
-                    for file in equibop/*; do
-                      filename=$(basename "$file")
-                      cp "$file" "release/equicordDesktop${filename^}"
-                    done
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
 
-                    find release -size 0 -delete
-                    rm release/package.json
-                    rm release/*.map
+            - name: Lint & Test if desktop version compiles
+              run: pnpm test
 
-            -   name: Upload Chyzcord Stable
-                if: ${{ github.ref_name == 'main' }}
-                run: |
-                    gh release upload latest --clobber dist/release/*
-
-            -   name: Upload Chyzcord Dev
-                if: ${{ github.ref_name == 'dev' }}
-                run: |
-                    gh release upload devbuild --clobber dist/release/*
+            - name: Test if web version compiles
+              run: pnpm buildWeb

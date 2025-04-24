@@ -16,6 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import "./sidebarFix.css";
+
 import { definePluginSettings } from "@api/Settings";
 import { Devs } from "@utils/constants";
 import { getIntlMessage } from "@utils/discord";
@@ -104,7 +106,7 @@ export const settings = definePluginSettings({
     }
 });
 
-let cssMade = false;
+const cssMade = false;
 
 const cssElementId = "VC-BetterFolders";
 
@@ -122,27 +124,42 @@ export default definePlugin({
             replacement: [
                 // Create the isBetterFolders variable in the GuildsBar component
                 {
-                    match: /let{disableAppDownload:\i=\i\.isPlatformEmbedded,isOverlay:.+?(?=}=\i,)/,
+                    match: /let{disableAppDownload:\i=\i\.isPlatformEmbedded,isOverlay:.+?(?=}=\i,)/g,
                     replace: "$&,isBetterFolders"
                 },
                 // If we are rendering the Better Folders sidebar, we filter out guilds that are not in folders and unexpanded folders
                 {
-                    match: /\[(\i)\]=(\(0,\i\.\i\).{0,40}getGuildsTree\(\).+?}\))(?=,)/,
+                    match: /\[(\i)\]=(\(0,\i\.\i\).{0,40}getGuildsTree\(\).+?}\))(?=,)/g,
                     replace: (_, originalTreeVar, rest) => `[betterFoldersOriginalTree]=${rest},${originalTreeVar}=$self.getGuildTree(!!arguments[0]?.isBetterFolders,betterFoldersOriginalTree,arguments[0]?.betterFoldersExpandedIds)`
                 },
                 // If we are rendering the Better Folders sidebar, we filter out everything but the servers and folders from the GuildsBar Guild List children
                 {
-                    match: /lastTargetNode:\i\[\i\.length-1\].+?}\)(?::null)?\](?=}\))/,
+                    match: /lastTargetNode:\i\[\i\.length-1\].+?}\)(?::null)?\](?=}\))/g,
                     replace: "$&.filter($self.makeGuildsBarGuildListFilter(!!arguments[0]?.isBetterFolders))"
                 },
                 // If we are rendering the Better Folders sidebar, we filter out everything but the scroller for the guild list from the GuildsBar Tree children
+                // As of now, this is just the unread indicator at the bottom
+                // Discord has two different sidebars controlled by an experiment
+                // only the second one needs this filter
                 {
-                    match: /unreadMentionsIndicatorBottom,.+?}\)\]/,
+                    match: /topSection.+?unreadMentionsIndicatorBottom,.+?}\)\]/,
                     replace: "$&.filter($self.makeGuildsBarTreeFilter(!!arguments[0]?.isBetterFolders))"
+                },
+                // With one of the sidebar versions, there is a sticky top bar. Don't render it if we are rendering the Better Folders sidebar
+                {
+                    // [^0] to not match any other JSX call
+                    match: /(?=\(0,\i\.jsxs?\)[^0]+\.topSection)/,
+                    replace: "!!arguments[0]?.isBetterFolders?null:"
+                },
+                // Don't render the tiny separator line at the top of the Better Folders sidebar
+                // Only needed with the sidebar variant with the sticky top bar
+                {
+                    match: /(?=\(0,\i\.jsxs?\)[^0]+fullWidth:)/,
+                    replace: "!!arguments[0]?.isBetterFolders?null:"
                 },
                 // Export the isBetterFolders variable to the folders component
                 {
-                    match: /switch\(\i\.type\){case \i\.\i\.FOLDER:.+?folderNode:\i,/,
+                    match: /switch\(\i\.type\){case \i\.\i\.FOLDER:.+?folderNode:\i,/g,
                     replace: '$&isBetterFolders:typeof isBetterFolders!=="undefined"?isBetterFolders:false,'
                 }
             ]
@@ -202,6 +219,13 @@ export default definePlugin({
                     predicate: () => settings.store.showFolderIcon !== FolderIconDisplay.Always,
                     match: /(?<=\.expandedFolderBackground.+?}\),)(?=\i,)/,
                     replace: "!$self.shouldShowFolderIconAndBackground(!!arguments[0]?.isBetterFolders,arguments[0]?.betterFoldersExpandedIds)?null:"
+                },
+                {
+                    // Discord adds a slight bottom margin of 4px when it's expanded
+                    // Which looks off when there's nothing open in the folder
+                    predicate: () => !settings.store.keepIcons,
+                    match: /(?=className:.{0,50}folderIcon)/,
+                    replace: "style:arguments[0]?.isBetterFolders?{}:{marginBottom:0},"
                 }
             ]
         },
@@ -212,12 +236,17 @@ export default definePlugin({
             replacement: [
                 {
                     // Render the Better Folders sidebar
+                    // Discord has two different places where they render the sidebar.
+                    // One is for visual refresh, one is not,
+                    // and each has a bunch of conditions &&ed in front of it.
+                    // Add the betterFolders sidebar to both, keeping the conditions Discord uses.
                     match: /(?<=[[,])((?:!?\i&&)+)\(.{0,50}({className:\i\.guilds,themeOverride:\i})\)/g,
-                    replace: (_, conditions, props) => `${_},${conditions}$self.FolderSideBar({...${props}})`
+                    replace: (m, conditions, props) => `${m},${conditions}$self.FolderSideBar(${props})`
                 },
                 {
+                    // Add grid styles to fix aligment with other visual refresh elements
                     match: /(?<=className:)(\i\.base)(?=,)/,
-                    replace: "($self.makePatchedBaseCSS($1))"
+                    replace: "`${$self.gridStyle} ${$1}`"
                 }
             ]
         },
@@ -276,46 +305,7 @@ export default definePlugin({
         }
     },
 
-    gridStyle: "vc-BetterFolders-sidebar-grid",
-    makePatchedBaseCSS(className: string) {
-        done: try {
-            if (cssMade) break done;
-            const rule = [...document.styleSheets]
-                .flatMap(x => [...x.cssRules])
-                // cant do includes because they have a `not ((grid-template-columns`
-                // dumb type inference
-                .filter((x): x is CSSSupportsRule => x instanceof CSSSupportsRule && x.conditionText.startsWith("(grid-template-columns"))
-                .flatMap(x => [...x.cssRules])
-                .filter(x => x instanceof CSSStyleRule)
-                .find(x => x.selectorText.endsWith(`.${className}`));
-            if (!rule) {
-                console.error("Failed to find css rule for betterFolders");
-                break done;
-            }
-            const areas = rule.style.gridTemplateAreas
-                .split('" "')
-                .map(x => x.replace(/"/g, "").split(" "));
-            areas[0].splice(1, 0, areas[0][0]);
-            areas[1].splice(1, 0, "sidebar");
-            areas[2].splice(1, 0, "sidebar");
-            const css = `
-            .visual-refresh .${this.gridStyle} {
-                grid-template-areas: ${areas.map(x => `"${x.join(" ")}"`).join(" ")};
-                grid-template-columns: ${rule.style.gridTemplateColumns.replace(/(?<=guildsEnd\])/, " min-content [sidebarEnd]")};
-            }
-            `;
-            const element = document.createElement("style");
-            element.id = cssElementId;
-            element.textContent = css;
-            document.getElementById(cssElementId)?.remove();
-            document.head.appendChild(element);
-            cssMade = true;
-        } catch (e) {
-            console.error(e);
-            return className;
-        }
-        return `${className} ${this.gridStyle}`;
-    },
+    gridStyle: "vc-betterFolders-sidebar-grid",
 
     getGuildTree(isBetterFolders: boolean, originalTree: any, expandedFolderIds?: Set<any>) {
         return useMemo(() => {
@@ -352,13 +342,7 @@ export default definePlugin({
         return child => {
             if (!isBetterFolders) return true;
 
-            if (child?.props?.className?.includes("itemsContainer") && child.props.children != null) {
-                // Filter out everything but the scroller for the guild list
-                child.props.children = child.props.children.filter(child => child?.props?.onScroll != null);
-                return true;
-            }
-
-            return false;
+            return child?.props?.className?.includes("itemsContainer") && child.props.children != null;
         };
     },
 

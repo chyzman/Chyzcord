@@ -7,9 +7,7 @@
 import "./styles.css";
 
 import { classNameFactory } from "@api/Styles";
-import { proxyLazy } from "@utils/lazy";
 import { findComponentByCodeLazy } from "@webpack";
-import { Forms } from "@webpack/common";
 import { ComponentType, HTMLAttributes } from "react";
 
 export enum SpinnerTypes {
@@ -32,7 +30,7 @@ type Spinner = ComponentType<Omit<HTMLAttributes<HTMLDivElement>, "children"> & 
 };
 
 // https://github.com/Kyuuhachi/VencordPlugins/blob/main/MessageLinkTooltip/index.tsx#L11-L33
-export const Spinner = findComponentByCodeLazy('"pulsingEllipsis"') as Spinner;
+export const Spinner = findComponentByCodeLazy('"pulsingEllipsis"') as unknown as Spinner;
 
 export const QrCodeIcon = findComponentByCodeLazy("0v3ZM20");
 
