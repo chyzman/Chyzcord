@@ -63,60 +63,60 @@ function ChyzcordSettings() {
         key: KeysOfType<typeof settings, boolean>;
         title: string;
         note: string;
-        warning: { enabled: boolean; message?: string };
-      }
-  > = [
-    {
-      key: "useQuickCss",
-      title: "Enable Custom CSS",
-      note: "Loads your Custom CSS",
-      warning: { enabled: false },
-    },
-    !IS_WEB && {
-      key: "enableReactDevtools",
-      title: "Enable React Developer Tools",
-      note: "Requires a full restart",
-      warning: { enabled: false },
-    },
-    !IS_WEB &&
-      (!IS_DISCORD_DESKTOP || !isWindows
-        ? {
-            key: "frameless",
-            title: "Disable the window frame",
-            note: "Requires a full restart",
-            warning: { enabled: false },
-          }
-        : {
-            key: "winNativeTitleBar",
-            title:
-              "Use Windows' native title bar instead of Discord's custom one",
-            note: "Requires a full restart",
-            warning: { enabled: false },
-          }),
-    !IS_WEB && {
-      key: "transparent",
-      title: "Enable window transparency.",
-      note: "You need a theme that supports transparency or this will do nothing. Requires a full restart!",
-      warning: {
-        enabled: isWindows,
-        message: "Enabling this will prevent you from snapping this window.",
-      },
-    },
-    !IS_WEB &&
-      isWindows && {
-        key: "winCtrlQ",
-        title:
-          "Register Ctrl+Q as shortcut to close Discord (Alternative to Alt+F4)",
-        note: "Requires a full restart",
-        warning: { enabled: false },
-      },
-    IS_DISCORD_DESKTOP && {
-      key: "disableMinSize",
-      title: "Disable minimum window size",
-      note: "Requires a full restart",
-      warning: { enabled: false },
-    },
-  ];
+        warning: { enabled: boolean; message?: string; };
+    }
+    > = [
+            {
+                key: "useQuickCss",
+                title: "Enable Custom CSS",
+                note: "Loads your Custom CSS",
+                warning: { enabled: false },
+            },
+            !IS_WEB && {
+                key: "enableReactDevtools",
+                title: "Enable React Developer Tools",
+                note: "Requires a full restart",
+                warning: { enabled: false },
+            },
+            !IS_WEB &&
+            (!IS_DISCORD_DESKTOP || !isWindows
+                ? {
+                    key: "frameless",
+                    title: "Disable the Window Frame",
+                    note: "Requires a full restart",
+                    warning: { enabled: false },
+                }
+                : {
+                    key: "winNativeTitleBar",
+                    title:
+                        "Use Windows' native title bar instead of Discord's custom one",
+                    note: "Requires a full restart",
+                    warning: { enabled: false },
+                }),
+            !IS_WEB && {
+                key: "transparent",
+                title: "Enable Window Transparency",
+                note: "You need a theme that supports transparency or this will do nothing. Requires a full restart!",
+                warning: {
+                    enabled: isWindows,
+                    message: "Enabling this will prevent you from snapping this window.",
+                },
+            },
+            !IS_WEB &&
+            isWindows && {
+                key: "winCtrlQ",
+                title:
+                    "Register Ctrl+Q as shortcut to close Discord (Alternative to Alt+F4)",
+                note: "Requires a full restart",
+                warning: { enabled: false },
+            },
+            IS_DISCORD_DESKTOP && {
+                key: "disableMinSize",
+                title: "Disable Minimum Window Size",
+                note: "Requires a full restart",
+                warning: { enabled: false },
+            },
+        ];
 
     return (
         <SettingsTab title="Chyzcord Settings">

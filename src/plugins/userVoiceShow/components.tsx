@@ -111,7 +111,7 @@ function VoiceChannelTooltip({ channel, isLocked }: VoiceChannelTooltipProps) {
                     <Text variant="text-sm/bold">{guild.name}</Text>
                 </div>
             )}
-           <div className={cl("name2")} style={{ display: "flex", alignItems: "center" }}>
+            <div className={cl("name2")} style={{ display: "flex", alignItems: "center" }}>
                 {channelIcon}
                 <Text variant="text-sm/semibold">
                     {channelName}
@@ -156,8 +156,10 @@ function VoiceChannelTooltip({ channel, isLocked }: VoiceChannelTooltipProps) {
     );
 }
 
-export interface VoiceChannelIndicatorProps {
+interface VoiceChannelIndicatorProps {
     userId: string;
+    isMessageIndicator?: boolean;
+    isProfile?: boolean;
     isActionButton?: boolean;
     shouldHighlight?: boolean;
 }

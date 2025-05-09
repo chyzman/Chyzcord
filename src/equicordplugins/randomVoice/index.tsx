@@ -11,8 +11,8 @@ import { makeRange } from "@components/PluginSettings/components";
 import { debounce } from "@shared/debounce";
 import { EquicordDevs } from "@utils/constants";
 import definePlugin, { OptionType } from "@utils/types";
-import { findByCode, findByProps,findByPropsLazy, findComponentByCodeLazy, findStoreLazy } from "@webpack";
-import { ChannelRouter, ChannelStore, ContextMenuApi, GuildStore, IconUtils, Menu, PermissionsBits, PermissionStore, React, SelectedChannelStore, Toasts, UserStore } from "@webpack/common";
+import { findByCode, findByProps, findByPropsLazy, findComponentByCodeLazy, findStoreLazy } from "@webpack";
+import { ChannelRouter, ChannelStore, ContextMenuApi, GuildStore, Menu, PermissionsBits, PermissionStore, React, SelectedChannelStore, Toasts, UserStore } from "@webpack/common";
 
 import style from "./styles.css?managed";
 
@@ -177,7 +177,7 @@ export default definePlugin({
         }
     ],
     flux: {
-        VOICE_STATE_UPDATES({ voiceStates }: { voiceStates: VoiceState[] }) {
+        VOICE_STATE_UPDATES({ voiceStates }: { voiceStates: VoiceState[]; }) {
             const currentUserId = UserStore.getCurrentUser().id;
             const myChannelId = VoiceStateStore.getVoiceStateForUser(currentUserId)?.channelId;
             if (!myChannelId || !settings.store.leaveEmpty) return;
