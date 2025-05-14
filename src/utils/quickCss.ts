@@ -18,6 +18,7 @@
 
 import { Settings, SettingsStore } from "@api/Settings";
 import { findByCodeLazy } from "@webpack";
+import {ThemeStore} from "@webpack/common";
 
 let style: HTMLStyleElement;
 let themesStyle: HTMLStyleElement;
