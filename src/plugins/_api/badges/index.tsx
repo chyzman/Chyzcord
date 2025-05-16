@@ -19,10 +19,7 @@
 import "./fixDiscordBadgePadding.css";
 
 import { _getBadges, BadgePosition, BadgeUserArgs, ProfileBadge } from "@api/Badges";
-import DonateButton, { VCDonateButton } from "@components/DonateButton";
 import ErrorBoundary from "@components/ErrorBoundary";
-import { Flex } from "@components/Flex";
-import { Heart } from "@components/Heart";
 import { openContributorModal } from "@components/PluginSettings/ContributorModal";
 import { isEquicordDonor } from "@components/VencordSettings/VencordTab";
 import { ChyzcordDevs,Devs} from "@utils/constants";
@@ -31,8 +28,10 @@ import { Margins } from "@utils/margins";
 import { isChyzcordPluginDev, isEquicordPluginDev, isPluginDev } from "@utils/misc";
 import { closeModal, ModalContent, ModalFooter, ModalHeader, ModalRoot, openModal } from "@utils/modal";
 import definePlugin from "@utils/types";
-import { Forms, Toasts, UserStore } from "@webpack/common";
+import { Toasts, UserStore } from "@webpack/common";
 import { User } from "discord-types/general";
+
+import { EquicordDonorModal, VencordDonorModal } from "./modals";
 
 const CONTRIBUTOR_BADGE = "https://vencord.dev/assets/favicon.png";
 const EQUICORD_CONTRIBUTOR_BADGE = "https://i.imgur.com/57ATLZu.png";
@@ -43,16 +42,16 @@ const ContributorBadge: ProfileBadge = {
     description: "Vencord Contributor",
     image: CONTRIBUTOR_BADGE,
     position: BadgePosition.START,
-    shouldShow: ({userId}) => isPluginDev(userId),
-    onClick: (_, {userId}) => openContributorModal(UserStore.getUser(userId))
+    shouldShow: ({ userId }) => isPluginDev(userId),
+    onClick: (_, { userId }) => openContributorModal(UserStore.getUser(userId))
 };
 
 const EquicordContributorBadge: ProfileBadge = {
     description: "Equicord Contributor",
     image: EQUICORD_CONTRIBUTOR_BADGE,
     position: BadgePosition.START,
-    shouldShow: ({userId}) => isEquicordPluginDev(userId),
-    onClick: (_, {userId}) => openContributorModal(UserStore.getUser(userId))
+    shouldShow: ({ userId }) => isEquicordPluginDev(userId),
+    onClick: (_, { userId }) => openContributorModal(UserStore.getUser(userId))
 };
 
 const EquicordDonorBadge: ProfileBadge = {
@@ -63,6 +62,9 @@ const EquicordDonorBadge: ProfileBadge = {
         const donorBadges = EquicordDonorBadges[userId]?.map(badge => badge.badge);
         const hasDonorBadge = donorBadges?.includes("https://cdn.nest.rip/uploads/78cb1e77-b7a6-4242-9089-e91f866159bf.png");
         return isEquicordDonor(userId) && !hasDonorBadge;
+    },
+    onClick: () => {
+        return EquicordDonorModal();
     }
 };
 
@@ -95,6 +97,7 @@ async function loadAllBadges(noCache = false) {
     ChyzcordDonorBadges = chyzcordBadges;
 }
 
+let intervalId: any;
 
 export default definePlugin({
     name: "BadgeAPI",
@@ -129,6 +132,15 @@ export default definePlugin({
         }
     ],
 
+    // for access from the console or other plugins
+    get DonorBadges() {
+        return DonorBadges;
+    },
+
+    get EquicordDonorBadges() {
+        return EquicordDonorBadges;
+    },
+
     toolboxActions: {
         async "Refetch Badges"() {
             await loadAllBadges(true);
@@ -140,6 +152,8 @@ export default definePlugin({
         }
     },
 
+    userProfileBadges: [ContributorBadge, EquicordContributorBadge, EquicordDonorBadge],
+
     async start() {
         Vencord.Api.Badges.addProfileBadge(ContributorBadge);
         Vencord.Api.Badges.addProfileBadge(EquicordContributorBadge);
@@ -147,6 +161,12 @@ export default definePlugin({
 
         Vencord.Api.Badges.addProfileBadge(EquicordDonorBadge);
         await loadAllBadges();
+        clearInterval(intervalId);
+        intervalId = setInterval(loadAllBadges, 1000 * 60 * 30); // 30 minutes
+    },
+
+    async stop() {
+        clearInterval(intervalId);
     },
 
     getBadges(props: { userId: string; user?: User; guildId: string; }) {
@@ -180,59 +200,7 @@ export default definePlugin({
                 }
             },
             onClick() {
-                const modalKey = openModal(props => (
-                    <ErrorBoundary noop onError={() => {
-                        closeModal(modalKey);
-                        VencordNative.native.openExternal("https://github.com/sponsors/Vendicated");
-                    }}>
-                        <ModalRoot {...props}>
-                            <ModalHeader>
-                                <Flex style={{ width: "100%", justifyContent: "center" }}>
-                                    <Forms.FormTitle
-                                        tag="h2"
-                                        style={{
-                                            width: "100%",
-                                            textAlign: "center",
-                                            margin: 0
-                                        }}
-                                    >
-                                        <Heart />
-                                        Vencord Donor
-                                    </Forms.FormTitle>
-                                </Flex>
-                            </ModalHeader>
-                            <ModalContent>
-                                <Flex>
-                                    <img
-                                        role="presentation"
-                                        src="https://cdn.discordapp.com/emojis/1026533070955872337.png"
-                                        alt=""
-                                        style={{ margin: "auto" }}
-                                    />
-                                    <img
-                                        role="presentation"
-                                        src="https://cdn.discordapp.com/emojis/1026533090627174460.png"
-                                        alt=""
-                                        style={{ margin: "auto" }}
-                                    />
-                                </Flex>
-                                <div style={{ padding: "1em" }}>
-                                    <Forms.FormText>
-                                        This Badge is a special perk for Vencord Donors
-                                    </Forms.FormText>
-                                    <Forms.FormText className={Margins.top20}>
-                                        Please consider supporting the development of Vencord by becoming a donor. It would mean a lot!
-                                    </Forms.FormText>
-                                </div>
-                            </ModalContent>
-                            <ModalFooter>
-                                <Flex style={{ width: "100%", justifyContent: "center" }}>
-                                    <VCDonateButton />
-                                </Flex>
-                            </ModalFooter>
-                        </ModalRoot>
-                    </ErrorBoundary>
-                ));
+                return VencordDonorModal();
             },
         }));
     },
@@ -249,60 +217,7 @@ export default definePlugin({
                 }
             },
             onClick() {
-                const modalKey = openModal(props => (
-                    <ErrorBoundary noop onError={() => {
-                        closeModal(modalKey);
-                        // Will get my own in the future
-                        VencordNative.native.openExternal("https://github.com/sponsors/Vendicated");
-                    }}>
-                        <ModalRoot {...props}>
-                            <ModalHeader>
-                                <Flex style={{ width: "100%", justifyContent: "center" }}>
-                                    <Forms.FormTitle
-                                        tag="h2"
-                                        style={{
-                                            width: "100%",
-                                            textAlign: "center",
-                                            margin: 0
-                                        }}
-                                    >
-                                        <Heart />
-                                        Equicord Donor
-                                    </Forms.FormTitle>
-                                </Flex>
-                            </ModalHeader>
-                            <ModalContent>
-                                <Flex>
-                                    <img
-                                        role="presentation"
-                                        src="https://cdn.discordapp.com/emojis/1026533070955872337.png"
-                                        alt=""
-                                        style={{ margin: "auto" }}
-                                    />
-                                    <img
-                                        role="presentation"
-                                        src="https://cdn.discordapp.com/emojis/1026533090627174460.png"
-                                        alt=""
-                                        style={{ margin: "auto" }}
-                                    />
-                                </Flex>
-                                <div style={{ padding: "1em" }}>
-                                    <Forms.FormText>
-                                        This Badge is a special perk for Equicord (Not Vencord) Donors
-                                    </Forms.FormText>
-                                    <Forms.FormText className={Margins.top20}>
-                                        Please consider supporting the development of Equicord by becoming a donor. It would mean a lot! :3
-                                    </Forms.FormText>
-                                </div>
-                            </ModalContent>
-                            <ModalFooter>
-                                <Flex style={{ width: "100%", justifyContent: "center" }}>
-                                    <DonateButton />
-                                </Flex>
-                            </ModalFooter>
-                        </ModalRoot>
-                    </ErrorBoundary>
-                ));
+                return EquicordDonorModal();
             },
         }));
     },
