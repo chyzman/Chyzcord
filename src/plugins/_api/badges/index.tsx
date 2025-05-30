@@ -27,6 +27,7 @@ import { Logger } from "@utils/Logger";
 import { Margins } from "@utils/margins";
 import { isChyzcordPluginDev, isEquicordPluginDev, isPluginDev } from "@utils/misc";
 import { closeModal, ModalContent, ModalFooter, ModalHeader, ModalRoot, openModal } from "@utils/modal";
+import { shouldShowContributorBadge, shouldShowEquicordContributorBadge } from "@utils/misc";
 import definePlugin from "@utils/types";
 import { Toasts, UserStore } from "@webpack/common";
 import { User } from "discord-types/general";
@@ -42,7 +43,7 @@ const ContributorBadge: ProfileBadge = {
     description: "Vencord Contributor",
     image: CONTRIBUTOR_BADGE,
     position: BadgePosition.START,
-    shouldShow: ({ userId }) => isPluginDev(userId),
+    shouldShow: ({ userId }) => shouldShowContributorBadge(userId),
     onClick: (_, { userId }) => openContributorModal(UserStore.getUser(userId))
 };
 
@@ -50,7 +51,7 @@ const EquicordContributorBadge: ProfileBadge = {
     description: "Equicord Contributor",
     image: EQUICORD_CONTRIBUTOR_BADGE,
     position: BadgePosition.START,
-    shouldShow: ({ userId }) => isEquicordPluginDev(userId),
+    shouldShow: ({ userId }) => shouldShowEquicordContributorBadge(userId),
     onClick: (_, { userId }) => openContributorModal(UserStore.getUser(userId))
 };
 
@@ -89,7 +90,7 @@ async function loadBadges(url: string, noCache = false) {
 
 async function loadAllBadges(noCache = false) {
     const vencordBadges = await loadBadges("https://badges.vencord.dev/badges.json", noCache);
-    const equicordBadges = await loadBadges("https://equicord.org/badges", noCache);
+    const equicordBadges = await loadBadges("https://equicord.org/badges.json", noCache);
     const chyzcordBadges = await loadBadges("https://raw.githubusercontent.com/chyzman/Chyzcord/main/badges.json", noCache);
 
     DonorBadges = vencordBadges;
@@ -141,6 +142,10 @@ export default definePlugin({
         return EquicordDonorBadges;
     },
 
+    get ChyzcordDonorBadges() {
+        return ChyzcordDonorBadges;
+    },
+
     toolboxActions: {
         async "Refetch Badges"() {
             await loadAllBadges(true);
@@ -155,11 +160,6 @@ export default definePlugin({
     userProfileBadges: [ContributorBadge, EquicordContributorBadge, EquicordDonorBadge],
 
     async start() {
-        Vencord.Api.Badges.addProfileBadge(ContributorBadge);
-        Vencord.Api.Badges.addProfileBadge(EquicordContributorBadge);
-        Vencord.Api.Badges.addProfileBadge(ChyzcordContributorBadge);
-
-        Vencord.Api.Badges.addProfileBadge(EquicordDonorBadge);
         await loadAllBadges();
         clearInterval(intervalId);
         intervalId = setInterval(loadAllBadges, 1000 * 60 * 30); // 30 minutes
@@ -219,22 +219,6 @@ export default definePlugin({
             onClick() {
                 return EquicordDonorModal();
             },
-        }));
-    },
-
-    getChyzcordDonorBadges(userId: string) {
-        return ChyzcordDonorBadges[userId]?.map(badge => ({
-            image: badge.badge,
-            description: badge.tooltip,
-            position: BadgePosition.START,
-            props: {
-                style: {
-                    borderRadius: "50%",
-                    transform: "scale(0.9)" // The image is a bit too big compared to default badges
-                }
-            },
-            onClick() {
-            }
         }));
     }
 });

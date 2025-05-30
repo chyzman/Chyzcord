@@ -149,7 +149,7 @@ export default definePlugin({
                                 }}
                             />
                             <HeaderBarIcon
-                                icon={() => (<XSmallIcon style={{width: "24px",height: "24px"}} />)}
+                                icon={() => (<XSmallIcon style={{ width: "24px",height: "24px" }} />)}
                                 tooltip="Close Sidebar Chat"
                                 onClick={() => {
                                     FluxDispatcher.dispatch({

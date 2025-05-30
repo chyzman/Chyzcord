@@ -347,6 +347,10 @@ export const EquicordDevs = Object.freeze({
     Skully: {name: "Skully", id: 150298098516754432n},
     Buzzy: {name: "Buzzy", id: 1273353654644117585n},
     Reycko: {name: "Reycko", id: 1123725368004726794n},
+    Campfire: {name: "Campfire", id: 376414446840578081n,},
+    Cootshk: {name: "Cootshk", id: 921605971577548820n,},
+    sliwka: {name: "sliwka", id: 1165286199628419129n,},
+    bbgaming25k: {name: "bbgaming25k", id: 851222385528274964n,},
 } satisfies Record<string, Dev>);
 
 export const ChyzcordDevs = Object.freeze({
