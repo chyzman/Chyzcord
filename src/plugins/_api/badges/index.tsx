@@ -24,10 +24,7 @@ import { openContributorModal } from "@components/PluginSettings/ContributorModa
 import { isEquicordDonor } from "@components/VencordSettings/VencordTab";
 import { ChyzcordDevs,Devs} from "@utils/constants";
 import { Logger } from "@utils/Logger";
-import { Margins } from "@utils/margins";
-import { isChyzcordPluginDev, isEquicordPluginDev, isPluginDev } from "@utils/misc";
-import { closeModal, ModalContent, ModalFooter, ModalHeader, ModalRoot, openModal } from "@utils/modal";
-import { shouldShowContributorBadge, shouldShowEquicordContributorBadge } from "@utils/misc";
+import { isChyzcordPluginDev, isEquicordPluginDev, isPluginDev, shouldShowContributorBadge, shouldShowEquicordContributorBadge } from "@utils/misc";
 import definePlugin from "@utils/types";
 import { Toasts, UserStore } from "@webpack/common";
 import { User } from "discord-types/general";

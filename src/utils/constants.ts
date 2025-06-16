@@ -227,7 +227,7 @@ export const Devs = /* #__PURE__*/ Object.freeze({
     rattles: {name: "Rattles", id: 1141097452741591140n},
     zastix: {name: "zastix", id: 253302259696271360n},
     jamesbt365: {name: "jamesbt365", id: 158567567487795200n},
-    samsam: {name: "samsam", id: 836452332387565589n,},
+    samsam: {name: "samsam", id: 836452332387565589n},
     Cootshk: {name: "Cootshk", id: 921605971577548820n},
 } satisfies Record<string, Dev>);
 
@@ -259,6 +259,7 @@ export const EquicordDevs = Object.freeze({
     Combatmaster: {name: "Combatmaster331", id: 790562534503612437n},
     Megal: {name: "Megal", id: 387790666484285441n},
     Woosh: {name: "w00shh.", id: 919239894327521361n},
+    Synth: {name: "synthxcx", id: 934393331562205195n},
     Hanzy: {name: "hanzydev", id: 1093131781043126322n},
     zoodogood: {name: "zoodogood", id: 921403577539387454n},
     Drag: {name: "dragalt_", id: 1189903210564038697n},
@@ -334,7 +335,7 @@ export const EquicordDevs = Object.freeze({
     mochienya: {name: "mochie", id: 1043599230247374869n},
     okiso: {name: "okiso", id: 274178934143451137n},
     port22exposed: {name: "port", id: 1318383159645311009n},
-    PhoenixAceVFX: {name: "PhoenixAceVFX", id: 1016895892055396484n,},
+    PhoenixAceVFX: {name: "PhoenixAceVFX", id: 1016895892055396484n},
     TheArmagan: {name: "TheArmagan", id: 707309693449535599n},
     seth: {name: "S€th", id: 1273447359417942128n},
     SteelTech: {name: "SteelTech", id: 1344190786476183643n},
@@ -348,13 +349,15 @@ export const EquicordDevs = Object.freeze({
     Skully: {name: "Skully", id: 150298098516754432n},
     Buzzy: {name: "Buzzy", id: 1273353654644117585n},
     Reycko: {name: "Reycko", id: 1123725368004726794n},
-    Campfire: {name: "Campfire", id: 376414446840578081n,},
-    Cootshk: {name: "Cootshk", id: 921605971577548820n,},
-    sliwka: {name: "sliwka", id: 1165286199628419129n,},
-    bbgaming25k: {name: "bbgaming25k", id: 851222385528274964n,},
-    davidkra230: {name: "davidkra230", id: 652699312631054356n,},
+    Campfire: {name: "Campfire", id: 376414446840578081n},
+    Cootshk: {name: "Cootshk", id: 921605971577548820n},
+    sliwka: {name: "sliwka", id: 1165286199628419129n},
+    bbgaming25k: {name: "bbgaming25k", id: 851222385528274964n},
+    davidkra230: {name: "davidkra230", id: 652699312631054356n},
     GroupXyz: {name: "GroupXyz", id: 950033410229944331n},
     Suffocate: {name: "Suffocate", id: 772601756776923187n},
+    RedBaron2k7: {name: "redbaron2k7", id: 1142923640778797157n},
+    Antipollyanna: {name: "antipollyanna", id: 1297622889473904642n},
 } satisfies Record<string, Dev>);
 
 export const ChyzcordDevs = Object.freeze({
