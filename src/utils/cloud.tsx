@@ -17,25 +17,43 @@
 */
 
 import * as DataStore from "@api/DataStore";
-import {showNotification} from "@api/Notifications";
-import {Settings} from "@api/Settings";
-import {OAuth2AuthorizeModal, UserStore} from "@webpack/common";
+import { showNotification } from "@api/Notifications";
+import { Settings } from "@api/Settings";
+import { Alerts, OAuth2AuthorizeModal, UserStore } from "@webpack/common";
 
-import {Logger} from "./Logger";
-import {openModal} from "./modal";
+import { Logger } from "./Logger";
+import { openModal } from "./modal";
+import { relaunch } from "./native";
 
 export const cloudLogger = new Logger("Cloud", "#39b7e0");
-export const cloudUrl = () => {
-    if (Settings.cloud.url.includes("https://equicord.thororen.com") || Settings.cloud.url.includes("https://cloud.equicord.fyi")) {
-        Settings.cloud.url = "https://cloud.equicord.org";
-        Settings.cloud.authenticated = false;
-        deauthorizeCloud();
-    }
-    return Settings.cloud.url;
-};
-export const getCloudUrl = () => new URL(cloudUrl());
 
-const cloudUrlOrigin = () => getCloudUrl().origin;
+export const getCloudUrl = () => new URL(Settings.cloud.url);
+const getCloudUrlOrigin = () => getCloudUrl().origin;
+
+export async function checkCloudUrlCsp() {
+    if (IS_WEB) return true;
+
+    const { host } = getCloudUrl();
+    if (host === "api.vencord.dev") return true;
+    if (host === "cloud.equicord.org") return true;
+
+    if (await VencordNative.csp.isDomainAllowed(Settings.cloud.url, ["connect-src"])) {
+        return true;
+    }
+
+    const res = await VencordNative.csp.requestAddOverride(Settings.cloud.url, ["connect-src"], "Cloud Sync");
+    if (res === "ok") {
+        Alerts.show({
+            title: "Cloud Integration enabled",
+            body: `${host} has been added to the whitelist. Please restart the app for the changes to take effect.`,
+            confirmText: "Restart now",
+            cancelText: "Later!",
+            onConfirm: relaunch
+        });
+    }
+    return false;
+}
+
 const getUserId = () => {
     const id = UserStore.getCurrentUser()?.id;
     if (!id) throw new Error("User not yet logged in");
@@ -45,7 +63,7 @@ const getUserId = () => {
 export async function getAuthorization() {
     const secrets = await DataStore.get<Record<string, string>>("Vencord_cloudSecret") ?? {};
 
-    const origin = cloudUrlOrigin();
+    const origin = getCloudUrlOrigin();
 
     // we need to migrate from the old format here
     if (secrets[origin]) {
@@ -67,7 +85,7 @@ export async function getAuthorization() {
 async function setAuthorization(secret: string) {
     await DataStore.update<Record<string, string>>("Vencord_cloudSecret", secrets => {
         secrets ??= {};
-        secrets[`${cloudUrlOrigin()}:${getUserId()}`] = secret;
+        secrets[`${getCloudUrlOrigin()}:${getUserId()}`] = secret;
         return secrets;
     });
 }
@@ -75,7 +93,7 @@ async function setAuthorization(secret: string) {
 export async function deauthorizeCloud() {
     await DataStore.update<Record<string, string>>("Vencord_cloudSecret", secrets => {
         secrets ??= {};
-        delete secrets[`${cloudUrlOrigin()}:${getUserId()}`];
+        delete secrets[`${getCloudUrlOrigin()}:${getUserId()}`];
         return secrets;
     });
 }
@@ -86,9 +104,11 @@ export async function authorizeCloud() {
         return;
     }
 
+    if (!await checkCloudUrlCsp()) return;
+
     try {
         const oauthConfiguration = await fetch(new URL("/v1/oauth/settings", getCloudUrl()));
-        var {clientId, redirectUri} = await oauthConfiguration.json();
+        var { clientId, redirectUri } = await oauthConfiguration.json();
     } catch {
         showNotification({
             title: "Cloud Integration",
@@ -106,7 +126,7 @@ export async function authorizeCloud() {
         permissions={0n}
         clientId={clientId}
         cancelCompletesFlow={false}
-        callback={async ({location}: any) => {
+        callback={async ({ location }: any) => {
             if (!location) {
                 Settings.cloud.authenticated = false;
                 return;
@@ -114,9 +134,9 @@ export async function authorizeCloud() {
 
             try {
                 const res = await fetch(location, {
-                    headers: {Accept: "application/json"}
+                    headers: { Accept: "application/json" }
                 });
-                const {secret} = await res.json();
+                const { secret } = await res.json();
                 if (secret) {
                     cloudLogger.info("Authorized with secret");
                     await setAuthorization(secret);

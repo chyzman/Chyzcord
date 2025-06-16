@@ -228,6 +228,7 @@ export const Devs = /* #__PURE__*/ Object.freeze({
     zastix: {name: "zastix", id: 253302259696271360n},
     jamesbt365: {name: "jamesbt365", id: 158567567487795200n},
     samsam: {name: "samsam", id: 836452332387565589n,},
+    Cootshk: {name: "Cootshk", id: 921605971577548820n},
 } satisfies Record<string, Dev>);
 
 export const EquicordDevs = Object.freeze({
@@ -351,6 +352,9 @@ export const EquicordDevs = Object.freeze({
     Cootshk: {name: "Cootshk", id: 921605971577548820n,},
     sliwka: {name: "sliwka", id: 1165286199628419129n,},
     bbgaming25k: {name: "bbgaming25k", id: 851222385528274964n,},
+    davidkra230: {name: "davidkra230", id: 652699312631054356n,},
+    GroupXyz: {name: "GroupXyz", id: 950033410229944331n},
+    Suffocate: {name: "Suffocate", id: 772601756776923187n},
 } satisfies Record<string, Dev>);
 
 export const ChyzcordDevs = Object.freeze({
