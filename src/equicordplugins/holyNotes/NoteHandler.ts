@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { findByCode } from "@webpack";
+import { makeDummyUser } from "@components/PluginSettings/PluginModal";
 import { ChannelStore, lodash, Toasts, UserStore } from "@webpack/common";
 import { Channel, Message } from "discord-types/general";
 
@@ -142,12 +142,10 @@ export default new (class NoteHandler {
     public refreshAvatars = async () => {
         const notebooks = this.getAllNotes();
 
-        const User = findByCode("tag", "isClyde");
-
         for (const notebook in notebooks)
             for (const noteId in notebooks[notebook]) {
                 const note = notebooks[notebook][noteId];
-                const user = UserStore.getUser(note.author.id) ?? new User({ ...note.author });
+                const user = UserStore.getUser(note.author.id) ?? makeDummyUser(note.author);
 
                 Object.assign(notebooks[notebook][noteId].author, {
                     avatar: user.avatar,

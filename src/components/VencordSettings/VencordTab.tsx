@@ -17,7 +17,6 @@ import { DONOR_ROLE_ID, GUILD_ID, VC_DONOR_ROLE_ID, VC_GUILD_ID } from "@utils/c
 import { Margins } from "@utils/margins";
 import { identity, isChyzcordPluginDev, isEquicordPluginDev, isPluginDev } from "@utils/misc";
 import { relaunch, showItemInFolder } from "@utils/native";
-import { useAwaiter } from "@utils/react";
 import { Button, Forms, GuildMemberStore, React, Select, Switch, UserStore } from "@webpack/common";
 
 import BadgeAPI from "../../plugins/_api/badges";
@@ -43,9 +42,6 @@ type KeysOfType<Object, Type> = {
 }[keyof Object];
 
 function ChyzcordSettings() {
-    const [settingsDir, , settingsDirPending] = useAwaiter(VencordNative.settings.getSettingsDir, {
-        fallbackValue: "Loading..."
-    });
     const settings = useSettings();
 
     const donateImage = React.useMemo(
@@ -183,7 +179,7 @@ function ChyzcordSettings() {
                         <QuickAction
                             Icon={FolderIcon}
                             text="Open Settings Folder"
-                            action={() => showItemInFolder(settingsDir)}
+                            action={() => VencordNative.settings.openFolder()}
                         />
                     )}
                     <QuickAction
