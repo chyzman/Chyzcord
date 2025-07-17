@@ -36,7 +36,7 @@ function ServerInfoComponent(props) {
 }
 
 export function GuildPruneModal(props) {
-    const joinedServers = Object.values(GuildStore.getGuilds()).filter(e => !e.isOwner(UserStore.getCurrentUser()));
+    const joinedServers = Object.values(GuildStore.getGuilds()).filter(e => e.ownerId !== UserStore.getCurrentUser().id);
 
     const [index, setIndex] = useState(0);
 

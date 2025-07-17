@@ -8,7 +8,7 @@ import "./style.css";
 
 import { Devs } from "@utils/constants";
 import definePlugin from "@utils/types";
-import { ChannelStore, DateUtils, GuildStore, IconUtils, NavigationRouter, Popout, SelectedGuildStore, SnowflakeUtils, Text, UserStore, useStateFromStores } from "@webpack/common";
+import {ChannelStore, DateUtils, GuildStore, IconUtils, NavigationRouter, Popout, SelectedGuildStore, SnowflakeUtils, Text, useRef, UserStore, useStateFromStores} from "@webpack/common";
 
 import { ArrowSvg, checkForIconExistence, cl, ServerProfileComponent } from "./utils";
 
@@ -28,6 +28,7 @@ export default definePlugin({
                         guild_id !== SelectedGuildStore.getGuildId() && <Popout
                             position="top"
                             renderPopout={() => <ServerProfileComponent guildId={guild_id} />}
+                            targetElementRef={useRef(null)}
                         >
                             {popoutProps => <div className={cl("footer-element")} {...popoutProps}>
                                 {
@@ -63,13 +64,11 @@ export default definePlugin({
                         // DMs
                         if (channel.type === 1) return `@${(() => {
                             const user = UserStore.getUser(channel.recipients[0]);
-                            // @ts-expect-error
                             return user.globalName || user.username;
                         })()}`;
                         // GDMs
                         if (channel.type === 3) return channel.name || (() => {
                             const users = channel.recipients.map(r => UserStore.getUser(r));
-                            // @ts-expect-error
                             return users.map(u => u.globalName || u.username).join(", ");
                         })();
                         // Threads

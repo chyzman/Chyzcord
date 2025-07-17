@@ -6,9 +6,9 @@
 
 import { definePluginSettings } from "@api/Settings";
 import { OptionType } from "@utils/types";
+import { User } from "@vencord/discord-types";
 import { findByPropsLazy } from "@webpack";
 import {Alerts, Button, showToast, ToastType} from "@webpack/common";
-import { User } from "discord-types/general";
 
 import { clearUserNotes, transferUserNotes } from "./data";
 

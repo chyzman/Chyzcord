@@ -5,8 +5,8 @@
  */
 
 import { BadgeUserArgs, ProfileBadge } from "@api/Badges";
+import { User } from "@vencord/discord-types";
 import { RelationshipStore, UserStore } from "@webpack/common";
-import { User } from "discord-types/general";
 
 import { BlockedIcon, FriendIcon } from "./icons";
 

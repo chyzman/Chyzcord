@@ -7,6 +7,7 @@
 import { copyToClipboard } from "@utils/clipboard";
 import { Devs } from "@utils/constants";
 import definePlugin from "@utils/types";
+import { GuildMember } from "@vencord/discord-types";
 import { findByPropsLazy, findComponentByCodeLazy } from "@webpack";
 import {
     Button,
@@ -16,7 +17,6 @@ import {
     UserProfileStore,
     UserStore
 } from "@webpack/common";
-import { GuildMember } from "discord-types/general";
 
 const SummaryItem = findComponentByCodeLazy("borderType", "showBorder", "hideDivider");
 
@@ -76,12 +76,12 @@ export default definePlugin({
             const nick = GuildMemberStore.getNick(guildId, currentUser.id);
             const selfMember = GuildMemberStore.getMember(guildId, currentUser.id) as GuildMember & { avatarDecoration: string | undefined };
             savedProfile.nick = nick ?? "";
-            savedProfile.pronouns = profile.pronouns;
-            savedProfile.bio = profile.bio;
-            savedProfile.themeColors = profile.themeColors;
-            savedProfile.banner = profile.banner;
+            savedProfile.pronouns = profile?.pronouns ?? null;
+            savedProfile.bio = profile?.bio ?? null;
+            savedProfile.themeColors = profile?.themeColors;
+            savedProfile.banner = profile?.banner ?? undefined;
             savedProfile.avatar = selfMember.avatar;
-            savedProfile.profileEffectId = profile.profileEffectId;
+            savedProfile.profileEffectId = profile?.profileEffectId;
             savedProfile.avatarDecoration = selfMember.avatarDecoration;
         };
 

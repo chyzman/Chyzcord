@@ -8,8 +8,8 @@ import { classNameFactory } from "@api/Styles";
 import {
     closeModal, ModalCloseButton, ModalFooter, ModalHeader, ModalProps, ModalRoot, openModal
 } from "@utils/modal";
+import { User } from "@vencord/discord-types";
 import { Button, Text, TextArea, useState } from "@webpack/common";
-import { User } from "discord-types/general";
 
 import { getUserNotes, saveUserNotes } from "../data";
 import settings from "../settings";

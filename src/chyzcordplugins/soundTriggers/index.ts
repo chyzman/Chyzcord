@@ -8,8 +8,8 @@ import { definePluginSettings } from "@api/Settings";
 import { classNameFactory } from "@api/Styles";
 import { Devs } from "@utils/constants";
 import definePlugin, { OptionType } from "@utils/types";
+import { Message } from "@vencord/discord-types";
 import { SelectedChannelStore } from "@webpack/common";
-import { Message } from "discord-types/general";
 
 import { findAndPlayTriggers } from "./audio";
 import { SoundTriggerSettings } from "./components/SoundTriggerSettings";

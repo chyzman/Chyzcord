@@ -10,8 +10,8 @@ import { findGroupChildrenByChildId, NavContextMenuPatchCallback } from "@api/Co
 import ErrorBoundary from "@components/ErrorBoundary";
 import { Devs } from "@utils/constants";
 import definePlugin from "@utils/types";
+import { User } from "@vencord/discord-types";
 import { Button, Menu, TextArea, UserStore, useState } from "@webpack/common";
-import { User } from "discord-types/general";
 
 import { PopupIcon } from "./components/Icons";
 import { OpenNotesDataButton } from "./components/NotesDataButton";

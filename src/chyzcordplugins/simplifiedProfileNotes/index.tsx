@@ -8,9 +8,9 @@ import { definePluginSettings } from "@api/Settings";
 import { Devs } from "@utils/constants";
 import { getIntlMessage } from "@utils/discord";
 import definePlugin, { OptionType } from "@utils/types";
+import { User } from "@vencord/discord-types";
 import { extractAndLoadChunksLazy, findByCodeLazy, findByPropsLazy, findComponentByCodeLazy } from "@webpack";
 import { useEffect, useState } from "@webpack/common";
-import { User } from "discord-types/general";
 
 const useNote = findByCodeLazy(".getNote(");
 const NoteEditor = findComponentByCodeLazy("hideNote:", ".userId);return");

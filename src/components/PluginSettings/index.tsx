@@ -35,7 +35,7 @@ import {ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalRoot, Mod
 import {useAwaiter} from "@utils/react";
 import {Plugin} from "@utils/types";
 import {findByPropsLazy} from "@webpack";
-import {Alerts, Button, Card, Flex, Forms, lodash, Parser, React, Select, Text, TextInput, Toasts, Tooltip, useMemo} from "@webpack/common";
+import {Alerts, Button, Card, Flex, Forms, lodash, Parser, React, SearchableSelect, Select, Text, TextInput, Toasts, Tooltip, useMemo} from "@webpack/common";
 import {JSX} from "react";
 
 import Plugins, {ExcludedPlugins, PluginMeta} from "~plugins";

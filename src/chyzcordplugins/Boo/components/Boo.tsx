@@ -6,9 +6,9 @@
 
 import "./styles.css";
 
+import { Message } from "@vencord/discord-types";
 import { findByPropsLazy } from "@webpack";
 import { MessageStore, React, useEffect, UserStore, useState,useStateFromStores } from "@webpack/common";
-import { Message } from "discord-types/general";
 
 import { BooProps } from "../types";
 import IconGhost from "./IconGhost";

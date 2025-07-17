@@ -6,9 +6,9 @@
 
 import { LogIcon } from "@components/Icons";
 import { getIntlMessage } from "@utils/discord";
+import { Guild } from "@vencord/discord-types";
 import { findByPropsLazy, findComponentByCodeLazy } from "@webpack";
 import { NavigationRouter } from "@webpack/common";
-import { Guild } from "discord-types/general";
 
 const ChannelRow = findComponentByCodeLazy(".basicChannelRowLink,");
 const Routes = findByPropsLazy("INDEX", "FRIENDS", "ME");

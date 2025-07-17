@@ -11,7 +11,7 @@ import {
     closeModal, ModalCloseButton, ModalContent, ModalHeader, ModalProps, ModalRoot, openModal
 } from "@utils/modal";
 import { LazyComponent, useAwaiter } from "@utils/react";
-import { Alerts, Avatar, Button, ContextMenuApi, Menu, Popout, React, RelationshipStore, Select, Text, TextArea, TextInput, Tooltip, useCallback, useMemo, useReducer, UserStore, UserUtils, useState } from "@webpack/common";
+import {Alerts, Avatar, Button, ContextMenuApi, Menu, Popout, React, RelationshipStore, Select, Text, TextArea, TextInput, Tooltip, useCallback, useMemo, useReducer, useRef, UserStore, UserUtils, useState} from "@webpack/common";
 
 import { cacheUsers, deleteUserNotes, getRunning, saveUserNotes, setupStates, stopCacheProcess, usersCache, usersNotes as usersNotesMap } from "../data";
 import settings from "../settings";
@@ -100,6 +100,8 @@ export function NotesDataModal({ modalProps, close }: {
 
     const canLoadMore = visibleNotesNum < filteredNotes.length;
 
+    const targetRef = useRef(null);
+
     return (
         <ModalRoot className={cl("root")} {...modalProps}>
             <ModalHeader className={cl("header")}>
@@ -124,6 +126,7 @@ export function NotesDataModal({ modalProps, close }: {
                     position="bottom"
                     shouldShow={shouldShow}
                     onRequestClose={() => setShouldShow(false)}
+                    targetElementRef={targetRef}
                     renderPopout={() => {
                         const [isRunning, setRunning] = useState(getRunning);
                         const [cacheStatus, setCacheStatus] = useState(usersCache.size);

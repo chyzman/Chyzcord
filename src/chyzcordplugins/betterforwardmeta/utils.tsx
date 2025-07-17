@@ -5,8 +5,8 @@
  */
 
 import { classNameFactory } from "@api/Styles";
+import { Guild } from "@vencord/discord-types";
 import { findComponentByCodeLazy } from "@webpack";
-import { Guild } from "discord-types/general";
 
 export const ServerProfileComponent = findComponentByCodeLazy("{guildProfile:", "GUILD_PROFILE");
 export const cl = classNameFactory("vc-serverprofileforward-");
