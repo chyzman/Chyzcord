@@ -5,11 +5,11 @@
  */
 
 import { classNameFactory } from "@api/Styles";
-import { getIntlMessage, getUniqueUsername } from "@utils/discord";
+import { getGuildAcronym, getIntlMessage, getUniqueUsername } from "@utils/discord";
 import { classes } from "@utils/misc";
+import { Channel, Guild, User } from "@vencord/discord-types";
 import { findByPropsLazy, findComponentByCodeLazy } from "@webpack";
 import { Avatar, ChannelStore, ContextMenuApi, GuildStore, PresenceStore, ReadStateStore, Text, TypingStore, useDrag, useDrop, useRef, UserStore, useStateFromStores } from "@webpack/common";
-import { Channel, Guild, User } from "discord-types/general";
 
 import { ChannelTabsProps, CircleQuestionIcon, closeTab, isTabSelected, moveDraggedTabs, moveToTab, openedTabs, settings } from "../util";
 import { TabContextMenu } from "./ContextMenus";
@@ -37,7 +37,7 @@ const GuildIcon = ({ guild }: { guild: Guild; }) => {
             className={cl("icon")}
         />
         : <div className={cl("guild-acronym-icon")}>
-            <Text variant="text-xs/semibold" tag="span">{guild.acronym}</Text>
+            <Text variant="text-xs/semibold" tag="span">{getGuildAcronym(guild)}</Text>
         </div>;
 };
 

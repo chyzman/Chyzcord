@@ -8,10 +8,9 @@ import { definePluginSettings } from "@api/Settings";
 import { Devs } from "@utils/constants";
 import { isTruthy } from "@utils/guards";
 import definePlugin, { OptionType } from "@utils/types";
+import { Channel, FluxStore } from "@vencord/discord-types";
 import { findByPropsLazy, findStoreLazy } from "@webpack";
-import { ApplicationAssetUtils, ChannelStore, FluxDispatcher, GuildStore, PresenceStore, RelationshipStore, SelectedChannelStore, SelectedGuildStore, UserStore } from "@webpack/common";
-import { FluxStore } from "@webpack/types";
-import { Channel } from "discord-types/general";
+import { ApplicationAssetUtils, ChannelStore, FluxDispatcher, GuildStore, IconUtils, PresenceStore, RelationshipStore, SelectedChannelStore, SelectedGuildStore, UserStore } from "@webpack/common";
 
 const presenceStore = findByPropsLazy("getLocalPresence");
 const GuildMemberCountStore = findStoreLazy("GuildMemberCountStore") as FluxStore & { getMemberCount(guildId: string): number | null; };
@@ -169,6 +168,12 @@ const settings = definePluginSettings({
             if (value && value < 0) return "End timestamp must be greater than 0.";
             return true;
         }
+    },
+    secretStuff: {
+        type: OptionType.STRING,
+        description: "A list of server/channel ids separated by commas, which are hidden from the RPC.",
+        onChange: onChange,
+        default: ""
     }
 });
 
@@ -207,7 +212,7 @@ function totalFriendCount(): number {
 
 function memberCount(): string {
     const channelId = SelectedChannelStore.getChannelId();
-    const guildId = SelectedGuildStore.getGuildId();
+    const guildId = SelectedGuildStore.getGuildId()!;
     const { groups } = ChannelMemberStore.getProps(guildId, channelId);
     const total = GuildMemberCountStore.getMemberCount(guildId);
 
@@ -225,6 +230,10 @@ function memberCount(): string {
 function getChannelIconURL(channel: Channel): string {
     if (channel.icon) return `https://cdn.discordapp.com/channel-icons/${channel.id}/${channel.icon}.webp?size=128`;
     return chino;
+}
+
+function getSecretStuff(): string[] {
+    return settings.store.secretStuff.split(",").map(id => id.trim()).filter(Boolean);
 }
 
 async function createActivity(): Promise<Activity | undefined> {
@@ -255,12 +264,20 @@ async function createActivity(): Promise<Activity | undefined> {
 
 
     const channelId = SelectedChannelStore.getChannelId();
-    const guildId = SelectedGuildStore.getGuildId();
+    const guildId = SelectedGuildStore.getGuildId()!;
     const voiceId = SelectedChannelStore.getVoiceChannelId();
     const currentUser = UserStore.getCurrentUser();
     if (userAvatarAsSmallImage) imageSmall = currentUser.getAvatarURL(undefined, undefined, true) || chino;
 
-    if (!channelId) {
+    const secretStuff = getSecretStuff();
+    const isSecret = secretStuff.includes(channelId) || secretStuff.includes(guildId);
+
+    if (isSecret) {
+        appName = "Hidden Channel/Guild";
+        details = "#secret";
+        state = "hehe";
+        imageBig = chino;
+    } else if (!channelId) {
         appName = "Friends List";
         details = `${onlineFriendCount()} online / ${totalFriendCount()} total`;
         state = `${GuildStore.getGuildCount()} servers`;
@@ -272,7 +289,7 @@ async function createActivity(): Promise<Activity | undefined> {
             if (guild) {
                 details = guild.name;
                 state = memberCount();
-                imageBig = guild.getIconURL(128, true) || chino;
+                imageBig = IconUtils.getGuildIconURL({ id: guild.id, icon: guild.icon, canAnimate: true, size: 512 }) || chino;
                 if (guild.vanityURLCode) {
                     buttonOneText = `Join ${guild.name.slice(0, 26)}`;
                     buttonOneURL = `https://discord.gg/${guild.vanityURLCode}`;
@@ -301,7 +318,7 @@ async function createActivity(): Promise<Activity | undefined> {
                 appName = `#${channel.name}`;
                 details = guild.name;
                 state = memberCount();
-                imageBig = guild.getIconURL(128, true) || chino;
+                imageBig = IconUtils.getGuildIconURL({ id: guild.id, icon: guild.icon, canAnimate: true, size: 512 }) || chino;
                 if (guild.vanityURLCode) {
                     buttonOneText = `Join ${guild.name.slice(0, 31 - 5)}`;
                     buttonOneURL = `https://discord.gg/${guild.vanityURLCode}`;

@@ -16,13 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {mergeDefaults} from "@utils/mergeDefaults";
-import {findByCodeLazy} from "@webpack";
-import {MessageActions, SnowflakeUtils} from "@webpack/common";
-import {Message} from "discord-types/general";
-import type {PartialDeep} from "type-fest";
-
-import {Argument} from "./types";
+import { mergeDefaults } from "@utils/mergeDefaults";
+import { CommandArgument, Message } from "@vencord/discord-types";
+import { findByCodeLazy } from "@webpack";
+import { MessageActions, SnowflakeUtils } from "@webpack/common";
+import type { PartialDeep } from "type-fest";
 
 const createBotMessage = findByCodeLazy('username:"Clyde"');
 
@@ -37,7 +35,7 @@ export function generateId() {
  * @returns {Message}
  */
 export function sendBotMessage(channelId: string, message: PartialDeep<Message>): Message {
-    const botMessage = createBotMessage({channelId, content: "", embeds: []});
+    const botMessage = createBotMessage({ channelId, content: "", embeds: [] });
 
     MessageActions.receiveMessage(channelId, mergeDefaults(message, botMessage));
 
@@ -51,8 +49,8 @@ export function sendBotMessage(channelId: string, message: PartialDeep<Message>)
  * @param fallbackValue Fallback value in case this option wasn't passed
  * @returns Value
  */
-export function findOption<T>(args: Argument[], name: string): T & {} | undefined;
-export function findOption<T>(args: Argument[], name: string, fallbackValue: T): T & {};
-export function findOption(args: Argument[], name: string, fallbackValue?: any) {
+export function findOption<T>(args: CommandArgument[], name: string): T & {} | undefined;
+export function findOption<T>(args: CommandArgument[], name: string, fallbackValue: T): T & {};
+export function findOption(args: CommandArgument[], name: string, fallbackValue?: any) {
     return (args.find(a => a.name === name)?.value ?? fallbackValue) as any;
 }

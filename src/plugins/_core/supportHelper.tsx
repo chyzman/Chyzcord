@@ -22,7 +22,8 @@ import ErrorBoundary from "@components/ErrorBoundary";
 import { Flex } from "@components/Flex";
 import { Link } from "@components/Link";
 import { openUpdaterModal } from "@components/VencordSettings/UpdaterTab";
-import { CONTRIB_ROLE_ID, Devs, DONOR_ROLE_ID, EQUCORD_HELPERS, EQUIBOP_CONTRIB_ROLE_ID, EQUICORD_TEAM, GUILD_ID, SUPPORT_CHANNEL_ID, SUPPORT_CHANNEL_IDS, VC_CONTRIB_ROLE_ID, VC_DONOR_ROLE_ID, VC_GUILD_ID, VC_REGULAR_ROLE_ID, VC_SUPPORT_CHANNEL_ID, VENCORD_CONTRIB_ROLE_ID } from "@utils/constants";
+import { toggleEnabled } from "@equicordplugins/equicordHelper/utils";
+import { CONTRIB_ROLE_ID, Devs, DONOR_ROLE_ID, EQUCORD_HELPERS, EQUIBOP_CONTRIB_ROLE_ID, EQUICORD_TEAM, GUILD_ID, SUPPORT_CHANNEL_ID, SUPPORT_CHANNEL_IDS, VC_CONTRIB_ROLE_ID, VC_DONOR_ROLE_ID, VC_GUILD_ID, VC_REGULAR_ROLE_ID, VC_SUPPORT_CHANNEL_IDS, VENCORD_CONTRIB_ROLE_ID } from "@utils/constants";
 import { sendMessage } from "@utils/discord";
 import { Logger } from "@utils/Logger";
 import { Margins } from "@utils/margins";
@@ -67,6 +68,34 @@ async function forceUpdate() {
     return outdated;
 }
 
+function getWindowsName(release: string) {
+    const build = parseInt(release.split(".")[2]);
+    if (build >= 22000) return "Windows 11";
+    if (build >= 10240) return "Windows 10";
+    if (build >= 9200) return "Windows 8.1";
+    if (build >= 7600) return "Windows 7";
+    return `Windows (${release})`;
+}
+
+function getMacOSName(release: string) {
+    const major = parseInt(release.split(".")[0]);
+    if (major === 24) return "MacOS 15 (Sequoia)";
+    if (major === 23) return "MacOS 14 (Sonoma)";
+    if (major === 22) return "MacOS 13 (Ventura)";
+    if (major === 21) return "MacOS 12 (Monterey)";
+    if (major === 20) return "MacOS 11 (Big Sur)";
+    if (major === 19) return "MacOS 10.15 (Catalina)";
+    return `MacOS (${release})`;
+}
+
+function platformName() {
+    if (typeof DiscordNative === "undefined") return window.navigator.platform;
+    if (DiscordNative.process.platform === "win32") return `${getWindowsName(DiscordNative.os.release)}`;
+    if (DiscordNative.process.platform === "darwin") return `${getMacOSName(DiscordNative.os.release)} (${DiscordNative.process.arch === "arm64" ? "Apple Silicon" : "Intel Silicon"})`;
+    if (DiscordNative.process.platform === "linux") return `Linux (${DiscordNative.os.release})`;
+    return DiscordNative.process.platform;
+}
+
 async function generateDebugInfoMessage() {
     const { RELEASE_CHANNEL } = window.GLOBAL_ENV;
 
@@ -86,11 +115,7 @@ async function generateDebugInfoMessage() {
             `v${VERSION} • [${gitHash}](<https://github.com/Equicord/Equicord/commit/${gitHash}>)` +
             `${SettingsPlugin.additionalInfo} - ${Intl.DateTimeFormat("en-GB", { dateStyle: "medium" }).format(BUILD_TIMESTAMP)}`,
         Client: `${RELEASE_CHANNEL} ~ ${client}`,
-        Platform: typeof DiscordNative !== "undefined" ?
-            `${DiscordNative.process.platform === "darwin" ?
-                (DiscordNative.process.arch === "arm64" ? "MacSilicon" : "MacIntel") :
-                (DiscordNative.process.platform === "win32" && DiscordNative.process.arch === "x64" ? "Windows" : DiscordNative.process.platform)}` :
-            window.navigator.platform
+        Platform: platformName()
     };
 
     if (IS_DISCORD_DESKTOP) {
@@ -136,7 +161,9 @@ function generatePluginList() {
                 <style>
                     {'[class*="backdrop_"][style*="backdrop-filter"]{backdrop-filter:blur(16px) brightness(0.25) !important;}'}
                 </style>
-                <img src="https://media.tenor.com/QtGqjwBpRzwAAAAi/wumpus-dancing.gif" />
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: "1rem" }}>
+                    <img src="https://media.tenor.com/QtGqjwBpRzwAAAAi/wumpus-dancing.gif" />
+                </div>
                 <Forms.FormText>Before you ask for help,</Forms.FormText>
                 <Forms.FormText>We do not handle support for users who use 100+ plugins</Forms.FormText>
                 <Forms.FormText>issue could be plugin confliction</Forms.FormText>
@@ -201,14 +228,16 @@ export default definePlugin({
 
             const selfId = UserStore.getCurrentUser()?.id;
             if (!selfId || isPluginDev(selfId) || isEquicordPluginDev(selfId)) return;
-            if (channelId === VC_SUPPORT_CHANNEL_ID && Vencord.Plugins.isPluginEnabled("VCSupport") && !clicked) {
+            if (VC_SUPPORT_CHANNEL_IDS.includes(channelId) && Vencord.Plugins.isPluginEnabled("VCSupport") && !clicked) {
                 return Alerts.show({
                     title: "You are entering the support channel!",
                     body: <div>
                         <style>
                             {'[class*="backdrop_"][style*="backdrop-filter"]{backdrop-filter:blur(16px) brightness(0.25) !important;}'}
                         </style>
-                        <img src="https://media.tenor.com/QtGqjwBpRzwAAAAi/wumpus-dancing.gif" />
+                        <div style={{ display: "flex", justifyContent: "center", marginBottom: "1rem" }}>
+                            <img src="https://media.tenor.com/QtGqjwBpRzwAAAAi/wumpus-dancing.gif" />
+                        </div>
                         <Forms.FormText>Before you ask for help,</Forms.FormText>
                         <Forms.FormText>Check for updates and if this</Forms.FormText>
                         <Forms.FormText>issue could be caused by Equicord!</Forms.FormText>
@@ -216,7 +245,7 @@ export default definePlugin({
                     confirmText: "Go to Equicord Support",
                     onConfirm() {
                         clicked = true;
-                        VencordNative.native.openExternal("https://discord.gg/5Xh2W87egW");
+                        VencordNative.native.openExternal("https://discord.gg/equicord-1173279886065029291");
                     },
                     cancelText: "Okay continue",
                     onCancel() {
@@ -246,7 +275,6 @@ export default definePlugin({
                 }
             }
 
-            // @ts-ignore outdated type
             const roles = GuildMemberStore.getSelfMember(VC_GUILD_ID)?.roles || GuildMemberStore.getSelfMember(GUILD_ID)?.roles;
             if (!roles || TrustedRolesIds.some(id => roles.includes(id))) return;
 
@@ -256,7 +284,7 @@ export default definePlugin({
                     body: <div>
                         <Forms.FormText>You are using an externally updated Equicord version, the ability to help you here may be limited.</Forms.FormText>
                         <Forms.FormText className={Margins.top8}>
-                            Please join the <Link href="https://discord.gg/5Xh2W87egW">Equicord Server</Link> for support,
+                            Please join the <Link href="https://discord.gg/equicord-1173279886065029291">Equicord Server</Link> for support,
                             or if this issue persists on Vencord, continue on.
                         </Forms.FormText>
                     </div>
@@ -291,10 +319,15 @@ export default definePlugin({
 
         const shouldAddUpdateButton =
             !IS_UPDATER_DISABLED
-            && (
-                (props.channel.id === SUPPORT_CHANNEL_ID && equicordSupport)
-            )
+            && ((props.channel.id === SUPPORT_CHANNEL_ID && equicordSupport))
             && props.message.content?.includes("update");
+
+        const contentWords = (props.message.content?.toLowerCase().match(/`\w+`/g) ?? []).map(e => e.slice(1, -1));
+        const matchedPlugins = Object.keys(Vencord.Plugins.plugins).filter(name => contentWords.includes(name.toLowerCase()));
+        const matchedPlugin = matchedPlugins.sort((a, b) => b.length - a.length)[0];
+        const pluginData = matchedPlugin && Vencord.Plugins.plugins[matchedPlugin];
+        const equicordGuild = ChannelStore.getChannel(props.channel.id)?.guild_id === GUILD_ID;
+        const shouldAddPluginButtons = equicordGuild && equicordSupport && matchedPlugin;
 
         if (shouldAddUpdateButton) {
             buttons.push(
@@ -314,6 +347,28 @@ export default definePlugin({
                     }}
                 >
                     Update Now
+                </Button>
+            );
+        }
+
+        if (shouldAddPluginButtons && matchedPlugin && pluginData) {
+            if (pluginData.required || pluginData.name.endsWith("API")) return;
+            const isEnabled = Vencord.Plugins.isPluginEnabled(matchedPlugin);
+            buttons.push(
+                <Button
+                    key="vc-plugin-toggle"
+                    color={isEnabled ? Button.Colors.RED : Button.Colors.GREEN}
+                    onClick={async () => {
+                        try {
+                            const success = await toggleEnabled(matchedPlugin);
+                            if (success) showToast(`${isEnabled ? "Disabled" : "Enabled"} ${matchedPlugin}`, Toasts.Type.SUCCESS);
+                        } catch (e) {
+                            new Logger(this.name).error("Error while toggling:", e);
+                            showToast(`Failed to toggle ${matchedPlugin}`, Toasts.Type.FAILURE);
+                        }
+                    }}
+                >
+                    {`${isEnabled ? "Disable" : "Enable"} ${matchedPlugin}`}
                 </Button>
             );
         }
@@ -378,7 +433,7 @@ export default definePlugin({
             <Card className={`vc-plugins-restart-card ${Margins.top8}`}>
                 Please do not private message plugin developers for support!
                 <br />
-                Instead, use the support channel: {Parser.parse("https://discord.com/channels/1173279886065029291/1173342942858055721")}
+                Instead, use the support channel: {Parser.parse("https://discord.com/channels/1173279886065029291/1297590739911573585")}
                 {!ChannelStore.getChannel(SUPPORT_CHANNEL_ID) && " (Click the link to join)"}
             </Card>
         );
