@@ -20,8 +20,8 @@ import "./fixDiscordBadgePadding.css";
 
 import { _getBadges, BadgePosition, BadgeUserArgs, ProfileBadge } from "@api/Badges";
 import ErrorBoundary from "@components/ErrorBoundary";
-import { openContributorModal } from "@components/PluginSettings/ContributorModal";
-import { isEquicordDonor } from "@components/VencordSettings/VencordTab";
+import { openContributorModal } from "@components/settings/tabs";
+import { isEquicordDonor } from "@components/settings/tabs/vencord";
 import { ChyzcordDevs,Devs} from "@utils/constants";
 import { Logger } from "@utils/Logger";
 import { isChyzcordPluginDev, isEquicordPluginDev, isPluginDev, shouldShowContributorBadge, shouldShowEquicordContributorBadge } from "@utils/misc";
@@ -127,6 +127,13 @@ export default definePlugin({
                     replace: "...($1.onClick&&{onClick:vcE=>$1.onClick(vcE,$1)}),$&"
                 }
             ]
+        },
+        {
+            find: "profileCardUsernameRow,children",
+            replacement: {
+                match: /(?<=accountProfileCard.{0,50}displayProfile:(\i).*?badges:)(\i)/,
+                replace: "[...$self.getBadges($1),...$2]"
+            }
         }
     ],
 

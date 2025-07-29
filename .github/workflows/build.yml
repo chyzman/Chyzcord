@@ -33,10 +33,16 @@ jobs:
             -   name: Build
                 run: pnpm buildStandalone
 
-            -   name: Collect files to be released
-                run: |
-                    cd dist
-                    mkdir release
+            - name: Generate plugin lists
+              run: |
+                pnpm generatePluginJson dist/plugins.json
+                pnpm generateEquicordPluginJson dist/equicordplugins.json
+                pnpm generateVencordPluginJson dist/vencordplugins.json
+
+            - name: Collect files to be released
+              run: |
+                  cd dist
+                  mkdir release
 
                     cp browser/browser.* release
                     cp Vencord.user.{js,js.LEGAL.txt} release

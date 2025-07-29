@@ -45,7 +45,7 @@ interface PluginData {
     commands: Command[];
     required: boolean;
     enabledByDefault: boolean;
-    target: "discordDesktop" | "vencordDesktop" | "equibop" | "desktop" | "web" | "dev";
+    target: "discordDesktop" | "vesktop" | "equibop" | "desktop" | "web" | "dev";
     filePath: string;
 }
 
@@ -262,7 +262,7 @@ async function parseFile(fileName: string) {
             .split(sep)
             .join(posixSep)
             .replace(/\/index\.([jt]sx?)$/, "")
-            .replace(/^src\/plugins\//, "");
+            .replace(/^src\/equicordplugins\//, "");
 
         return [data] as const;
     }
