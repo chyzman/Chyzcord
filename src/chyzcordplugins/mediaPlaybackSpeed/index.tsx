@@ -9,9 +9,8 @@ import "./styles.css";
 import { definePluginSettings } from "@api/Settings";
 import { classNameFactory } from "@api/Styles";
 import ErrorBoundary from "@components/ErrorBoundary";
-import { makeRange } from "@components/PluginSettings/components";
 import { Devs } from "@utils/constants";
-import definePlugin, { OptionType } from "@utils/types";
+import definePlugin, { makeRange, OptionType } from "@utils/types";
 import { ContextMenuApi, FluxDispatcher, Heading, Menu, React, Tooltip, useEffect } from "@webpack/common";
 import { RefObject } from "react";
 
@@ -129,6 +128,15 @@ export default definePlugin({
             replacement: {
                 match: /onVolumeShow:\i,onVolumeHide:\i\}\)(?<=useCallback\(\(\)=>\{let \i=(\i).current;.+?)/,
                 replace: "$&,$self.renderComponent($1)"
+            }
+        },
+        // remove native voice message control
+        // thought about removing it from here but this provides extra functionality like default/other speeds
+        {
+            find: "\"VoiceMessagePlayer\"",
+            replacement: {
+                match: /(?<=\}\)),\i(?=&&\(0,\i\.jsx\)\(\i\.\i,)/,
+                replace: ",false"
             }
         },
         // audio & video embeds

@@ -6,7 +6,7 @@
 
 import { NavContextMenuPatchCallback } from "@api/ContextMenu";
 import { definePluginSettings } from "@api/Settings";
-import { makeRange } from "@components/PluginSettings/components";
+import { makeRange } from "@utils/types";
 import { clearableDebounce, debounce } from "@shared/debounce";
 import { Devs } from "@utils/constants";
 import { humanFriendlyJoin } from "@utils/text";

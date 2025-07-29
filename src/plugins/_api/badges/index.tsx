@@ -18,18 +18,18 @@
 
 import "./fixDiscordBadgePadding.css";
 
-import { _getBadges, BadgePosition, BadgeUserArgs, ProfileBadge } from "@api/Badges";
+import {_getBadges, BadgePosition, BadgeUserArgs, ProfileBadge} from "@api/Badges";
 import ErrorBoundary from "@components/ErrorBoundary";
-import { openContributorModal } from "@components/settings/tabs";
-import { isEquicordDonor } from "@components/settings/tabs/vencord";
-import { ChyzcordDevs,Devs} from "@utils/constants";
-import { Logger } from "@utils/Logger";
-import { isChyzcordPluginDev, isEquicordPluginDev, isPluginDev, shouldShowContributorBadge, shouldShowEquicordContributorBadge } from "@utils/misc";
+import {openContributorModal} from "@components/settings/tabs";
+import {isEquicordDonor} from "@components/settings/tabs/vencord";
+import {ChyzcordDevs, Devs} from "@utils/constants";
+import {Logger} from "@utils/Logger";
+import {isChyzcordPluginDev, isEquicordPluginDev, isPluginDev, shouldShowContributorBadge, shouldShowEquicordContributorBadge} from "@utils/misc";
 import definePlugin from "@utils/types";
-import { User } from "@vencord/discord-types";
-import { Toasts, UserStore } from "@webpack/common";
+import {User} from "@vencord/discord-types";
+import {Toasts, UserStore} from "@webpack/common";
 
-import { EquicordDonorModal, VencordDonorModal } from "./modals";
+import {EquicordDonorModal, VencordDonorModal} from "./modals";
 
 const CONTRIBUTOR_BADGE = "https://cdn.discordapp.com/emojis/1092089799109775453.png?size=64";
 const EQUICORD_CONTRIBUTOR_BADGE = "https://i.imgur.com/57ATLZu.png";
@@ -40,23 +40,23 @@ const ContributorBadge: ProfileBadge = {
     description: "Vencord Contributor",
     image: CONTRIBUTOR_BADGE,
     position: BadgePosition.START,
-    shouldShow: ({ userId }) => shouldShowContributorBadge(userId),
-    onClick: (_, { userId }) => openContributorModal(UserStore.getUser(userId))
+    shouldShow: ({userId}) => shouldShowContributorBadge(userId),
+    onClick: (_, {userId}) => openContributorModal(UserStore.getUser(userId))
 };
 
 const EquicordContributorBadge: ProfileBadge = {
     description: "Equicord Contributor",
     image: EQUICORD_CONTRIBUTOR_BADGE,
     position: BadgePosition.START,
-    shouldShow: ({ userId }) => shouldShowEquicordContributorBadge(userId),
-    onClick: (_, { userId }) => openContributorModal(UserStore.getUser(userId))
+    shouldShow: ({userId}) => shouldShowEquicordContributorBadge(userId),
+    onClick: (_, {userId}) => openContributorModal(UserStore.getUser(userId))
 };
 
 const EquicordDonorBadge: ProfileBadge = {
     description: "Equicord Donor",
     image: EQUICORD_DONOR_BADGE,
     position: BadgePosition.START,
-    shouldShow: ({ userId }) => {
+    shouldShow: ({userId}) => {
         const donorBadges = EquicordDonorBadges[userId]?.map(badge => badge.badge);
         const hasDonorBadge = donorBadges?.includes("https://cdn.nest.rip/uploads/78cb1e77-b7a6-4242-9089-e91f866159bf.png");
         return isEquicordDonor(userId) && !hasDonorBadge;
@@ -189,7 +189,7 @@ export default definePlugin({
     renderBadgeComponent: ErrorBoundary.wrap((badge: ProfileBadge & BadgeUserArgs) => {
         const Component = badge.component!;
         return <Component {...badge} />;
-    }, { noop: true }),
+    }, {noop: true}),
 
 
     getDonorBadges(userId: string) {
@@ -222,6 +222,23 @@ export default definePlugin({
             },
             onClick() {
                 return EquicordDonorModal();
+            },
+        }));
+    },
+
+    getChyzcordDonorBadges(userId: string) {
+        return ChyzcordDonorBadges[userId]?.map(badge => ({
+            image: badge.badge,
+            description: badge.tooltip,
+            position: BadgePosition.START,
+            props: {
+                style: {
+                    borderRadius: "50%",
+                    transform: "scale(0.9)" // The image is a bit too big compared to default badges
+                }
+            },
+            onClick(_, {userId}) {
+                return openContributorModal(UserStore.getUser(userId));
             },
         }));
     }

@@ -91,7 +91,7 @@ export function _getBadges(args: BadgeUserArgs) {
     }
     const donorBadges = BadgeAPIPlugin.getDonorBadges(args.userId);
     const equicordDonorBadges = BadgeAPIPlugin.getEquicordDonorBadges(args.userId);
-    const chyzcordDonorBadgets = (Plugins.BadgeAPI as unknown as typeof import("../plugins/_api/badges").default).getChyzcordDonorBadges(args.userId);
+    const chyzcordDonorBadgets = BadgeAPIPlugin.getChyzcordDonorBadges(args.userId);
     if (donorBadges) badges.unshift(...donorBadges);
     if (equicordDonorBadges) badges.unshift(...equicordDonorBadges);
     if (chyzcordDonorBadgets) badges.unshift(...chyzcordDonorBadgets);

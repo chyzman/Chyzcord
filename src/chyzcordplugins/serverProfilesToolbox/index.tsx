@@ -4,13 +4,16 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import "./styles.css";
+
 import { copyToClipboard } from "@utils/clipboard";
 import { Devs } from "@utils/constants";
 import definePlugin from "@utils/types";
-import { GuildMember } from "@vencord/discord-types";
-import { findByPropsLazy, findComponentByCodeLazy } from "@webpack";
+import { Guild, GuildMember } from "@vencord/discord-types";
+import { findComponentByCodeLazy } from "@webpack";
 import {
     Button,
+    FluxDispatcher,
     GuildMemberStore,
     Text,
     Toasts,
@@ -42,32 +45,64 @@ const savedProfile: SavedProfile = {
     avatarDecoration: undefined,
 };
 
-const {
-    setPendingAvatar,
-    setPendingBanner,
-    setPendingBio,
-    setPendingNickname,
-    setPendingPronouns,
-    setPendingThemeColors,
-    setPendingProfileEffectId,
-    setPendingAvatarDecoration,
-}: {
-    setPendingAvatar: (a: string | undefined) => void;
-    setPendingBanner: (a: string | undefined) => void;
-    setPendingBio: (a: string | null) => void;
-    setPendingNickname: (a: string | null) => void;
-    setPendingPronouns: (a: string | null) => void;
-    setPendingThemeColors: (a: number[] | undefined) => void;
-    setPendingProfileEffectId: (a: string | undefined) => void;
-    setPendingAvatarDecoration: (a: string | undefined) => void;
-} = findByPropsLazy("setPendingNickname", "setPendingPronouns");
+const IdentityActions = {
+    setPendingAvatar(avatar: string | undefined) {
+        FluxDispatcher.dispatch({
+            type: "GUILD_IDENTITY_SETTINGS_SET_PENDING_AVATAR",
+            avatar,
+        });
+    },
+    setPendingBanner(banner: string | undefined) {
+        FluxDispatcher.dispatch({
+            type: "GUILD_IDENTITY_SETTINGS_SET_PENDING_BANNER",
+            banner,
+        });
+    },
+    setPendingBio(bio: string | null) {
+        FluxDispatcher.dispatch({
+            type: "GUILD_IDENTITY_SETTINGS_SET_PENDING_BIO",
+            bio,
+        });
+    },
+    setPendingNickname(nickname: string | null) {
+        FluxDispatcher.dispatch({
+            type: "GUILD_IDENTITY_SETTINGS_SET_PENDING_NICKNAME",
+            nickname,
+        });
+    },
+    setPendingPronouns(pronouns: string | null) {
+        FluxDispatcher.dispatch({
+            type: "GUILD_IDENTITY_SETTINGS_SET_PENDING_PRONOUNS",
+            pronouns,
+        });
+    },
+    setPendingThemeColors(themeColors: number[] | undefined) {
+        FluxDispatcher.dispatch({
+            type: "GUILD_IDENTITY_SETTINGS_SET_PENDING_THEME_COLORS",
+            themeColors,
+        });
+    },
+    setPendingProfileEffectId(profileEffectId: string | undefined) {
+        FluxDispatcher.dispatch({
+            type: "GUILD_IDENTITY_SETTINGS_SET_PENDING_PROFILE_EFFECT_ID",
+            profileEffectId,
+        });
+    },
+    setPendingAvatarDecoration(avatarDecoration: string | undefined) {
+        FluxDispatcher.dispatch({
+            type: "GUILD_IDENTITY_SETTINGS_SET_PENDING_AVATAR_DECORATION",
+            avatarDecoration,
+        });
+    },
+};
 
 export default definePlugin({
     name: "ServerProfilesToolbox",
     authors: [Devs.D3SOX],
     description: "Adds a copy/paste/reset button to the server profiles editor",
 
-    patchServerProfiles({ guildId }: { guildId: string }) {
+    patchServerProfiles(guild: Guild) {
+        const guildId = guild.id;
         const currentUser = UserStore.getCurrentUser();
         const premiumType = currentUser.premiumType ?? 0;
 
@@ -86,32 +121,32 @@ export default definePlugin({
         };
 
         const paste = () => {
-            setPendingNickname(savedProfile.nick);
-            setPendingPronouns(savedProfile.pronouns);
+            IdentityActions.setPendingNickname(savedProfile.nick);
+            IdentityActions.setPendingPronouns(savedProfile.pronouns);
             if (premiumType === 2) {
-                setPendingBio(savedProfile.bio);
-                setPendingThemeColors(savedProfile.themeColors);
-                setPendingBanner(savedProfile.banner);
-                setPendingAvatar(savedProfile.avatar);
-                setPendingProfileEffectId(savedProfile.profileEffectId);
-                setPendingAvatarDecoration(savedProfile.avatarDecoration);
+                IdentityActions.setPendingBio(savedProfile.bio);
+                IdentityActions.setPendingThemeColors(savedProfile.themeColors);
+                IdentityActions.setPendingBanner(savedProfile.banner);
+                IdentityActions.setPendingAvatar(savedProfile.avatar);
+                IdentityActions.setPendingProfileEffectId(savedProfile.profileEffectId);
+                IdentityActions.setPendingAvatarDecoration(savedProfile.avatarDecoration);
             }
         };
 
         const reset = () => {
-            setPendingNickname(null);
-            setPendingPronouns("");
+            IdentityActions.setPendingNickname(null);
+            IdentityActions.setPendingPronouns("");
             if (premiumType === 2) {
-                setPendingBio(null);
-                setPendingThemeColors([]);
-                setPendingBanner(undefined);
-                setPendingAvatar(undefined);
-                setPendingProfileEffectId(undefined);
-                setPendingAvatarDecoration(undefined);
+                IdentityActions.setPendingBio(null);
+                IdentityActions.setPendingThemeColors([]);
+                IdentityActions.setPendingBanner(undefined);
+                IdentityActions.setPendingAvatar(undefined);
+                IdentityActions.setPendingProfileEffectId(undefined);
+                IdentityActions.setPendingAvatarDecoration(undefined);
             }
         };
 
-        const copy2Clipboard = () => {
+        const copyClipboard = () => {
             copy();
             copyToClipboard(JSON.stringify(savedProfile));
         };
@@ -149,7 +184,7 @@ export default definePlugin({
             }
         };
 
-        return <SummaryItem title="Server Profiles Toolbox" hideDivider={false} forcedDivider>
+            return <SummaryItem title="Server Profiles Toolbox" hideDivider={false} forcedDivider className="vc-server-profiles-toolbox">
             <div style={{ display: "flex", alignItems: "center", flexDirection: "column", gap: "5px" }}>
                 <Text variant="text-md/normal">
                     Use the following buttons to mange the currently selected server
@@ -166,7 +201,7 @@ export default definePlugin({
                     </Button>
                 </div>
                 <div style={{ display: "flex", gap: "5px" }}>
-                    <Button onClick={copy2Clipboard}>
+                    <Button onClick={copyClipboard}>
                         Copy to clipboard
                     </Button>
                     <Button onClick={pasteFromClipboard}>
@@ -179,10 +214,10 @@ export default definePlugin({
 
     patches: [
         {
-            find: ".PROFILE_CUSTOMIZATION_GUILD_SELECT_TITLE",
+            find: "PROFILE_CUSTOMIZATION_GUILD_HINT.format",
             replacement: {
-                match: /return\(0(.{10,350})\}\)\}\)\}/,
-                replace: "return [(0$1})}),$self.patchServerProfiles(e)]}"
+                match: /\(0,\i\.jsx\)\(\i\.\i,\{guildId:(\i)\.id,/,
+                replace: "$self.patchServerProfiles($1),$&"
             }
         }
     ],
