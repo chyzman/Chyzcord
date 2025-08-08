@@ -9,6 +9,8 @@ on:
             - main
             - dev
 
+permissions: write-all
+
 jobs:
     Test:
         name: Test
@@ -25,7 +27,7 @@ jobs:
                   cache: "pnpm"
 
             - name: Install dependencies
-              run: pnpm install --no-frozen-lockfile
+              run: pnpm install --frozen-lockfile
 
             - name: Lint & Test if desktop version compiles
               run: pnpm test
@@ -35,3 +37,9 @@ jobs:
 
             - name: Test if plugin structure is valid
               run: pnpm generatePluginJson
+
+            - name: Create Tag
+              if: ${{ github.ref_name == 'main' }}
+              uses: butlerlogic/action-autotag@1.1.2
+              env:
+                GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

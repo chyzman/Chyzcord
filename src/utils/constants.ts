@@ -76,7 +76,7 @@ export const Devs = /* #__PURE__*/ Object.freeze({
     Samu: {name: "Samu", id: 702973430449832038n},
     Nyako: {name: "nyako", id: 118437263754395652n},
     MaiKokain: {name: "Mai", id: 722647978577363026n},
-    echo: {name: "ECHO", id: 712639419785412668n},
+    amy: {name: "Amy", id: 603229858612510720n},
     katlyn: {name: "katlyn", id: 250322741406859265n},
     nea: {name: "nea", id: 310702108997320705n},
     Nuckyz: {name: "Nuckyz", id: 235834946571337729n},

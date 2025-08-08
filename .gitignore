@@ -22,10 +22,11 @@ lerna-debug.log*
 .pnpm-debug.log*
 *.tsbuildinfo
 
-ExtensionCache/
-
+.modules/
 src/userplugins
 /excludedplugins/
+
+ExtensionCache/
 /settings
 
 # vencord companion module cache
