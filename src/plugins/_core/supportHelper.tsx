@@ -22,8 +22,7 @@ import ErrorBoundary from "@components/ErrorBoundary";
 import { Flex } from "@components/Flex";
 import { Link } from "@components/Link";
 import { openUpdaterModal } from "@components/settings/tabs/updater";
-import { toggleEnabled } from "@equicordplugins/equicordHelper/utils";
-import { CONTRIB_ROLE_ID, Devs, DONOR_ROLE_ID, EQUCORD_HELPERS, EQUIBOP_CONTRIB_ROLE_ID, EQUICORD_TEAM, GUILD_ID, SUPPORT_CHANNEL_ID, SUPPORT_CHANNEL_IDS, VC_CONTRIB_ROLE_ID, VC_DONOR_ROLE_ID, VC_GUILD_ID, VC_REGULAR_ROLE_ID, VC_SUPPORT_CHANNEL_IDS, VENCORD_CONTRIB_ROLE_ID } from "@utils/constants";
+import { CONTRIB_ROLE_ID, Devs, DONOR_ROLE_ID, EQUIBOP_CONTRIB_ROLE_ID, EQUICORD_HELPERS, EQUICORD_TEAM, GUILD_ID, SUPPORT_CHANNEL_ID, SUPPORT_CHANNEL_IDS, VC_CONTRIB_ROLE_ID, VC_DONOR_ROLE_ID, VC_GUILD_ID, VC_REGULAR_ROLE_ID, VC_SUPPORT_CHANNEL_IDS, VENCORD_CONTRIB_ROLE_ID } from "@utils/constants";
 import { sendMessage } from "@utils/discord";
 import { Logger } from "@utils/Logger";
 import { Margins } from "@utils/margins";
@@ -32,7 +31,7 @@ import { relaunch } from "@utils/native";
 import { onlyOnce } from "@utils/onlyOnce";
 import { makeCodeblock } from "@utils/text";
 import definePlugin from "@utils/types";
-import { checkForUpdates, isOutdated, update } from "@utils/updater";
+import { checkForUpdates, isOutdated, shortGitHash, update } from "@utils/updater";
 import { Alerts, Button, Card, ChannelStore, Forms, GuildMemberStore, Parser, PermissionsBits, PermissionStore, RelationshipStore, showToast, Text, Toasts, UserStore } from "@webpack/common";
 import { JSX } from "react";
 
@@ -57,6 +56,7 @@ const TrustedRolesIds = [
 const AsyncFunction = async function () { }.constructor;
 
 const ShowCurrentGame = getUserSettingLazy<boolean>("status", "showCurrentGame")!;
+const ShowEmbeds = getUserSettingLazy<boolean>("textAndImages", "renderEmbeds")!;
 
 async function forceUpdate() {
     const outdated = await checkForUpdates();
@@ -112,7 +112,7 @@ async function generateDebugInfoMessage() {
 
     const info = {
         Equicord:
-            `v${VERSION} • [${gitHash}](<https://github.com/Equicord/Equicord/commit/${gitHash}>)` +
+            `v${VERSION} • [${shortGitHash()}](<https://github.com/Equicord/Equicord/commit/${gitHash}>)` +
             `${SettingsPlugin.getVersionInfo()} - ${Intl.DateTimeFormat("en-GB", { dateStyle: "medium" }).format(BUILD_TIMESTAMP)}`,
         Client: `${RELEASE_CHANNEL} ~ ${client}`,
         Platform: platformName()
@@ -122,12 +122,22 @@ async function generateDebugInfoMessage() {
         info["Last Crash Reason"] = (await tryOrElse(() => DiscordNative.processUtils.getLastCrash(), undefined))?.rendererCrashReason ?? "N/A";
     }
 
+    const potentiallyProblematicPlugins = ([
+        "NoRPC", "NoProfileThemes", "NoMosaic", "NoRoleHeaders", "NoSystemBadge", "NoDeleteSafety",
+        "Moyai", "AlwaysAnimate", "ClientTheme", "Equissant", "Ingtoninator", "KeyboardSounds", "NeverPausePreviews",
+    ].filter(Vencord.Plugins.isPluginEnabled) ?? []).sort();
+
+    if (Vencord.Plugins.isPluginEnabled("CustomIdle") && Vencord.Settings.plugins.CustomIdle.idleTimeout === 0) {
+        potentiallyProblematicPlugins.push("CustomIdle");
+    }
+
     const commonIssues = {
-        "NoRPC enabled": Vencord.Plugins.isPluginEnabled("NoRPC"),
-        "Activity Sharing disabled": tryOrElse(() => !ShowCurrentGame.getSetting(), false),
+        "Activity Sharing Disabled": tryOrElse(() => !ShowCurrentGame.getSetting(), false),
+        "Link Embeds Disabled": tryOrElse(() => !ShowEmbeds.getSetting(), false),
         "Equicord DevBuild": !IS_STANDALONE,
         "Has UserPlugins": Object.values(PluginMeta).some(m => m.userPlugin),
-        "More than two weeks out of date": BUILD_TIMESTAMP < Date.now() - 12096e5,
+        ">2 Weeks Outdated": BUILD_TIMESTAMP < Date.now() - 12096e5,
+        [`Potentially Problematic Plugins: ${potentiallyProblematicPlugins.join(", ")}`]: potentiallyProblematicPlugins.length
     };
 
     let content = `>>> ${Object.entries(info).map(([k, v]) => `**${k}**: ${v}`).join("\n")}`;
@@ -315,19 +325,12 @@ export default definePlugin({
     renderMessageAccessory(props) {
         const buttons = [] as JSX.Element[];
 
-        const equicordSupport = GuildMemberStore.getMember(GUILD_ID, props.message.author.id)?.roles?.includes(EQUCORD_HELPERS);
+        const equicordSupport = GuildMemberStore.getMember(GUILD_ID, props.message.author.id)?.roles?.includes(EQUICORD_HELPERS);
 
         const shouldAddUpdateButton =
             !IS_UPDATER_DISABLED
             && ((props.channel.id === SUPPORT_CHANNEL_ID && equicordSupport))
             && props.message.content?.includes("update");
-
-        const contentWords = (props.message.content?.toLowerCase().match(/`\w+`/g) ?? []).map(e => e.slice(1, -1));
-        const matchedPlugins = Object.keys(Vencord.Plugins.plugins).filter(name => contentWords.includes(name.toLowerCase()));
-        const matchedPlugin = matchedPlugins.sort((a, b) => b.length - a.length)[0];
-        const pluginData = matchedPlugin && Vencord.Plugins.plugins[matchedPlugin];
-        const equicordGuild = ChannelStore.getChannel(props.channel.id)?.guild_id === GUILD_ID;
-        const shouldAddPluginButtons = equicordGuild && equicordSupport && matchedPlugin;
 
         if (shouldAddUpdateButton) {
             buttons.push(
@@ -347,28 +350,6 @@ export default definePlugin({
                     }}
                 >
                     Update Now
-                </Button>
-            );
-        }
-
-        if (shouldAddPluginButtons && matchedPlugin && pluginData) {
-            if (pluginData.required || pluginData.name.endsWith("API")) return;
-            const isEnabled = Vencord.Plugins.isPluginEnabled(matchedPlugin);
-            buttons.push(
-                <Button
-                    key="vc-plugin-toggle"
-                    color={isEnabled ? Button.Colors.RED : Button.Colors.GREEN}
-                    onClick={async () => {
-                        try {
-                            const success = await toggleEnabled(matchedPlugin);
-                            if (success) showToast(`${isEnabled ? "Disabled" : "Enabled"} ${matchedPlugin}`, Toasts.Type.SUCCESS);
-                        } catch (e) {
-                            new Logger(this.name).error("Error while toggling:", e);
-                            showToast(`Failed to toggle ${matchedPlugin}`, Toasts.Type.FAILURE);
-                        }
-                    }}
-                >
-                    {`${isEnabled ? "Disable" : "Enable"} ${matchedPlugin}`}
                 </Button>
             );
         }

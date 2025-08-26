@@ -11,7 +11,7 @@ import { Devs, EquicordDevs } from "@utils/constants";
 import definePlugin, { OptionType } from "@utils/types";
 import { GuildMember, Message, User } from "@vencord/discord-types";
 import { findByCodeLazy, findStoreLazy } from "@webpack";
-import { ChannelStore, GuildMemberStore, MessageStore, RelationshipStore, StreamerModeStore, UserStore } from "@webpack/common";
+import { ChannelStore, GuildMemberStore, GuildStore, MessageStore, RelationshipStore, StreamerModeStore, UserStore } from "@webpack/common";
 import { JSX } from "react";
 
 const wrapEmojis = findByCodeLazy("lastIndex;return");
@@ -67,7 +67,7 @@ function validColor(color: string) {
     return isValid;
 }
 
-function resolveColor(user: User | GuildMember, savedColor: string, fallbackColor: string): any {
+function resolveColor(user: User | GuildMember, savedColor: string, fallbackColor: string, canUseGradient: boolean): any {
     const fallbackReturn = {
         normal: {
             original: {
@@ -119,7 +119,7 @@ function resolveColor(user: User | GuildMember, savedColor: string, fallbackColo
         }
     }
 
-    gradient = !secondaryColor
+    gradient = !canUseGradient || !secondaryColor
         ? null
         : tertiaryColor
             ? "linear-gradient(to right,var(--custom-gradient-color-1),var(--custom-gradient-color-2),var(--custom-gradient-color-3),var(--custom-gradient-color-1))"
@@ -306,10 +306,11 @@ function getMemberListProfilesReactionsVoiceNameElement(props: memberListProfile
 function getMessageName(props: messageProps): [string | null, JSX.Element | null, string | null] {
     const { hideDefaultAtSign, replies } = settings.use();
     const { message, userOverride, isRepliedMessage, withMentionPrefix } = props;
+    const isWebhook = !!message.webhookId && !message.interaction;
     const channel = ChannelStore.getChannel(message.channel_id) || {};
     const target = userOverride || message.author;
-    const user = UserStore.getUser(target.id);
-    const member = GuildMemberStore.getMember(channel.guild_id, target.id);
+    const user = isWebhook ? target : UserStore.getUser(target.id);
+    const member = isWebhook ? null : GuildMemberStore.getMember(channel.guild_id, target.id);
     const author = user && member ? { ...user, ...member } : user || member || null;
     const mentionSymbol = hideDefaultAtSign && (!isRepliedMessage || replies) ? "" : withMentionPrefix ? "@" : "";
     return renderUsername(author, channel.id, message.id, isRepliedMessage ? "replies" : "messages", mentionSymbol);
@@ -355,12 +356,13 @@ function renderUsername(
     const config = hookless ? settings.store : settings.use();
     const { messages, replies, mentions, memberList, profilePopout, reactions, discriminators, hideDefaultAtSign, truncateAllNamesWithStreamerMode, removeDuplicates, ignoreGradients, animateGradients, includedNames, friendNameColor, nicknameColor, displayNameColor, usernameColor, triggerNameRerender } = config;
 
+    const canUseGradient = ((author as GuildMember)?.guildId ? (GuildStore.getGuild((author as GuildMember).guildId) ?? {}).premiumFeatures?.features.includes("ENHANCED_ROLE_COLORS") : false);
     const textMutedValue = getComputedStyle(document.documentElement)?.getPropertyValue("--text-muted")?.trim() || "#72767d";
     const options = splitTemplate(includedNames);
-    const resolvedUsernameColor = author ? resolveColor(author, usernameColor.trim(), "") : null;
-    const resolvedDisplayNameColor = author ? resolveColor(author, displayNameColor.trim(), "") : null;
-    const resolvedNicknameColor = author ? resolveColor(author, nicknameColor.trim(), "") : null;
-    const resolvedFriendNameColor = author ? resolveColor(author, friendNameColor.trim(), "") : null;
+    const resolvedUsernameColor = author ? resolveColor(author, usernameColor.trim(), "", canUseGradient) : null;
+    const resolvedDisplayNameColor = author ? resolveColor(author, displayNameColor.trim(), "", canUseGradient) : null;
+    const resolvedNicknameColor = author ? resolveColor(author, nicknameColor.trim(), "", canUseGradient) : null;
+    const resolvedFriendNameColor = author ? resolveColor(author, friendNameColor.trim(), "", canUseGradient) : null;
     const affixColor = { color: textMutedValue, "-webkit-text-fill-color": textMutedValue, isolation: "isolate" };
     const [username, display, nick, friend] = getProcessedNames(author, truncateAllNamesWithStreamerMode, discriminators);
 
@@ -480,14 +482,14 @@ function renderUsername(
     third = remainingNames.shift();
     fourth = remainingNames.shift();
 
-    const topRoleStyle = isMention || isReactionsPopout ? resolveColor(author, "Role", "") : null;
+    const topRoleStyle = isMention || isReactionsPopout ? resolveColor(author, "Role", "", canUseGradient) : null;
     const hasGradient = !!topRoleStyle?.gradient && Object.keys(topRoleStyle.gradient).length > 0;
     const message = channelId && messageId ? MessageStore.getMessage(channelId, messageId) : null;
     const groupId = (message as any)?.showMeYourNameGroupId || null;
     const isHovering = (isMessage || isReply || isMention)
-        ? (hoveringMessageSet.has(Number(messageId)) || hoveringMessageSet.has(Number(groupId)))
+        ? ((messageId && hoveringMessageSet.has(messageId)) || (groupId && hoveringMessageSet.has(groupId)))
         : isReactionsPopout
-            ? hoveringReactionPopoutSet.has(Number((author as User).id))
+            ? hoveringReactionPopoutSet.has((author as User).id)
             : false;
 
     const shouldGradientGlow = isHovering && hasGradient;
@@ -630,43 +632,27 @@ function renderUsername(
     return [allDataText, nameElement, first.name];
 }
 
-const hoveringMessageSet = new Set<number>();
-const hoveringReactionPopoutSet = new Set<number>();
+const hoveringMessageSet = new Set<string>();
+const hoveringReactionPopoutSet = new Set<string>();
 
 function addHoveringMessage(id: string) {
-    const prevSize = hoveringMessageSet.size;
-    hoveringMessageSet.add(Number(id));
-
-    if (hoveringMessageSet.size !== prevSize) {
-        settings.store.triggerNameRerender = !settings.store.triggerNameRerender;
-    }
+    hoveringMessageSet.add(id);
+    settings.store.triggerNameRerender = !settings.store.triggerNameRerender;
 }
 
 function removeHoveringMessage(id: string) {
-    const prevSize = hoveringMessageSet.size;
-    hoveringMessageSet.delete(Number(id));
-
-    if (hoveringMessageSet.size !== prevSize) {
-        settings.store.triggerNameRerender = !settings.store.triggerNameRerender;
-    }
+    hoveringMessageSet.delete(id);
+    settings.store.triggerNameRerender = !settings.store.triggerNameRerender;
 }
 
 function addHoveringReactionPopout(id: string) {
-    const prevSize = hoveringReactionPopoutSet.size;
-    hoveringReactionPopoutSet.add(Number(id));
-
-    if (hoveringReactionPopoutSet.size !== prevSize) {
-        settings.store.triggerNameRerender = !settings.store.triggerNameRerender;
-    }
+    hoveringReactionPopoutSet.add(id);
+    settings.store.triggerNameRerender = !settings.store.triggerNameRerender;
 }
 
 function removeHoveringReactionPopout(id: string) {
-    const prevSize = hoveringReactionPopoutSet.size;
-    hoveringReactionPopoutSet.delete(Number(id));
-
-    if (hoveringReactionPopoutSet.size !== prevSize) {
-        settings.store.triggerNameRerender = !settings.store.triggerNameRerender;
-    }
+    hoveringReactionPopoutSet.delete(id);
+    settings.store.triggerNameRerender = !settings.store.triggerNameRerender;
 }
 
 const settings = definePluginSettings({
@@ -786,11 +772,11 @@ export default definePlugin({
             replacement: [
                 {
                     // Replace names in messages and replies.
-                    match: /(onContextMenu:\i,children:)(.{0,100}?),"data-text":(\i\+\i)/,
+                    match: /(onContextMenu:\i,children:)(.{0,250}?),"data-text":(\i\+\i)/,
                     replace: "$1$self.getMessageNameElement(arguments[0])??($2),\"data-text\":$self.getMessageNameText(arguments[0])??($3)"
                 },
                 {
-                    // Animate gradients in first-level messages.
+                    // Animate gradients for message authors.
                     match: /(let{setAnimate:\i}=(\i);)/,
                     replace: "$1if($2.animate){$self.addHoveringMessage(arguments[0].message.id)}else{$self.removeHoveringMessage(arguments[0].message.id)};"
                 }
@@ -830,7 +816,7 @@ export default definePlugin({
             find: "CUSTOM_GIFT?\"\":",
             replacement: {
                 match: /(\(\i,\i,\i\);)(let \i=\i.id===\i(?:.{0,500}?)hovering:(\i))/,
-                replace: "$1arguments[0].message.showMeYourNameGroupId=arguments[0].groupId;if($3){$self.addHoveringMessage(arguments[0].groupId);}else{$self.removeHoveringMessage(arguments[0].groupId)};$2"
+                replace: "$1arguments[0].message.showMeYourNameGroupId=arguments[0].groupId;if($3){$self.addHoveringMessage(arguments[0].groupId)}else{$self.removeHoveringMessage(arguments[0].groupId)};$2"
             },
         },
         {

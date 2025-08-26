@@ -28,16 +28,17 @@ import definePlugin from "@utils/types";
 import { Message } from "@vencord/discord-types";
 import { ChannelStore } from "@webpack/common";
 
-const KEY = "HideAttachments_HiddenIds";
+const KEY = "HideMedia_HiddenIds";
 
 let hiddenMessages = new Set<string>();
 
 async function getHiddenMessages() {
-    hiddenMessages = await get(KEY) ?? new Set();
+    const stored = await get(KEY);
+    hiddenMessages = new Set(stored ?? []);
     return hiddenMessages;
 }
 
-const saveHiddenMessages = (ids: Set<string>) => set(KEY, ids);
+const saveHiddenMessages = (ids: Set<string>) => set(KEY, [...ids]);
 
 migratePluginSettings("HideMedia", "HideAttachments");
 
@@ -60,7 +61,7 @@ export default definePlugin({
     renderMessagePopoverButton(msg) {
         if (!hasMedia(msg) && !msg.messageSnapshots.some(s => hasMedia(s.message))) return null;
 
-        const isHidden = hiddenMessages instanceof Set ? hiddenMessages.has(msg.id) : false;
+        const isHidden = hiddenMessages.has(msg.id);
 
         return {
             label: isHidden ? "Show Media" : "Hide Media",
@@ -90,7 +91,7 @@ export default definePlugin({
     },
 
     shouldHide(messageId: string) {
-        return hiddenMessages instanceof Set ? hiddenMessages.has(messageId) : false;
+        return hiddenMessages.has(messageId);
     },
 
     async toggleHide(channelId: string, messageId: string) {

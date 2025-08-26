@@ -82,7 +82,7 @@ function recalculateActivities() {
 function ImportCustomRPCComponent() {
     return (
         <Flex flexDirection="column">
-            <Forms.FormText type={Forms.FormText.Types.DESCRIPTION}>Import the application id of the CustomRPC plugin to the filter list</Forms.FormText>
+            <Forms.FormText>Import the application id of the CustomRPC plugin to the filter list</Forms.FormText>
             <div>
                 <Button
                     onClick={() => {
@@ -133,7 +133,7 @@ function IdsListComponent(props: { setValue: (value: string) => void; }) {
     return (
         <Forms.FormSection>
             <Forms.FormTitle tag="h3">Filter List</Forms.FormTitle>
-            <Forms.FormText className={Margins.bottom8} type={Forms.FormText.Types.DESCRIPTION}>Comma separated list of activity IDs to filter (Useful for filtering specific RPC activities and CustomRPC</Forms.FormText>
+            <Forms.FormText className={Margins.bottom8}>Comma separated list of activity IDs to filter (Useful for filtering specific RPC activities and CustomRPC</Forms.FormText>
             <TextInput
                 type="text"
                 value={idsList}
@@ -259,7 +259,7 @@ export default definePlugin({
             replacement: {
                 // let { ... nowPlaying: a = !1 ...
                 // let { overlay: b ... } = Props
-                match: /#{intl::SETTINGS_GAMES_TOGGLE_OVERLAY}.+?}\(\),(?<=nowPlaying:(\i)=!1,.+?overlay:\i,[^}]+?\}=(\i).+?)/,
+                match: /null:.{0,10}\i\(\),(?<=nowPlaying:(\i)=!1,.+?overlay:\i,[^}]+?\}=(\i).+?)/,
                 replace: (m, nowPlaying, props) => `${m}$self.renderToggleGameActivityButton(${props},${nowPlaying}),`
             }
         },

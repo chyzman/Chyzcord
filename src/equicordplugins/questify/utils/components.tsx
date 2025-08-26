@@ -55,7 +55,13 @@ export interface RGB {
     b: number;
 }
 
+export type ExcludedQuestMap = Map<string, ExcludedQuest>;
+
 export type QuestMap = Map<string, Quest>;
+
+export interface ExcludedQuest {
+    id: string;
+}
 
 export interface Quest {
     questifyNumber: number;
@@ -100,6 +106,7 @@ export interface Quest {
         };
     },
     userStatus: null | {
+        userId: string;
         claimedAt: string | null;
         completedAt: string | null;
         enrolledAt: string | null;
