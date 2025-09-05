@@ -116,7 +116,7 @@ function VencordPopoutIcon() {
     );
 }
 
-function VencordPopoutButton() {
+function VencordPopoutButton({ buttonClass }: { buttonClass: string; }) {
     const buttonRef = useRef(null);
     const [show, setShow] = useState(false);
 
@@ -134,7 +134,7 @@ function VencordPopoutButton() {
             {(_, { isShown }) => (
                 <HeaderBarIcon
                     ref={buttonRef}
-                    className="vc-toolbox-btn"
+                    className={`vc-toolbox-btn ${buttonClass}`}
                     onClick={() => setShow(v => !v)}
                     tooltip={isShown ? null : "Chyzcord Toolbox"}
                     icon={() => VencordPopoutIcon()}
@@ -143,17 +143,6 @@ function VencordPopoutButton() {
             )}
         </Popout>
     );
-}
-
-function ToolboxFragmentWrapper({ children }: { children: ReactNode[]; }) {
-    children.splice(
-        children.length - 1, 0,
-        <ErrorBoundary noop>
-            <VencordPopoutButton />
-        </ErrorBoundary>
-    );
-
-    return <>{children}</>;
 }
 
 migratePluginSettings("ChyzcordToolbox", "EquicordToolbox", "VencordToolbox");
@@ -165,15 +154,17 @@ export default definePlugin({
 
     patches: [
         {
-            find: ".controlButtonWrapper,",
+            find: '"M9 3v18"',
             replacement: {
-                match: /(?<=function (\i).{0,100}\()\i.Fragment,(?=.+?toolbar:\1\(\))/,
-                replace: "$self.ToolboxFragmentWrapper,"
+                match: /focusSectionProps:"HELP".{0,20},className:(\i\.button)\}\),/,
+                replace: "$& $self.renderVencordPopoutButton($1),"
             }
         }
     ],
 
-    ToolboxFragmentWrapper: ErrorBoundary.wrap(ToolboxFragmentWrapper, {
-        fallback: () => <p style={{ color: "red" }}>Failed to render :(</p>
-    })
+    renderVencordPopoutButton: (buttonClass: string) => (
+        <ErrorBoundary noop>
+            <VencordPopoutButton buttonClass={buttonClass} />
+        </ErrorBoundary>
+    )
 });
