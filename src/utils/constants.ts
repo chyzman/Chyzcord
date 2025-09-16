@@ -374,14 +374,11 @@ export const EquicordDevs = Object.freeze({
     Johannes7k75: {name: "Johannes7k75", id: 587701169103699994n},
     DiabeloDEV: {name: "DiabeloDEV", id: 1231342375465390100n},
     Mocha: {name: "Mocha", id: 808802000224518264n},
+    justjxke: {name: "justjxke", id: 852558183087472640n},
 } satisfies Record<string, Dev>);
 
 export const ChyzcordDevs = Object.freeze({
     chyzman: {name: "chyzman", id: 270305829540855808n},
-    justjxke: {
-        name: "justjxke",
-        id: 852558183087472640n
-    }
 } satisfies Record<string, Dev>);
 
 // iife so #__PURE__ works correctly
