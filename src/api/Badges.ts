@@ -99,7 +99,8 @@ export function _getBadges(args: BadgeUserArgs) {
 
     const donorBadges = BadgeAPIPlugin.getDonorBadges(args.userId);
     const equicordDonorBadges = BadgeAPIPlugin.getEquicordDonorBadges(args.userId);
-    const chyzcordDonorBadgets = BadgeAPIPlugin.getChyzcordDonorBadges(args.userId);
+    const chyzcordDonorBadges = BadgeAPIPlugin.getChyzcordDonorBadges(args.userId);
+
     if (donorBadges) {
         badges.unshift(
             ...donorBadges.map(badge => ({

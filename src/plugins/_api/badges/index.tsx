@@ -22,7 +22,7 @@ import {_getBadges, BadgePosition, BadgeUserArgs, ProfileBadge} from "@api/Badge
 import ErrorBoundary from "@components/ErrorBoundary";
 import { openContributorModal } from "@components/settings/tabs";
 import { isEquicordDonor } from "@components/settings/tabs/vencord";
-import { Devs, ChyzcordDevs } from "@utils/constants";
+import {ChyzcordDevs, Devs } from "@utils/constants";
 import { Logger } from "@utils/Logger";
 import { copyWithToast, shouldShowContributorBadge, shouldShowEquicordContributorBadge } from "@utils/misc";
 import definePlugin from "@utils/types";

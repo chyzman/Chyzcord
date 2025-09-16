@@ -97,11 +97,13 @@ function ReloadRequiredCard({required, enabledPlugins, openWarningModal, resetCh
 interface PluginCardProps extends React.HTMLProps<HTMLDivElement> {
     plugin: Plugin;
     disabled: boolean;
+
     onRestartNeeded(name: string): void;
+
     isNew?: boolean;
 }
 
-export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, onMouseLeave, isNew }: PluginCardProps) {
+export function PluginCard({plugin, disabled, onRestartNeeded, onMouseEnter, onMouseLeave, isNew}: PluginCardProps) {
     const settings = Settings.plugins[plugin.name];
 
     const isEnabled = () => Vencord.Plugins.isPluginEnabled(plugin.name);
@@ -111,7 +113,7 @@ export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, on
 
         // If we're enabling a plugin, make sure all deps are enabled recursively.
         if (!wasEnabled) {
-            const { restartNeeded, failures } = startDependenciesRecursive(plugin);
+            const {restartNeeded, failures} = startDependenciesRecursive(plugin);
             if (failures.length) {
                 logger.error(`Failed to start dependencies for ${plugin.name}: ${failures.join(", ")}`);
                 showNotice("Failed to start dependencies: " + failures.join(", "), "Close", () => null);
@@ -168,16 +170,15 @@ export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, on
                     className={classes(ButtonClasses.button, cl("info-button"))}
                 >
                     {plugin.options && !isObjectEmpty(plugin.options)
-                        ? <CogWheel className={cl("info-icon")} />
-                        : <InfoIcon className={cl("info-icon")} />}
+                        ? <CogWheel className={cl("info-icon")}/>
+                        : <InfoIcon className={cl("info-icon")}/>}
                 </button>
             }
         />
     );
 }
 
-const enum SearchStatus {
-    ALL,
+enum SearchStatus {
     ENABLED,
     DISABLED,
     NEW,
