@@ -635,12 +635,26 @@ function renderUsername(
 const hoveringMessageSet = new Set<string>();
 const hoveringReactionPopoutSet = new Set<string>();
 
+function handleHoveringMessage(message: any, animate: boolean) {
+    if (!message) return;
+
+    if (animate) {
+        addHoveringMessage(message.id);
+        addHoveringMessage(message.showMeYourNameGroupId);
+    } else {
+        removeHoveringMessage(message.id);
+        removeHoveringMessage(message.showMeYourNameGroupId);
+    }
+}
+
 function addHoveringMessage(id: string) {
+    if (!id) return;
     hoveringMessageSet.add(id);
     settings.store.triggerNameRerender = !settings.store.triggerNameRerender;
 }
 
 function removeHoveringMessage(id: string) {
+    if (!id) return;
     hoveringMessageSet.delete(id);
     settings.store.triggerNameRerender = !settings.store.triggerNameRerender;
 }
@@ -776,11 +790,27 @@ export default definePlugin({
                     replace: "$1$self.getMessageNameElement(arguments[0])??($2),\"data-text\":$self.getMessageNameText(arguments[0])??($3)"
                 },
                 {
-                    // Animate gradients for message authors.
-                    match: /(let{setAnimate:\i}=(\i);)/,
-                    replace: "$1if($2.animate){$self.addHoveringMessage(arguments[0].message.id)}else{$self.removeHoveringMessage(arguments[0].message.id)};"
+                    // Pass the message object to the should-animate checker.
+                    match: /(\(\{)(shouldSubscribe)/,
+                    replace: "$1message:arguments[0].message,$2"
                 }
             ]
+        },
+        {
+            // Track hovering on messages to animate mentions.
+            find: /setAnimate.{0,50}\.ANIMATE_CHAT_AVATAR,/,
+            replacement: {
+                match: /(let{setAnimate:\i}=(\i);)/,
+                replace: "$1$self.handleHoveringMessage(arguments[0].message,$2.animate);"
+            }
+        },
+        {
+            // Attach the group ID to their messages to allow animating mentions within a group.
+            find: "CUSTOM_GIFT?\"\":",
+            replacement: {
+                match: /(\(\i,\i,\i\);)(let \i=\i.id===\i(?:.{0,500}?)hovering:(\i))/,
+                replace: "$1arguments[0].message.showMeYourNameGroupId=arguments[0].groupId;$2"
+            },
         },
         {
             // Replace names in mentions.
@@ -805,19 +835,6 @@ export default definePlugin({
                 match: /(className:"mention",)/,
                 replace: "$1props:arguments[2],"
             }
-        },
-        {
-            // Track hovering over second-level messages to animate gradients.
-            // Tack on the groupId, which is how the client groups messages from
-            // the same author together, to the message temporarily so that mentions
-            // across a group can animate together. By default, Discord handles this
-            // by animating the second-level message if you are hovering the first-level
-            // message, but not the other way around. This patch allows both.
-            find: "CUSTOM_GIFT?\"\":",
-            replacement: {
-                match: /(\(\i,\i,\i\);)(let \i=\i.id===\i(?:.{0,500}?)hovering:(\i))/,
-                replace: "$1arguments[0].message.showMeYourNameGroupId=arguments[0].groupId;if($3){$self.addHoveringMessage(arguments[0].groupId)}else{$self.removeHoveringMessage(arguments[0].groupId)};$2"
-            },
         },
         {
             // Replace names in the member list.
@@ -927,6 +944,7 @@ export default definePlugin({
 
     addHoveringMessage,
     removeHoveringMessage,
+    handleHoveringMessage,
     addHoveringReactionPopout,
     removeHoveringReactionPopout,
     getMessageNameText,

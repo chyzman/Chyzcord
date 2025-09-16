@@ -16,10 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Toasts } from "@webpack/common";
+import { ChannelStore, GuildMemberStore, Toasts } from "@webpack/common";
 
 import { copyToClipboard } from "./clipboard";
-import {ChyzcordDevsById, EquicordDevsById, VencordDevsById} from "./constants";
+import {ChyzcordDevsById, EQUICORD_HELPERS, EquicordDevsById, GUILD_ID, SUPPORT_CHANNEL_ID, VencordDevsById} from "./constants";
 
 /**
  * Calls .join(" ") on the arguments
@@ -95,8 +95,10 @@ export const isPluginDev = (id: string) => Object.hasOwn(VencordDevsById, id);
 export const shouldShowContributorBadge = (id: string) => isPluginDev(id) && VencordDevsById[id].badge !== false;
 
 export const isEquicordPluginDev = (id: string) => Object.hasOwn(EquicordDevsById, id);
-export const isChyzcordPluginDev = (id: string) => Object.hasOwn(ChyzcordDevsById, id);
 export const shouldShowEquicordContributorBadge = (id: string) => isEquicordPluginDev(id) && EquicordDevsById[id].badge !== false;
+
+export const isChyzcordPluginDev = (id: string) => Object.hasOwn(ChyzcordDevsById, id);
+export const shouldShowChyzordContributorBadge = (id: string) => isChyzcordPluginDev(id) && ChyzcordDevsById[id].badge !== false;
 
 export function pluralise(amount: number, singular: string, plural = singular + "s") {
     return amount === 1 ? `${amount} ${singular}` : `${amount} ${plural}`;
@@ -116,4 +118,20 @@ export function tryOrElse<T>(func: () => T, fallback: T): T {
     } catch {
         return fallback;
     }
+}
+
+export function isEquicordGuild(id: string, isGuildId: boolean = false): boolean {
+    if (isGuildId) return id === GUILD_ID;
+
+    const channel = ChannelStore.getChannel(id);
+    return channel.guild_id === GUILD_ID;
+}
+
+export function isSupportChannel(channelId: string): boolean {
+    return channelId === SUPPORT_CHANNEL_ID;
+}
+
+export function isEquicordSupport(userId: string): boolean {
+    const member = GuildMemberStore.getMember(GUILD_ID, userId);
+    return member?.roles?.includes(EQUICORD_HELPERS) || false;
 }
