@@ -24,7 +24,7 @@ import { openContributorModal } from "@components/settings/tabs";
 import { isEquicordDonor } from "@components/settings/tabs/vencord";
 import {ChyzcordDevs, Devs } from "@utils/constants";
 import { Logger } from "@utils/Logger";
-import { copyWithToast, shouldShowContributorBadge, shouldShowEquicordContributorBadge } from "@utils/misc";
+import {copyWithToast, shouldShowChyzordContributorBadge, shouldShowContributorBadge, shouldShowEquicordContributorBadge} from "@utils/misc";
 import definePlugin from "@utils/types";
 import {User} from "@vencord/discord-types";
 import {ContextMenuApi, Menu,Toasts, UserStore} from "@webpack/common";
@@ -70,7 +70,7 @@ const ChyzcordContributorBadge: ProfileBadge = {
     description: "Chyzcord Contributor",
     image: CHYZCORD_CONTRIBUTOR_BADGE,
     position: BadgePosition.START,
-    shouldShow: ({userId}) => isChyzcordPluginDev(userId),
+    shouldShow: ({userId}) => shouldShowChyzordContributorBadge(userId),
     onClick: (_, {userId}) => openContributorModal(UserStore.getUser(userId))
 };
 

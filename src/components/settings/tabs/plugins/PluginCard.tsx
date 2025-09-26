@@ -38,6 +38,7 @@ interface PluginCardProps extends React.HTMLProps<HTMLDivElement> {
 export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, onMouseLeave, isNew }: PluginCardProps) {
     const settings = Settings.plugins[plugin.name];
     const pluginMeta = PluginMeta[plugin.name];
+    const isChyzcordPlugin = pluginMeta?.folderName?.startsWith("src/chyzcordplugins/") ?? false;
     const isEquicordPlugin = pluginMeta?.folderName?.startsWith("src/equicordplugins/") ?? false;
     const isUserplugin = pluginMeta?.userPlugin ?? false;
 
@@ -93,7 +94,19 @@ export function PluginCard({ plugin, disabled, onRestartNeeded, onMouseEnter, on
         settings.enabled = !wasEnabled;
     }
 
-    const sourceBadge = isEquicordPlugin ? (
+    const sourceBadge = isChyzcordPlugin ? (
+        <img
+            src="https://discord.com/assets/030484501acb33086115.svg"
+            alt="Chyzcord"
+            title="Chyzcord Plugin"
+            style={{
+                width: "20px",
+                height: "20px",
+                marginLeft: "8px",
+                borderRadius: "2px"
+            }}
+        />
+    ) : isEquicordPlugin ? (
         <img
             src="https://equicord.org/assets/favicon.png"
             alt="Equicord"

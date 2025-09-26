@@ -22,25 +22,25 @@ import * as DataStore from "@api/DataStore";
 import { useSettings } from "@api/Settings";
 import { classNameFactory } from "@api/Styles";
 import { SettingsTab } from "@components/settings";
-import {debounce } from "@shared/debounce";
-import {ChangeList} from "@utils/ChangeList";
-import {proxyLazy} from "@utils/lazy";
-import {Logger} from "@utils/Logger";
-import {Margins} from "@utils/margins";
-import {classes} from "@utils/misc";
-import {useAwaiter, useIntersection} from "@utils/react";
-import {findByPropsLazy} from "@webpack";
-import {Alerts, Button, Card, Forms, lodash, Parser, React, SearchableSelect, Select, Text, TextInput, Toasts, Tooltip, useMemo} from "@webpack/common";
-import {JSX} from "react";
+import { debounce } from "@shared/debounce";
+import { ChangeList } from "@utils/ChangeList";
+import { proxyLazy } from "@utils/lazy";
+import { Logger } from "@utils/Logger";
+import { Margins } from "@utils/margins";
+import { classes } from "@utils/misc";
+import { useAwaiter, useIntersection } from "@utils/react";
+import { findByPropsLazy } from "@webpack";
+import { Alerts, Button, Card, Forms, lodash, Parser, React, Select, Text, TextInput, Toasts, Tooltip, useMemo } from "@webpack/common";
+import { JSX } from "react";
 
-import Plugins, {ExcludedPlugins, PluginMeta} from "~plugins";
+import Plugins, { ExcludedPlugins, PluginMeta } from "~plugins";
 
 import { PluginCard } from "./PluginCard";
 import { openWarningModal } from "./PluginModal";
-import {StockPluginsCard, UserPluginsCard} from "./PluginStatCards";
+import { StockPluginsCard, UserPluginsCard } from "./PluginStatCards";
 
 // Avoid circular dependency
-const {startDependenciesRecursive, startPlugin, stopPlugin} = proxyLazy(() => require("plugins"));
+const { startDependenciesRecursive, startPlugin, stopPlugin } = proxyLazy(() => require("plugins"));
 
 export const cl = classNameFactory("vc-plugins-");
 export const logger = new Logger("PluginSettings", "#a6d189");
@@ -59,7 +59,7 @@ function showErrorToast(message: string) {
     });
 }
 
-function ReloadRequiredCard({required, enabledPlugins, openWarningModal, resetCheckAndDo}) {
+function ReloadRequiredCard({ required, enabledPlugins, openWarningModal, resetCheckAndDo }) {
     return (
         <Card className={classes(cl("info-card"), required && "vc-warning-card")}>
             {required ? (
@@ -94,101 +94,18 @@ function ReloadRequiredCard({required, enabledPlugins, openWarningModal, resetCh
     );
 }
 
-interface PluginCardProps extends React.HTMLProps<HTMLDivElement> {
-    plugin: Plugin;
-    disabled: boolean;
-
-    onRestartNeeded(name: string): void;
-
-    isNew?: boolean;
-}
-
-export function PluginCard({plugin, disabled, onRestartNeeded, onMouseEnter, onMouseLeave, isNew}: PluginCardProps) {
-    const settings = Settings.plugins[plugin.name];
-
-    const isEnabled = () => Vencord.Plugins.isPluginEnabled(plugin.name);
-
-    function toggleEnabled() {
-        const wasEnabled = isEnabled();
-
-        // If we're enabling a plugin, make sure all deps are enabled recursively.
-        if (!wasEnabled) {
-            const {restartNeeded, failures} = startDependenciesRecursive(plugin);
-            if (failures.length) {
-                logger.error(`Failed to start dependencies for ${plugin.name}: ${failures.join(", ")}`);
-                showNotice("Failed to start dependencies: " + failures.join(", "), "Close", () => null);
-                return;
-            } else if (restartNeeded) {
-                // If any dependencies have patches, don't start the plugin yet.
-                settings.enabled = true;
-                onRestartNeeded(plugin.name);
-                return;
-            }
-        }
-
-        // if the plugin has patches, dont use stopPlugin/startPlugin. Wait for restart to apply changes.
-        if (plugin.patches?.length) {
-            settings.enabled = !wasEnabled;
-            onRestartNeeded(plugin.name);
-            return;
-        }
-
-        // If the plugin is enabled, but hasn't been started, then we can just toggle it off.
-        if (wasEnabled && !plugin.started) {
-            settings.enabled = !wasEnabled;
-            return;
-        }
-
-        const result = wasEnabled ? stopPlugin(plugin) : startPlugin(plugin);
-
-        if (!result) {
-            settings.enabled = false;
-
-            const msg = `Error while ${wasEnabled ? "stopping" : "starting"} plugin ${plugin.name}`;
-            logger.error(msg);
-            showErrorToast(msg);
-            return;
-        }
-
-        settings.enabled = !wasEnabled;
-    }
-
-    return (
-        <AddonCard
-            name={plugin.name}
-            description={plugin.description}
-            isNew={isNew}
-            enabled={isEnabled()}
-            setEnabled={toggleEnabled}
-            disabled={disabled}
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-            infoButton={
-                <button
-                    role="switch"
-                    onClick={() => openPluginModal(plugin, onRestartNeeded)}
-                    className={classes(ButtonClasses.button, cl("info-button"))}
-                >
-                    {plugin.options && !isObjectEmpty(plugin.options)
-                        ? <CogWheel className={cl("info-icon")}/>
-                        : <InfoIcon className={cl("info-icon")}/>}
-                </button>
-            }
-        />
-    );
-}
-
-enum SearchStatus {
+const enum SearchStatus {
+    ALL,
     ENABLED,
     DISABLED,
-    NEW,
-    VENCORD,
     EQUICORD,
+    VENCORD,
     CHYZCORD,
-    USERPLUGINS
+    CUSTOM,
+    NEW,
 }
 
-function ExcludedPluginsList({search}: { search: string; }) {
+function ExcludedPluginsList({ search }: { search: string; }) {
     const matchingExcludedPlugins = Object.entries(ExcludedPlugins)
         .filter(([name]) => name.toLowerCase().includes(search));
 
@@ -261,48 +178,37 @@ export default function PluginSettings() {
     const sortedPlugins = useMemo(() => Object.values(Plugins)
         .sort((a, b) => a.name.localeCompare(b.name)), []);
 
-    const [searchValue, setSearchValue] = React.useState<{ value: string; status: SearchStatus[] }>({value: "", status: []});
+    const [searchValue, setSearchValue] = React.useState({ value: "", status: SearchStatus.ALL });
 
     const search = searchValue.value.toLowerCase();
     const onSearch = (query: string) => {
-        setSearchValue(prev => ({...prev, value: query}));
+        setSearchValue(prev => ({ ...prev, value: query }));
     };
-    const onStatusChange = (status: SearchStatus[]) => {
-        setSearchValue(prev => ({...prev, status}));
+    const onStatusChange = (status: SearchStatus) => {
+        setSearchValue(prev => ({ ...prev, status }));
     };
 
     const pluginFilter = (plugin: typeof Plugins[keyof typeof Plugins]) => {
-        const {status} = searchValue;
+        const { status } = searchValue;
         const enabled = Vencord.Plugins.isPluginEnabled(plugin.name);
         const pluginMeta = PluginMeta[plugin.name];
+        const isChyzcordPlugin = pluginMeta?.folderName?.startsWith("src/chyzcordplugins/") ?? false;
         const isEquicordPlugin = pluginMeta?.folderName?.startsWith("src/equicordplugins/") ?? false;
         const isUserplugin = pluginMeta?.userPlugin ?? false;
 
-        if (enabled && !status.includes(SearchStatus.ENABLED) && status.includes(SearchStatus.DISABLED)) return false;
-        if (!enabled && !status.includes(SearchStatus.DISABLED) && status.includes(SearchStatus.ENABLED)) return false;
-        if (status.includes(SearchStatus.NEW) && !newPlugins?.includes(plugin.name)) return false;
+        if (enabled && status === SearchStatus.DISABLED) return false;
+        if (!enabled && status === SearchStatus.ENABLED) return false;
+        if (status === SearchStatus.NEW && !newPlugins?.includes(plugin.name)) return false;
+        if (status === SearchStatus.CHYZCORD && !isChyzcordPlugin) return false;
         if (status === SearchStatus.EQUICORD && !isEquicordPlugin) return false;
-        if (status === SearchStatus.VENCORD && isEquicordPlugin) return false;
+        if (status === SearchStatus.VENCORD && (isEquicordPlugin || isChyzcordPlugin || isUserplugin)) return false;
         if (status === SearchStatus.CUSTOM && !isUserplugin) return false;
-        const typeSum = [status.includes(SearchStatus.VENCORD), status.includes(SearchStatus.EQUICORD), status.includes(SearchStatus.CHYZCORD), status.includes(SearchStatus.USERPLUGINS)].filter(Boolean).length;
-        var passed = false;
-        if (typeSum > 0 && typeSum < 4) {
-            const {directory} = PluginMeta[plugin.name];
-            logger.info(plugin.name + ": " + directory);
-            if (status.includes(SearchStatus.VENCORD) && directory === "plugins") passed = true;
-            if (status.includes(SearchStatus.EQUICORD) && directory === "equicordplugins") passed = true;
-            if (status.includes(SearchStatus.CHYZCORD) && directory === "chyzcordplugins") passed = true;
-            if (status.includes(SearchStatus.USERPLUGINS) && directory === "userplugins") passed = true;
-        } else {
-            passed = true;
-        }
-        if (!search.length) return passed;
+        if (!search.length) return true;
 
         return (
-            passed &&
-            (plugin.name.toLowerCase().includes(search.replace(/\s+/g, "")) ||
-                plugin.description.toLowerCase().includes(search) ||
-                plugin.tags?.some(t => t.toLowerCase().includes(search)))
+            plugin.name.toLowerCase().includes(search.replace(/\s+/g, "")) ||
+            plugin.description.toLowerCase().includes(search) ||
+            plugin.tags?.some(t => t.toLowerCase().includes(search))
         );
     };
 
@@ -312,7 +218,7 @@ export default function PluginSettings() {
         const sortedPluginNames = Object.values(sortedPlugins).map(plugin => plugin.name);
 
         const newPlugins: string[] = [];
-        for (const {name: p} of sortedPlugins) {
+        for (const { name: p } of sortedPlugins) {
             const time = existingTimestamps[p] = cachedPlugins?.[p] ?? now;
             if ((time + 60 * 60 * 24 * 2) > now) {
                 newPlugins.push(p);
@@ -342,7 +248,7 @@ export default function PluginSettings() {
 
             requiredPlugins.push(
                 <Tooltip text={tooltipText} key={p.name}>
-                    {({onMouseLeave, onMouseEnter}) => (
+                    {({ onMouseLeave, onMouseEnter }) => (
                         <PluginCard
                             onMouseLeave={onMouseLeave}
                             onMouseEnter={onMouseEnter}
@@ -438,10 +344,9 @@ export default function PluginSettings() {
     const totalEnabledPlugins = enabledPlugins.length;
     const totalDisabledPlugins = totalPlugins.length - totalEnabledPlugins;
     const totalNewPlugins = totalPlugins.filter(p => newPlugins?.includes(p)).length;
-    const totalVencordPlugins = totalPlugins.filter(p => PluginMeta[p].directory === "plugins").length;
-    const totalEquicordPlugins = totalPlugins.filter(p => PluginMeta[p].directory === "equicordplugins").length;
-    const totalChyzcordPlugins = totalPlugins.filter(p => PluginMeta[p].directory === "chyzcordplugins").length;
-
+    const totalVencordPlugins = totalPlugins.filter(p => PluginMeta[p]?.folderName?.startsWith("src/plugins/")).length;
+    const totalEquicordPlugins = totalPlugins.filter(p => PluginMeta[p]?.folderName?.startsWith("src/equicordplugins/")).length;
+    const totalChyzcordPlugins = totalPlugins.filter(p => PluginMeta[p]?.folderName?.startsWith("src/chyzcordplugins/")).length;
 
     return (
         <SettingsTab title="Plugins">
@@ -470,25 +375,25 @@ export default function PluginSettings() {
             </Forms.FormTitle>
 
             <div className={classes(Margins.bottom20, cl("filter-controls"))}>
-                <TextInput autoFocus value={searchValue.value} placeholder="Search for a plugin..." onChange={onSearch}/>
-                <SearchableSelect
-                    options={[
-                        {label: `Enabled (${totalEnabledPlugins})`, value: SearchStatus.ENABLED},
-                        {label: `Disabled (${totalDisabledPlugins})`, value: SearchStatus.DISABLED},
-                        {label: `New (${totalNewPlugins})`, value: SearchStatus.NEW},
-                        {label: `Vencord (${totalVencordPlugins})`, value: SearchStatus.VENCORD},
-                        {label: `Equicord (${totalEquicordPlugins})`, value: SearchStatus.EQUICORD},
-                        {label: `Chyzcord (${totalChyzcordPlugins})`, value: SearchStatus.CHYZCORD},
-                        {label: `UserPlugins (${totalUserPlugins})`, value: SearchStatus.USERPLUGINS}
-                    ]}
-                    placeholder={!searchValue.status.length ? "Filter plugins..." : ""}
-                    // @ts-ignore
-                    value={searchValue.status}
-                    onChange={onStatusChange}
-                    closeOnSelect={false}
-                    multi={true}
-                    clearable={true}
-                />
+                <TextInput autoFocus value={searchValue.value} placeholder="Search for a plugin..." onChange={onSearch} />
+                <div className={InputStyles.inputWrapper}>
+                    <Select
+                        options={[
+                            { label: "Show All", value: SearchStatus.ALL, default: true },
+                            { label: `Show Enabled (${totalEnabledPlugins})`, value: SearchStatus.ENABLED },
+                            { label: `Show Disabled (${totalDisabledPlugins})`, value: SearchStatus.DISABLED },
+                            { label: `Show Chyzcord (${totalChyzcordPlugins})`, value: SearchStatus.CHYZCORD },
+                            { label: `Show Equicord (${totalEquicordPlugins})`, value: SearchStatus.EQUICORD },
+                            { label: `Show Vencord (${totalVencordPlugins})`, value: SearchStatus.VENCORD },
+                            ...(totalUserPlugins > 0 ? [{ label: `Show Custom (${totalUserPlugins})`, value: SearchStatus.CUSTOM }] : []),
+                            ...(totalNewPlugins > 0 ? [{ label: `Show New (${totalNewPlugins})`, value: SearchStatus.NEW }] : []),
+                        ]}
+                        serialize={String}
+                        select={onStatusChange}
+                        isSelected={v => v === searchValue.status}
+                        closeOnSelect={true}
+                    />
+                </div>
             </div>
 
             <Forms.FormTitle className={Margins.top20}>Plugins</Forms.FormTitle>
@@ -507,10 +412,10 @@ export default function PluginSettings() {
                         )}
                     </>
                 )
-                : <ExcludedPluginsList search={search}/>
+                : <ExcludedPluginsList search={search} />
             }
 
-            <Forms.FormDivider className={Margins.top20}/>
+            <Forms.FormDivider className={Margins.top20} />
 
             <Forms.FormTitle tag="h5" className={classes(Margins.top20, Margins.bottom8)}>
                 Required Plugins
@@ -521,7 +426,7 @@ export default function PluginSettings() {
                     : <Text variant="text-md/normal">No plugins meet the search criteria.</Text>
                 }
             </div>
-        </SettingsTab>
+        </SettingsTab >
     );
 }
 
@@ -529,7 +434,7 @@ function makeDependencyList(deps: string[]) {
     return (
         <React.Fragment>
             <Forms.FormText>This plugin is required by:</Forms.FormText>
-            {deps.map((dep: string) => <Forms.FormText className={cl("dep-text")}>{dep}</Forms.FormText>)}
+            {deps.map((dep: string) => <Forms.FormText key={dep} className={cl("dep-text")}>{dep}</Forms.FormText>)}
         </React.Fragment>
     );
 }

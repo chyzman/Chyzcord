@@ -26,6 +26,7 @@ interface Dev {
 
 const devs = {} as Record<string, Dev>;
 const equicordDevs = {} as Record<string, Dev>;
+const chyzcordDevs = {} as Record<string, Dev>;
 
 function getName(node: NamedDeclaration) {
     return node.name && isIdentifier(node.name) ? node.name.text : undefined;
@@ -103,13 +104,46 @@ function parseEquicordDevs() {
     throw new Error("Could not find EquicordDevs constant");
 }
 
+function parseChyzcordDevs() {
+    const file = createSourceFile("PluginCard.tsx", readFileSync("src/components/settings/tabs/plugins/PluginCard.tsx", "utf8"), ScriptTarget.Latest);
+
+    for (const child of file.getChildAt(0).getChildren()) {
+        if (!isVariableStatement(child)) continue;
+
+        const devsDeclaration = child.declarationList.declarations.find(d => hasName(d, "ChyzcordDevs"));
+        if (!devsDeclaration?.initializer || !isCallExpression(devsDeclaration.initializer)) continue;
+
+        const value = devsDeclaration.initializer.arguments[0];
+
+        if (!isObjectLiteralExpression(value)) throw new Error("Failed to parse ChyzcordDevs: not an object literal");
+
+        for (const prop of value.properties) {
+            const name = (prop.name as Identifier).text;
+            const value = isPropertyAssignment(prop) ? prop.initializer : prop;
+
+            if (!isObjectLiteralExpression(value)) throw new Error(`Failed to parse ChyzcordDevs: ${name} is not an object literal`);
+
+            chyzcordDevs[name] = {
+                name: (getObjectProp(value, "name") as StringLiteral).text,
+                id: (getObjectProp(value, "id") as BigIntLiteral).text.slice(0, -1)
+            };
+        }
+
+        return;
+    }
+
+    throw new Error("Could not find ChyzcordDevs constant");
+}
+
 (async () => {
     parseDevs();
     parseEquicordDevs();
+    parseChyzcordDevs();
 
     const allDevs = {
         vencord: devs,
         equicord: equicordDevs,
+        chyzcord: chyzcordDevs
     };
 
     const data = JSON.stringify(allDevs, null, 2);
