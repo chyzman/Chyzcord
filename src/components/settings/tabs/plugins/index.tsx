@@ -19,8 +19,8 @@
 import "./styles.css";
 
 import * as DataStore from "@api/DataStore";
-import { useSettings} from "@api/Settings";
-import {classNameFactory} from "@api/Styles";
+import { useSettings } from "@api/Settings";
+import { classNameFactory } from "@api/Styles";
 import { SettingsTab } from "@components/settings";
 import {debounce } from "@shared/debounce";
 import {ChangeList} from "@utils/ChangeList";
@@ -274,9 +274,16 @@ export default function PluginSettings() {
     const pluginFilter = (plugin: typeof Plugins[keyof typeof Plugins]) => {
         const {status} = searchValue;
         const enabled = Vencord.Plugins.isPluginEnabled(plugin.name);
+        const pluginMeta = PluginMeta[plugin.name];
+        const isEquicordPlugin = pluginMeta?.folderName?.startsWith("src/equicordplugins/") ?? false;
+        const isUserplugin = pluginMeta?.userPlugin ?? false;
+
         if (enabled && !status.includes(SearchStatus.ENABLED) && status.includes(SearchStatus.DISABLED)) return false;
         if (!enabled && !status.includes(SearchStatus.DISABLED) && status.includes(SearchStatus.ENABLED)) return false;
         if (status.includes(SearchStatus.NEW) && !newPlugins?.includes(plugin.name)) return false;
+        if (status === SearchStatus.EQUICORD && !isEquicordPlugin) return false;
+        if (status === SearchStatus.VENCORD && isEquicordPlugin) return false;
+        if (status === SearchStatus.CUSTOM && !isUserplugin) return false;
         const typeSum = [status.includes(SearchStatus.VENCORD), status.includes(SearchStatus.EQUICORD), status.includes(SearchStatus.CHYZCORD), status.includes(SearchStatus.USERPLUGINS)].filter(Boolean).length;
         var passed = false;
         if (typeSum > 0 && typeSum < 4) {

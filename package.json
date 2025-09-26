@@ -1,7 +1,7 @@
 {
     "name": "chyzcord",
     "private": "true",
-    "version": "1.12.13",
+    "version": "1.13.0",
     "description": "A fork of a fork of a Discord client mod",
     "homepage": "https://github.com/chyzman/Chyzcord#readme",
     "bugs": {
@@ -31,6 +31,7 @@
         "generateTypes": "tspc --emitDeclarationOnly --declaration --outDir packages/vencord-types --allowJs false",
         "inject": "node scripts/runInstaller.mjs -- --install",
         "uninject": "node scripts/runInstaller.mjs -- --uninstall",
+        "repair": "node scripts/runInstaller.mjs -- --repair",
         "lint": "eslint",
         "lint-styles": "stylelint \"src/**/*.css\" --ignore-pattern src/userplugins",
         "lint:fix": "pnpm lint --fix",
