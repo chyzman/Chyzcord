@@ -140,7 +140,7 @@ function ChyzcordSettings() {
                     <DonateButtonComponent />
                 </SpecialCard>
             )}
-            {isAnyPluginDev(user?.id) || isChyzcordPluginDev(user?.id) && (
+            {isAnyPluginDev(user?.id) && (
                 <SpecialCard
                     title="Contributions"
                     subtitle="Thank you for contributing!"
