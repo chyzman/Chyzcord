@@ -27,6 +27,7 @@ export const EQUICORD_TEAM = "1173520023239786538";
 export const EQUICORD_HELPERS = "1326406112144265257";
 export const EQUIBOP_CONTRIB_ROLE_ID = "1287079931645263968";
 export const VENCORD_CONTRIB_ROLE_ID = "1173343399470964856";
+export const EQUIBOT_USER_ID = "1243063117852835941";
 
 // Vencord
 export const VC_SUPPORT_CHANNEL_ID = "1026515880080842772";
@@ -382,6 +383,10 @@ export const EquicordDevs = Object.freeze({
 
 export const ChyzcordDevs = Object.freeze({
     chyzman: {name: "chyzman", id: 270305829540855808n},
+    mmeta: {
+        name: "mmeta",
+        id: 297075664530440192n
+    },
 } satisfies Record<string, Dev>);
 
 // iife so #__PURE__ works correctly

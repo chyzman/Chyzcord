@@ -8,6 +8,7 @@ import "./VencordTab.css";
 
 import { openNotificationLogModal } from "@api/Notifications/notificationLog";
 import { useSettings } from "@api/Settings";
+import { FormSwitch } from "@components/FormSwitch";
 import { FolderIcon, GithubIcon, LogIcon, PaintbrushIcon, RestartIcon } from "@components/Icons";
 import { openContributorModal, openPluginModal, SettingsTab, wrapTab } from "@components/settings";
 import { DonateButton, InviteButton } from "@components/settings/DonateButton";
@@ -16,15 +17,15 @@ import { SpecialCard } from "@components/settings/SpecialCard";
 import { gitRemote } from "@shared/vencordUserAgent";
 import { DONOR_ROLE_ID, GUILD_ID, VC_DONOR_ROLE_ID, VC_GUILD_ID } from "@utils/constants";
 import { Margins } from "@utils/margins";
-import { identity, isChyzcordPluginDev, isEquicordPluginDev, isPluginDev } from "@utils/misc";
-import { relaunch, showItemInFolder } from "@utils/native";
-import { Button, Flex, Forms, GuildMemberStore, React, Select, Switch, UserStore } from "@webpack/common";
+import { identity, isAnyPluginDev } from "@utils/misc";
+import { relaunch } from "@utils/native";
+import { Button, Flex, Forms, GuildMemberStore, React, Select, UserStore } from "@webpack/common";
 import BadgeAPI from "plugins/_api/badges";
 
 import { openNotificationSettingsModal } from "./NotificationSettings";
 
 const DEFAULT_DONATE_IMAGE = "https://cdn.discordapp.com/emojis/1026533090627174460.png";
-const SHIGGY_DONATE_IMAGE = "https://i.imgur.com/57ATLZu.png";
+const SHIGGY_DONATE_IMAGE = "https://equicord.org/assets/favicon.png";
 
 const VENNIE_DONATOR_IMAGE = "https://cdn.discordapp.com/emojis/1238120638020063377.png";
 const COZY_CONTRIB_IMAGE = "https://cdn.discordapp.com/emojis/1026533070955872337.png";
@@ -139,7 +140,7 @@ function ChyzcordSettings() {
                     <DonateButtonComponent />
                 </SpecialCard>
             )}
-            {isPluginDev(user?.id) || isEquicordPluginDev(user?.id) || isChyzcordPluginDev(user?.id) && (
+            {isAnyPluginDev(user?.id) || isChyzcordPluginDev(user?.id) && (
                 <SpecialCard
                     title="Contributions"
                     subtitle="Thank you for contributing!"
@@ -210,11 +211,12 @@ function ChyzcordSettings() {
                 {Switches.map(
                     s =>
                         s && (
-                            <Switch
+                            <FormSwitch
                                 key={s.key}
                                 value={settings[s.key]}
                                 onChange={v => (settings[s.key] = v)}
-                                note={
+                                title={s.title}
+                                description={
                                     s.warning.enabled ? (
                                         <>
                                             {s.note}
@@ -226,9 +228,7 @@ function ChyzcordSettings() {
                                         s.note
                                     )
                                 }
-                            >
-                                {s.title}
-                            </Switch>
+                            />
                         ),
                 )}
             </Forms.FormSection>

@@ -828,6 +828,14 @@ function setLastFilterChoices(filters: { group: string; filter: string; }[]): vo
     settings.store.lastQuestPageFilters = JSON.parse(JSON.stringify(filters)).reduce((acc, item) => ({ ...acc, [item.filter]: item }), {});
 }
 
+function getQuestAcceptedButtonProps(quest: Quest, text: string) {
+    return {
+        disabled: shouldDisableQuestAcceptedButton(quest) ?? true,
+        text: getQuestAcceptedButtonText(quest) ?? text,
+        onClick: () => { processQuestForAutoComplete(quest); }
+    };
+}
+
 export default definePlugin({
     name: "Questify",
     description: "Enhance your Quest experience with a suite of features, or disable them entirely if they're not your thing.",
@@ -848,8 +856,8 @@ export default definePlugin({
     shouldHideBadgeOnUserProfiles,
     shouldHideGiftInventoryRelocationNotice,
     shouldHideFriendsListActiveNowPromotion,
-    shouldDisableQuestAcceptedButton,
     processQuestForAutoComplete,
+    getQuestAcceptedButtonProps,
     getQuestAcceptedButtonText,
     getQuestPanelOverride,
     setLastFilterChoices,
@@ -1036,7 +1044,7 @@ export default definePlugin({
                     // Run Questify's sort function every time due to hook requirements but return
                     // early if not applicable. If the sort method is set to "Questify", replace the
                     // quests with the sorted ones. Also, setup a trigger to rerender the memo.
-                    match: /(?<=function \i\((\i).{0,100}?useRef\(\i\);)(return \i.useMemo\(\(\)=>{)/,
+                    match: /(?<=function \i\((\i),\i,\i\){let \i=\i.useRef.{0,100}?;)(return \i.useMemo\(\(\)=>{)/,
                     replace: "const questRerenderTrigger=$self.useQuestRerender();const questifySorted=$self.sortQuests($1,arguments[1].sortMethod!==\"questify\");$2if(arguments[1].sortMethod===\"questify\"){$1=questifySorted;};"
                 },
                 {
@@ -1051,7 +1059,7 @@ export default definePlugin({
                 },
                 {
                     // Add the trigger to the memo for rerendering Quests order due to progress changes, etc.
-                    match: /(?<=current=\i,\i},\[\i,\i,\i)/,
+                    match: /(?<=id\);.{0,100}?,\i},\[\i,\i,\i)/,
                     replace: ",questRerenderTrigger,questifySorted"
                 }
             ]
@@ -1191,15 +1199,11 @@ export default definePlugin({
                 {
                     // The Quest Accepted button is disabled by default. If the user reloads the client, they need a way
                     // to resume the automatic completion, so patch in optionally enabling it if the feature is enabled.
-                    match: /(START_QUEST_CTA.{0,400}?disabled:)(!0)/,
-                    replace: "$1$self.shouldDisableQuestAcceptedButton(arguments[0].quest)??$2"
-                },
-                {
                     // The "Quest Accepted" text is changed to "Resume" if the Quest is in progress but not active.
-                    // When the Quest Accepted button which has been enabled again by the above patch is clicked,
-                    // resume the automatic completion of the Quest and disable the button again.
-                    match: /(\i.intl.string\(\i.\i#{intl::QUEST_ACCEPTED}\))/,
-                    replace: "$self.getQuestAcceptedButtonText(arguments[0].quest)??$1,onClick:()=>{$self.processQuestForAutoComplete(arguments[0].quest)}"
+                    // Then, when the Quest Accepted button is clicked, resume the automatic completion of the
+                    // Quest and disable the button again.
+                    match: /(?<=fullWidth:!0}\)}\):.{0,150}?secondary",)disabled:!0,text:(.{0,30}?\["9KoPyM"\]\)),/,
+                    replace: "...$self.getQuestAcceptedButtonProps(arguments[0].quest,$1),"
                 }
             ]
         },

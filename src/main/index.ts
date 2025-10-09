@@ -104,7 +104,6 @@ if (!IS_VANILLA && !IS_EXTENSION) {
         } catch {
         }
 
-
         initCsp();
     });
 }

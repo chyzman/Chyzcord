@@ -8,13 +8,10 @@ import "@equicordplugins/_misc/styles.css";
 
 import { definePluginSettings } from "@api/Settings";
 import { Devs, EquicordDevs } from "@utils/constants";
-import { Logger } from "@utils/Logger";
-import { isEquicordGuild, isEquicordSupport } from "@utils/misc";
 import definePlugin, { OptionType } from "@utils/types";
-import { Button, Flex, showToast, Toasts } from "@webpack/common";
-import { JSX } from "react";
 
-import { toggleEnabled } from "./utils";
+import { PluginButtons } from "./pluginButtons";
+import { PluginCards } from "./pluginCards";
 
 const settings = definePluginSettings({
     disableCreateDMButton: {
@@ -28,6 +25,16 @@ const settings = definePluginSettings({
         description: "Disables the DM list context menu in favor of the x button",
         restartNeeded: true,
         default: false
+    },
+    noMirroredCamera: {
+        type: OptionType.BOOLEAN,
+        description: "Prevents the camera from being mirrored on your screen",
+        default: false,
+    },
+    removeActivitySection: {
+        type: OptionType.BOOLEAN,
+        description: "Removes the activity section above member list",
+        default: false,
     }
 });
 
@@ -52,77 +59,68 @@ export default definePlugin({
                 }
             ]
         },
+        // Disable Giant Create DM Button
         {
             find: ".createDMButtonContainer,",
+            predicate: () => settings.store.disableCreateDMButton,
             replacement: {
                 match: /"create-dm"\)/,
                 replace: "$&&&false"
             },
-            predicate: () => settings.store.disableCreateDMButton
         },
+        // Remove DM Context Menu
         {
             find: "#{intl::d+e27u::raw}",
+            predicate: () => settings.store.disableDMContextMenu,
+
             replacement: {
                 match: /\{dotsInsteadOfCloseButton:(\i),rearrangeContextMenu:(\i).*?autoTrackExposure:!0\}\)/,
                 replace: "$1=false,$2=false"
             },
-            predicate: () => settings.store.disableDMContextMenu
         },
+        // When focused on voice channel or group chat voice call
+        {
+            find: /\i\?\i.\i.SELF_VIDEO/,
+            predicate: () => settings.store.noMirroredCamera,
+            replacement: {
+                match: /mirror:\i/,
+                replace: "mirror:!1"
+            },
+        },
+        // Popout camera when not focused on voice channel
+        {
+            find: ".mirror]:",
+            all: true,
+            predicate: () => settings.store.noMirroredCamera,
+            replacement: {
+                match: /\[(\i).mirror]:\i/,
+                replace: "[$1.mirror]:!1"
+            },
+        },
+        // Overriding css on Preview Camera/Change Video Background popup
+        {
+            find: ".cameraPreview,",
+            replacement: {
+                match: /className:\i.camera,/,
+                replace: "$&style:{transform: \"scalex(1)\"},"
+            },
+            predicate: () => settings.store.noMirroredCamera
+        },
+        {
+            find: ".MEMBERLIST_CONTENT_FEED_TOGGLED,",
+            predicate: () => settings.store.removeActivitySection,
+            replacement: {
+                match: /null==\i\|\|/,
+                replace: "true||$&"
+            },
+        }
     ],
     renderMessageAccessory(props) {
-        return pluginToggleButtons(props);
-    }
-});
-
-function pluginToggleButtons(props) {
-    const buttons = [] as JSX.Element[];
-    const msg = props.message.content?.toLowerCase() ?? "";
-
-    const contentWords = (msg.match(/`\w+`/g) ?? []).map(e => e.slice(1, -1));
-    const matchedPlugins = Object.keys(Vencord.Plugins.plugins).filter(name => contentWords.includes(name.toLowerCase()));
-    const matchedPlugin = matchedPlugins.sort((a, b) => b.length - a.length)[0];
-    const pluginData = matchedPlugin ? Vencord.Plugins.plugins[matchedPlugin] : null;
-
-    const isEquicord = isEquicordGuild(props.channel.id) && isEquicordSupport(props.message.author.id);
-    const startsWithEnabled = msg.startsWith("enable");
-    const startsWithDisabled = msg.startsWith("disable");
-
-    const shouldAddPluginButtons = pluginData && isEquicord && (startsWithEnabled || startsWithDisabled);
-
-    if (shouldAddPluginButtons) {
-        if (pluginData.required || pluginData.name.endsWith("API")) return;
-        const isEnabled = Vencord.Plugins.isPluginEnabled(matchedPlugin);
-
-        let label = `${matchedPlugin} is already ${isEnabled ? "enabled" : "disabled"}`;
-        let disabled = true;
-
-        if ((startsWithDisabled && isEnabled) || (startsWithEnabled && !isEnabled)) {
-            label = `${isEnabled ? "Disable" : "Enable"} ${matchedPlugin}`;
-            disabled = false;
-        }
-
-        buttons.push(
-            <Button
-                key="vc-plugin-toggle"
-                color={disabled ? Button.Colors.PRIMARY : (isEnabled ? Button.Colors.RED : Button.Colors.GREEN)}
-                disabled={disabled}
-                size={Button.Sizes.SMALL}
-                onClick={async () => {
-                    try {
-                        const success = await toggleEnabled(matchedPlugin);
-                        if (success) showToast(`${label}`, Toasts.Type.SUCCESS);
-                    } catch (e) {
-                        new Logger("EquicordHelper").error("Error while toggling:", e);
-                        showToast(`Failed to ${label.toLowerCase()}`, Toasts.Type.FAILURE);
-                    }
-                }}
-            >
-                {label}
-            </Button>
+        return (
+            <>
+                <PluginButtons message={props.message} />
+                <PluginCards message={props.message} />
+            </>
         );
     }
-
-    return buttons.length
-        ? <Flex>{buttons}</Flex>
-        : null;
-}
+});

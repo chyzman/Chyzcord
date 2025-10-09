@@ -105,18 +105,18 @@ const enum SearchStatus {
     NEW,
 }
 
+export const ExcludedReasons: Record<"web" | "discordDesktop" | "vesktop" | "equibop" | "desktop" | "dev", string> = {
+    desktop: "Discord Desktop app or Vesktop",
+    discordDesktop: "Discord Desktop app",
+    vesktop: "Vesktop & Equibop apps",
+    equibop: "Vesktop & Equibop apps",
+    web: "Vesktop & Equibop apps as well as the Web version of Discord",
+    dev: "Developer version of Chyzcord"
+};
+
 function ExcludedPluginsList({ search }: { search: string; }) {
     const matchingExcludedPlugins = Object.entries(ExcludedPlugins)
         .filter(([name]) => name.toLowerCase().includes(search));
-
-    const ExcludedReasons: Record<"web" | "discordDesktop" | "vesktop" | "equibop" | "desktop" | "dev", string> = {
-        desktop: "Discord Desktop app or Vesktop",
-        discordDesktop: "Discord Desktop app",
-        vesktop: "Vesktop & Equibop apps",
-        equibop: "Vesktop & Equibop apps",
-        web: "Vesktop & Equibop apps as well as the Web version of Discord",
-        dev: "Developer version of Chyzcord"
-    };
 
     return (
         <Text variant="text-md/normal" className={Margins.top16}>
@@ -142,38 +142,35 @@ export default function PluginSettings() {
     const changes = React.useMemo(() => new ChangeList<string>(), []);
 
     React.useEffect(() => {
-        return () => void (changes.hasChanges && Alerts.show({
-            title: "Restart required",
-            body: (
-                <>
-                    <p>The following plugins require a restart:</p>
-                    <div>{changes.map((s, i) => (
-                        <>
-                            {i > 0 && ", "}
-                            {Parser.parse("`" + s + "`")}
-                        </>
-                    ))}</div>
-                </>
-            ),
-            confirmText: "Restart now",
-            cancelText: "Later!",
-            onConfirm: () => location.reload()
-        }));
+        return () => {
+            if (!changes.hasChanges) return;
+
+            const allChanges = [...changes.getChanges()];
+            const maxDisplay = 15;
+            const displayed = allChanges.slice(0, maxDisplay);
+            const remainingCount = allChanges.length - displayed.length;
+
+            Alerts.show({
+                title: "Restart required",
+                body: (
+                    <div>
+                        {displayed.map((s, i) => (
+                            <span key={i}>
+                                {i > 0 && ", "}
+                                {Parser.parse("`" + s + "`")}
+                            </span>
+                        ))}
+                        {remainingCount > 0 && <span> and {remainingCount} more</span>}
+                    </div>
+                ),
+                confirmText: "Restart now",
+                cancelText: "Later!",
+                onConfirm: () => location.reload()
+            });
+        };
     }, []);
 
-    const depMap = useMemo(() => {
-        const o = {} as Record<string, string[]>;
-        for (const plugin in Plugins) {
-            const deps = Plugins[plugin].dependencies;
-            if (deps) {
-                for (const dep of deps) {
-                    o[dep] ??= [];
-                    o[dep].push(plugin);
-                }
-            }
-        }
-        return o;
-    }, []);
+    const depMap = Vencord.Plugins.calculatePluginDependencyMap();
 
     const sortedPlugins = useMemo(() => Object.values(Plugins)
         .sort((a, b) => a.name.localeCompare(b.name)), []);
@@ -193,8 +190,8 @@ export default function PluginSettings() {
         const enabled = Vencord.Plugins.isPluginEnabled(plugin.name);
         const pluginMeta = PluginMeta[plugin.name];
         const isChyzcordPlugin = pluginMeta?.folderName?.startsWith("src/chyzcordplugins/") ?? false;
-        const isEquicordPlugin = pluginMeta?.folderName?.startsWith("src/equicordplugins/") ?? false;
-        const isUserplugin = pluginMeta?.userPlugin ?? false;
+        const isEquicordPlugin = pluginMeta.folderName.startsWith("src/equicordplugins/") ?? false;
+        const isUserplugin = pluginMeta.userPlugin ?? false;
 
         if (enabled && status === SearchStatus.DISABLED) return false;
         if (!enabled && status === SearchStatus.ENABLED) return false;
@@ -244,7 +241,7 @@ export default function PluginSettings() {
         if (isRequired) {
             const tooltipText = p.required || !depMap[p.name]
                 ? "This plugin is required for Chyzcord to function."
-                : makeDependencyList(depMap[p.name]?.filter(d => settings.plugins[d].enabled));
+                : <PluginDependencyList deps={depMap[p.name]?.filter(d => settings.plugins[d].enabled)} />;
 
             requiredPlugins.push(
                 <Tooltip text={tooltipText} key={p.name}>
@@ -320,7 +317,7 @@ export default function PluginSettings() {
     const totalPlugins = Object.keys(Plugins).filter(p => !isApiPlugin(p));
     const enabledPlugins = Object.keys(Plugins).filter(p => Vencord.Plugins.isPluginEnabled(p) && !isApiPlugin(p));
 
-    const totalStockPlugins = totalPlugins.filter(p => !PluginMeta[p].userPlugin).length;
+    const totalStockPlugins = totalPlugins.filter(p => !PluginMeta[p].userPlugin && !Plugins[p].hidden).length;
     const totalUserPlugins = totalPlugins.filter(p => PluginMeta[p].userPlugin).length;
     const enabledStockPlugins = enabledPlugins.filter(p => !PluginMeta[p].userPlugin).length;
     const enabledUserPlugins = enabledPlugins.filter(p => PluginMeta[p].userPlugin).length;
@@ -430,7 +427,7 @@ export default function PluginSettings() {
     );
 }
 
-function makeDependencyList(deps: string[]) {
+export function PluginDependencyList({ deps }: { deps: string[]; }) {
     return (
         <React.Fragment>
             <Forms.FormText>This plugin is required by:</Forms.FormText>
