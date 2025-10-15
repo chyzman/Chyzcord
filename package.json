@@ -1,7 +1,7 @@
 {
     "name": "chyzcord",
     "private": "true",
-    "version": "1.13.2",
+    "version": "1.13.3",
     "description": "A fork of a fork of a Discord client mod",
     "homepage": "https://github.com/chyzman/Chyzcord#readme",
     "bugs": {
