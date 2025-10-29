@@ -32,7 +32,6 @@ import {EquicordDonorModal, VencordDonorModal} from "./modals";
 
 const CONTRIBUTOR_BADGE = "https://cdn.discordapp.com/emojis/1092089799109775453.png?size=64";
 const EQUICORD_CONTRIBUTOR_BADGE = "https://equicord.org/assets/favicon.png";
-const EQUICORD_DONOR_BADGE = "https://images.equicord.org/api/v1/files/raw/0199d5dd-7ee3-7000-8ea5-ef331a206cee";
 const CHYZCORD_CONTRIBUTOR_BADGE = "https://discord.com/assets/030484501acb33086115.svg";
 
 const ContributorBadge: ProfileBadge = {
@@ -57,26 +56,18 @@ const EquicordContributorBadge: ProfileBadge = {
     },
 };
 
-const EquicordDonorBadge: ProfileBadge = {
-    description: "Equicord Donor",
-    image: EQUICORD_DONOR_BADGE,
-    position: BadgePosition.START,
-    shouldShow: ({userId}) => {
-        const donorBadges = EquicordDonorBadges[userId]?.map(badge => badge.badge);
-        const hasDonorBadge = donorBadges?.includes(EQUICORD_DONOR_BADGE);
-        return isEquicordDonor(userId) && !hasDonorBadge;
-    },
-    onClick: () => {
-        return EquicordDonorModal();
-    }
-};
-
 const ChyzcordContributorBadge: ProfileBadge = {
-    description: "Chyzcord Contributor",
-    image: CHYZCORD_CONTRIBUTOR_BADGE,
-    position: BadgePosition.START,
-    shouldShow: ({userId}) => shouldShowChyzordContributorBadge(userId),
-    onClick: (_, {userId}) => openContributorModal(UserStore.getUser(userId))
+  description: "Chyzcord Contributor",
+  image: CHYZCORD_CONTRIBUTOR_BADGE,
+  position: BadgePosition.START,
+  shouldShow: ({userId}) => shouldShowChyzordContributorBadge(userId),
+  onClick: (_, {userId}) => openContributorModal(UserStore.getUser(userId)),
+  props: {
+    style: {
+      borderRadius: "50%",
+      transform: "scale(0.9)"
+    }
+  },
 };
 
 let DonorBadges = {} as Record<string, Array<Record<"tooltip" | "badge", string>>>;
