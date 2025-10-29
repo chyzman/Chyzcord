@@ -33,7 +33,7 @@
                 "*://*.discord.com/*"
             ],
             "js": [
-                "dist/Vencord.js"
+                "dist/Equicord.js"
             ],
             "all_frames": true,
             "world": "MAIN"

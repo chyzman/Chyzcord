@@ -21,7 +21,6 @@ import "./fixDiscordBadgePadding.css";
 import {_getBadges, BadgePosition, BadgeUserArgs, ProfileBadge} from "@api/Badges";
 import ErrorBoundary from "@components/ErrorBoundary";
 import { openContributorModal } from "@components/settings/tabs";
-import { isEquicordDonor } from "@components/settings/tabs/vencord";
 import {ChyzcordDevs, Devs } from "@utils/constants";
 import { Logger } from "@utils/Logger";
 import {copyWithToast, shouldShowChyzordContributorBadge, shouldShowContributorBadge, shouldShowEquicordContributorBadge} from "@utils/misc";
@@ -192,7 +191,7 @@ export default definePlugin({
         }
     },
 
-    userProfileBadges: [ContributorBadge, EquicordContributorBadge, EquicordDonorBadge],
+    userProfileBadges: [ContributorBadge, EquicordContributorBadge],
 
     async start() {
         await loadAllBadges();
