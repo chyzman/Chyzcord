@@ -9,5 +9,6 @@ import gitRemote from "~git-remote";
 
 export {gitHash, gitRemote};
 
+export const gitHashShort = gitHash.slice(0, 7);
 export const VENCORD_USER_AGENT = `Chyzcord/${gitHash}${gitRemote ? ` (https://github.com/${gitRemote})` : ""}`;
 export const VENCORD_USER_AGENT_HASHLESS = `Chyzcord${gitRemote ? ` (https://github.com/${gitRemote})` : ""}`;

@@ -25,7 +25,7 @@ import { ChyzcordDevs, Devs } from "@utils/constants";
 import definePlugin from "@utils/types";
 import { findComponentByCodeLazy } from "@webpack";
 import { Menu, Popout, useRef, useState } from "@webpack/common";
-import type { ReactNode } from "react";
+import type { PropsWithChildren, ReactNode } from "react";
 
 const HeaderBarIcon = findComponentByCodeLazy(".HEADER_BAR_BADGE_TOP:", '.iconBadge,"top"');
 
@@ -43,25 +43,6 @@ function VencordPopout(onClose: () => void) {
                 >
                     {Object.entries(plugin.toolboxActions).map(([text, action]) => {
                         const key = `vc-toolbox-${plugin.name}-${text}`;
-
-                        if (plugin.name === "Demonstration") {
-                            const [demonstrationToggled, setToggled] = useState(false);
-
-                            return (
-                                <Menu.MenuCheckboxItem
-                                    id="vc-toolbox-demonstration-toggle"
-                                    key={key}
-                                    checked={!!demonstrationToggled}
-                                    label={text}
-                                    action={
-                                        () => {
-                                            action();
-                                            setToggled(!demonstrationToggled);
-                                        }
-                                    }
-                                />
-                            );
-                        }
 
                         return (
                             <Menu.MenuItem
@@ -156,16 +137,20 @@ export default definePlugin({
         {
             find: '?"BACK_FORWARD_NAVIGATION":',
             replacement: {
-                // TODO: (?:\.button) is for stable compat and should be removed soon:tm:
-                match: /focusSectionProps:"HELP".{0,20},className:(\i(?:\.button)?)\}\),/,
-                replace: "$& $self.renderVencordPopoutButton($1),"
+                match: /(?<=trailing:.{0,50})\i\.Fragment,\{(?=.+?className:(\i))/,
+                replace: "$self.TrailingWrapper,{className:$1,"
             }
         }
     ],
 
-    renderVencordPopoutButton: (buttonClass: string) => (
-        <ErrorBoundary noop>
-            <VencordPopoutButton buttonClass={buttonClass} />
-        </ErrorBoundary>
-    )
+    TrailingWrapper({ children, className }: PropsWithChildren<{ className: string; }>) {
+        return (
+            <>
+                {children}
+                <ErrorBoundary noop>
+                    <VencordPopoutButton buttonClass={className} />
+                </ErrorBoundary>
+            </>
+        );
+    },
 });
