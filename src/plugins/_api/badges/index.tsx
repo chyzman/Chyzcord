@@ -18,20 +18,20 @@
 
 import "./fixDiscordBadgePadding.css";
 
-import {_getBadges, BadgePosition, BadgeUserArgs, ProfileBadge} from "@api/Badges";
+import { _getBadges, BadgePosition, BadgeUserArgs, ProfileBadge } from "@api/Badges";
 import ErrorBoundary from "@components/ErrorBoundary";
 import { openContributorModal } from "@components/settings/tabs";
-import {ChyzcordDevs, Devs } from "@utils/constants";
+import {ChyzcordDevs, Devs} from "@utils/constants";
 import { copyWithToast } from "@utils/discord";
 import { Logger } from "@utils/Logger";
-import {copyWithToast, shouldShowChyzordContributorBadge, shouldShowContributorBadge, shouldShowEquicordContributorBadge} from "@utils/misc";
+import {shouldShowChyzordContributorBadge, shouldShowContributorBadge, shouldShowEquicordContributorBadge} from "@utils/misc";
 import definePlugin from "@utils/types";
-import {User} from "@vencord/discord-types";
-import {ContextMenuApi, Menu,Toasts, UserStore} from "@webpack/common";
+import { User } from "@vencord/discord-types";
+import { ContextMenuApi, Menu, Toasts, UserStore } from "@webpack/common";
 
 import Plugins, { PluginMeta } from "~plugins";
 
-import {EquicordDonorModal, VencordDonorModal} from "./modals";
+import { EquicordDonorModal, VencordDonorModal } from "./modals";
 
 const CONTRIBUTOR_BADGE = "https://cdn.discordapp.com/emojis/1092089799109775453.png?size=64";
 const EQUICORD_CONTRIBUTOR_BADGE = "https://equicord.org/assets/favicon.png";

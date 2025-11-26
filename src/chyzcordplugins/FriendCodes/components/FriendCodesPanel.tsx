@@ -8,7 +8,7 @@ import "./styles.css";
 
 import { copyToClipboard } from "@utils/clipboard";
 import { findByPropsLazy } from "@webpack";
-import { Button, Flex, Forms, Parser, Text, useEffect, useState } from "@webpack/common";
+import { Button, Forms, Parser, Text, useEffect, useState } from "@webpack/common";
 
 import { FriendInvite } from "../types";
 

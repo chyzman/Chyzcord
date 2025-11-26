@@ -397,7 +397,6 @@ export const EquicordDevs = Object.freeze({
   vei: {name: "Vei", id: 239414094799699968n},
   Prism: {name: "Prism", id: 390884143749136386n},
   square: {name: "square", id: 219363409097916416n},
-  square: {name: "square", id: 219363409097916416n},
   neoarz: {name: "neoarz", id: 1015372540937502851n},
   KamiRu:{name: "KamiRu", id: 819191621676695563n},
 } satisfies Record<string, Dev>);
