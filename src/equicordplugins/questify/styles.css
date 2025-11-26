@@ -46,10 +46,18 @@
     font-size: 14px;
 }
 
-.questify-select {
-    border-radius: 3px !important; /* Necessary !important */
-    margin-top: 8px;
-    min-height: 45px;
+.questify-select > div {
+    border-radius: 3px;
+    min-height: 43px;
+    border: 1px solid var(--border-normal);
+}
+
+.questify-volume-slider-container {
+    margin: 8px 0 0;
+    background-color: var(--input-background);
+    padding: 7px 12px 7px 7px;
+    border-radius: 3px;
+    border: 1px solid var(--border-normal);
 }
 
 .questify-inline-group-item .questify-select {
@@ -221,9 +229,9 @@
     position: relative;
 }
 
-/* Background of bottom half of Quest tile. */
+/* Background of Quest tile. */
 .questify-quest-item-restyle > div {
-    background-color: var(--questify-color);
+    background-color: var(--questify-color) !important; /* Necessary !important */
 }
 
 /* Normal button text + SVG button text color. */
@@ -244,7 +252,7 @@
 }
 
 /* Quest name color. */
-.questify-quest-item-restyle > div > div[class^="rewardDescriptionContainer"] > div[class^="textContainer"] > h2[class^="eyebrow"] {
+.questify-quest-item-restyle > div > div[class^="rewardDescriptionContainer"] > div[class^="textContainer"] > [class^="eyebrow"] {
     color: var(--questify-quest-name) !important; /* Necessary !important */
 }
 

@@ -50,6 +50,9 @@ const platform = navigator.platform.toLowerCase();
 export const IS_WINDOWS = platform.startsWith("win");
 export const IS_MAC = platform.startsWith("mac");
 export const IS_LINUX = platform.startsWith("linux");
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#mobile_tablet_or_desktop
+// "In summary, we recommend looking for the string Mobi anywhere in the User Agent to detect a mobile device."
+export const IS_MOBILE = navigator.userAgent.includes("Mobi");
 
 export interface Dev {
   name: string;
@@ -240,6 +243,10 @@ export const Devs = /* #__PURE__*/ Object.freeze({
   samsam: {name: "samsam", id: 836452332387565589n},
   Cootshk: {name: "Cootshk", id: 921605971577548820n},
   thororen: {name: "thororen", id: 848339671629299742n},
+    alfred: {
+        name: "alfred",
+        id: 1038466644353232967n
+    }
 } satisfies Record<string, Dev>);
 
 export const EquicordDevs = Object.freeze({
@@ -390,6 +397,9 @@ export const EquicordDevs = Object.freeze({
   vei: {name: "Vei", id: 239414094799699968n},
   Prism: {name: "Prism", id: 390884143749136386n},
   square: {name: "square", id: 219363409097916416n},
+  square: {name: "square", id: 219363409097916416n},
+  neoarz: {name: "neoarz", id: 1015372540937502851n},
+  KamiRu:{name: "KamiRu", id: 819191621676695563n},
 } satisfies Record<string, Dev>);
 
 export const ChyzcordDevs = Object.freeze({

@@ -54,6 +54,7 @@ function getUnitStr(unit: Units, isOne: boolean, short: boolean) {
  * @param short Whether to use short units like "d" instead of "days"
  */
 export function formatDuration(time: number, unit: Units, short: boolean = false) {
+    const { moment } = require("@webpack/common") as typeof import("@webpack/common");
     const dur = moment.duration(time, unit);
 
     let unitsAmounts = units.map(unit => ({amount: dur[unit](), unit}));

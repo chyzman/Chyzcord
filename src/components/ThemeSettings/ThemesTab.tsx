@@ -18,8 +18,10 @@
 
 import "./themesStyles.css";
 
+import { isPluginEnabled } from "@api/PluginManager";
 import { Settings, useSettings } from "@api/Settings";
 import { classNameFactory } from "@api/Styles";
+import { Card } from "@components/Card";
 import { Divider } from "@components/Divider";
 import { ErrorCard } from "@components/ErrorCard";
 import { Flex } from "@components/Flex";
@@ -41,7 +43,7 @@ import { getThemeInfo, stripBOM, type UserThemeHeader } from "@utils/themes/bd";
 import { usercssParse } from "@utils/themes/usercss";
 import { getStylusWebStoreUrl } from "@utils/web";
 import { findLazy } from "@webpack";
-import { Alerts, Button, Card, React, showToast, TabBar, TextInput, Tooltip, useEffect, useMemo, useRef, useState } from "@webpack/common";
+import { Alerts, Button, React, showToast, TabBar, TextInput, Tooltip, useEffect, useMemo, useRef, useState } from "@webpack/common";
 import type { ComponentType, Ref, SyntheticEvent } from "react";
 import type { UserstyleHeader } from "usercss-meta";
 
@@ -102,7 +104,7 @@ interface UserCSSCardProps {
 
 function UserCSSThemeCard({ theme, enabled, onChange, onDelete, onSettingsReset }: UserCSSCardProps) {
     const missingPlugins = useMemo(() =>
-        theme.requiredPlugins?.filter(p => !Vencord.Plugins.isPluginEnabled(p)), [theme]);
+        theme.requiredPlugins?.filter(p => !isPluginEnabled(p)), [theme]);
 
     return (
         <AddonCard
@@ -559,7 +561,7 @@ export function CspErrorCard() {
     const allowUrl = async (url: string) => {
         const { origin: baseUrl, host } = new URL(url);
 
-        const result = await VencordNative.csp.requestAddOverride(baseUrl, ["connect-src", "img-src", "style-src", "font-src"], "Vencord Themes");
+        const result = await VencordNative.csp.requestAddOverride(baseUrl, ["connect-src", "img-src", "style-src", "font-src"], "Equicord Themes");
         if (result !== "ok") return;
 
         CspBlockedUrls.forEach(url => {

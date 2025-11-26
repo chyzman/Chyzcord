@@ -16,77 +16,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import "./style.css";
+import "./styles.css";
 
-import { openNotificationLogModal } from "@api/Notifications/notificationLog";
-import { migratePluginSettings, Settings, useSettings } from "@api/Settings";
+import { definePluginSettings, migratePluginSettings } from "@api/Settings";
 import ErrorBoundary from "@components/ErrorBoundary";
 import { ChyzcordDevs, Devs } from "@utils/constants";
-import definePlugin from "@utils/types";
+import definePlugin, { OptionType } from "@utils/types";
 import { findComponentByCodeLazy } from "@webpack";
-import { Menu, Popout, useRef, useState } from "@webpack/common";
-import type { PropsWithChildren, ReactNode } from "react";
+import { Popout, useRef, useState } from "@webpack/common";
+import type { PropsWithChildren } from "react";
+
+import { renderPopout } from "./menu";
 
 const HeaderBarIcon = findComponentByCodeLazy(".HEADER_BAR_BADGE_TOP:", '.iconBadge,"top"');
 
-function VencordPopout(onClose: () => void) {
-    const { useQuickCss } = useSettings(["useQuickCss"]);
-
-    const pluginEntries = [] as ReactNode[];
-
-    for (const plugin of Object.values(Vencord.Plugins.plugins)) {
-        if (plugin.toolboxActions && Vencord.Plugins.isPluginEnabled(plugin.name)) {
-            pluginEntries.push(
-                <Menu.MenuGroup
-                    label={plugin.name}
-                    key={`vc-toolbox-${plugin.name}`}
-                >
-                    {Object.entries(plugin.toolboxActions).map(([text, action]) => {
-                        const key = `vc-toolbox-${plugin.name}-${text}`;
-
-                        return (
-                            <Menu.MenuItem
-                                id={key}
-                                key={key}
-                                label={text}
-                                action={action}
-                            />
-                        );
-                    })}
-                </Menu.MenuGroup>
-            );
-        }
+export const settings = definePluginSettings({
+    showPluginMenu: {
+        type: OptionType.BOOLEAN,
+        default: true,
+        description: "Show the plugins menu in the toolbox",
     }
+});
 
-    return (
-        <Menu.Menu
-            navId="vc-toolbox"
-            onClose={onClose}
-        >
-            <Menu.MenuItem
-                id="vc-toolbox-notifications"
-                label="Open Notification Log"
-                action={openNotificationLogModal}
-            />
-            <Menu.MenuCheckboxItem
-                id="vc-toolbox-quickcss-toggle"
-                checked={useQuickCss}
-                label={"Enable QuickCSS"}
-                action={() => {
-                    Settings.useQuickCss = !useQuickCss;
-                }}
-            />
-            <Menu.MenuItem
-                id="vc-toolbox-quickcss"
-                label="Open QuickCSS"
-                action={() => VencordNative.quickCss.openEditor()}
-            />
-            {...pluginEntries}
-        </Menu.Menu>
-    );
-}
-
-function VencordPopoutIcon() {
+function Icon() {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" width={24} height={24}>
             <path fill="#FFAC33" d="M11.792 6.062l-.011 3.324L17.129 8l-2.936-2zm21.458 17.42c0-1.138.761-2.071 1.75-2.238V9.585c-4-.962-34 7.191-34 7.191v3.536c1.564.294 2.75 1.662 2.75 3.312S2.564 26.644 1 26.938v7.716l34-6.482v-2.451c-.989-.168-1.75-1.102-1.75-2.239z"/>
@@ -110,7 +62,7 @@ function VencordPopoutButton({ buttonClass }: { buttonClass: string; }) {
             shouldShow={show}
             onRequestClose={() => setShow(false)}
             targetElementRef={buttonRef}
-            renderPopout={() => VencordPopout(() => setShow(false))}
+            renderPopout={() => renderPopout(() => setShow(false))}
         >
             {(_, { isShown }) => (
                 <HeaderBarIcon
@@ -118,7 +70,7 @@ function VencordPopoutButton({ buttonClass }: { buttonClass: string; }) {
                     className={`vc-toolbox-btn ${buttonClass}`}
                     onClick={() => setShow(v => !v)}
                     tooltip={isShown ? null : "Chyzcord Toolbox"}
-                    icon={() => VencordPopoutIcon()}
+                    icon={() => <Icon />}
                     selected={isShown}
                 />
             )}
@@ -132,6 +84,8 @@ export default definePlugin({
     description: "Adds a button next to the inbox button in the channel header that houses Chyzcord quick actions",
     authors: [Devs.Ven, Devs.AutumnVN, ChyzcordDevs.chyzman],
     enabledByDefault: true,
+
+    settings,
 
     patches: [
         {

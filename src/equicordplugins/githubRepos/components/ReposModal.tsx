@@ -6,12 +6,12 @@
 
 import { Button } from "@components/Button";
 import { HeadingPrimary } from "@components/Heading";
+import { getLanguageColor } from "@equicordplugins/githubRepos/colors";
+import { GitHubRepo } from "@equicordplugins/githubRepos/types";
 import { ModalContent, ModalFooter, ModalHeader, ModalRoot } from "@utils/modal";
 import { React } from "@webpack/common";
 
-import { getLanguageColor } from "../colors";
-import { GitHubRepo } from "../types";
-import { cl } from "./GitHubReposComponent";
+import { cl } from "..";
 import { Star } from "./Star";
 
 interface ReposModalProps {
@@ -73,10 +73,10 @@ export function ReposModal({ repos, username, rootProps }: ReposModalProps) {
                 <div className={cl("table-container")}>
                     <table className={cl("table")}>
                         <colgroup>
-                            <col style={{ width: "20%" }} />
-                            <col style={{ width: "45%" }} />
-                            <col style={{ width: "15%" }} />
-                            <col style={{ width: "10%" }} />
+                            <col className={cl("header-repo")} />
+                            <col className={cl("header-description")} />
+                            <col className={cl("header-language")} />
+                            <col className={cl("header-stars")} />
                         </colgroup>
                         {renderTableHeader()}
                         <tbody>
@@ -85,10 +85,10 @@ export function ReposModal({ repos, username, rootProps }: ReposModalProps) {
                     </table>
                 </div>
             </ModalContent>
-            <ModalFooter>
+            <ModalFooter className={cl("modal-footer")}>
                 <Button
                     className={cl("modal-footer-github")}
-                    variant="primary"
+                    variant="link"
                     onClick={() => window.open(`https://github.com/${username}?tab=repositories`, "_blank")}
                 >
                     View on GitHub

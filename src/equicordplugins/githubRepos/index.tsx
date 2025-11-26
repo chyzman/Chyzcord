@@ -7,6 +7,7 @@
 import "./styles.css";
 
 import { definePluginSettings } from "@api/Settings";
+import { classNameFactory } from "@api/Styles";
 import { BaseText } from "@components/BaseText";
 import ErrorBoundary from "@components/ErrorBoundary";
 import { EquicordDevs } from "@utils/constants";
@@ -16,6 +17,8 @@ import { findByCodeLazy } from "@webpack";
 import { React } from "@webpack/common";
 
 import { GitHubReposComponent } from "./components/GitHubReposComponent";
+
+export const cl = classNameFactory("vc-github-repos-");
 
 export const settings = definePluginSettings({
     showStars: {
@@ -67,7 +70,7 @@ export default definePlugin({
         {
             find: ".hasAvatarForGuild(null==",
             replacement: {
-                match: /currentUser:\i,guild:\i\}\).{0,100}(?=\])/,
+                match: /currentUser:\i,guild:\i.{0,15}\}\).{0,100}(?=\])/,
                 replace: "$&,$self.ProfilePopoutComponent({ user: arguments[0].user, displayProfile: arguments[0].displayProfile })"
             }
         },
