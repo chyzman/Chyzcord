@@ -1,7 +1,7 @@
 {
     "name": "chyzcord",
     "private": "true",
-    "version": "1.13.6.2",
+    "version": "1.13.6.4",
     "description": "A fork of a fork of a Discord client mod",
     "homepage": "https://github.com/chyzman/Chyzcord#readme",
     "bugs": {
@@ -26,8 +26,8 @@
         "generateDevsList": "tsx scripts/generateDevsList.ts",
         "generatePluginJson": "tsx scripts/generatePluginList.ts",
         "generateChyzcordPluginJson": "tsx scripts/generateChyzcordPluginList.ts",
-        "generateEquicordPluginJson": "tsx scripts/generateEquicordPluginList.ts",
-        "generateVencordPluginJson": "tsx scripts/generateVencordPluginList.ts",
+        "generateEquicordPluginJson": "tsx scripts/generatePluginList.ts --equicord",
+        "generateVencordPluginJson": "tsx scripts/generatePluginList.ts --vencord",
         "generateTypes": "tspc --emitDeclarationOnly --declaration --outDir packages/vencord-types --allowJs false",
         "inject": "node scripts/runInstaller.mjs -- --install",
         "uninject": "node scripts/runInstaller.mjs -- --uninstall",

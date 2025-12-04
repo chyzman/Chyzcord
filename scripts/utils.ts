@@ -24,17 +24,17 @@ import { BigIntLiteral, createSourceFile, Identifier, isArrayLiteralExpression, 
 
 import { getPluginTarget } from "./utils.mjs";
 
-interface Dev {
+export interface Dev {
     name: string;
     id: string;
 }
 
-interface Command {
+export interface Command {
     name: string;
     description: string;
 }
 
-interface PluginData {
+export interface PluginData {
     name: string;
     description: string;
     tags: string[];
@@ -50,26 +50,25 @@ interface PluginData {
     dirName: string;
     isModified: boolean;
 }
+export const devs = {} as Record<string, Dev>;
+export const equicordDevs = {} as Record<string, Dev>;
+export const chyzcordDevs = {} as Record<string, Dev>;
 
-const devs = {} as Record<string, Dev>;
-const equicordDevs = {} as Record<string, Dev>;
-const chyzcordDevs = {} as Record<string, Dev>;
-
-function getName(node: NamedDeclaration) {
+export function getName(node: NamedDeclaration) {
     return node.name && isIdentifier(node.name) ? node.name.text : undefined;
 }
 
-function hasName(node: NamedDeclaration, name: string) {
+export function hasName(node: NamedDeclaration, name: string) {
     return getName(node) === name;
 }
 
-function getObjectProp(node: ObjectLiteralExpression, name: string) {
+export function getObjectProp(node: ObjectLiteralExpression, name: string) {
     const prop = node.properties.find(p => hasName(p, name));
     if (prop && isPropertyAssignment(prop)) return prop.initializer;
     return prop;
 }
 
-function parseDevs() {
+export function parseDevs() {
     const file = createSourceFile("constants.ts", readFileSync("src/utils/constants.ts", "utf8"), ScriptTarget.Latest);
 
     for (const child of file.getChildAt(0).getChildren()) {
@@ -100,7 +99,7 @@ function parseDevs() {
     throw new Error("Could not find Devs constant");
 }
 
-function parseEquicordDevs() {
+export function parseEquicordDevs() {
     const file = createSourceFile("constants.ts", readFileSync("src/utils/constants.ts", "utf8"), ScriptTarget.Latest);
 
     for (const child of file.getChildAt(0).getChildren()) {
@@ -133,7 +132,6 @@ function parseEquicordDevs() {
 
 function parseChyzcordDevs() {
     const file = createSourceFile("constants.ts", readFileSync("src/utils/constants.ts", "utf8"), ScriptTarget.Latest);
-
     for (const child of file.getChildAt(0).getChildren()) {
         if (!isVariableStatement(child)) continue;
 
@@ -158,11 +156,9 @@ function parseChyzcordDevs() {
 
         return;
     }
-
-    throw new Error("Could not find ChyzcordDevs constant");
 }
 
-async function parseFile(fileName: string) {
+export async function parseFile(fileName: string) {
     const file = createSourceFile(fileName, await readFile(fileName, "utf8"), ScriptTarget.Latest);
 
     const fail = (reason: string) => {
@@ -264,7 +260,7 @@ async function parseFile(fileName: string) {
 
         const target = getPluginTarget(fileName);
         if (target) {
-            if (!["web", "discordDesktop", "vencordDesktop", "equibop", "desktop", "dev"].includes(target)) throw fail(`invalid target ${target}`);
+            if (!["web", "discordDesktop", "vesktop", "equibop", "desktop", "dev"].includes(target)) throw fail(`invalid target ${target}`);
             data.target = target as any;
         }
 
@@ -277,6 +273,7 @@ async function parseFile(fileName: string) {
             .split(sep)
             .join(posixSep)
             .replace(/\/index\.([jt]sx?)$/, "")
+            .replace(/^src\/plugins\//, "")
             .replace(/^src\/equicordplugins\//, "");
 
         return [data] as const;
@@ -285,7 +282,7 @@ async function parseFile(fileName: string) {
     throw fail("no default export called 'definePlugin' found");
 }
 
-async function getEntryPoint(dir: string, dirent: Dirent) {
+export async function getEntryPoint(dir: string, dirent: Dirent) {
     const base = join(dir, dirent.name);
     if (!dirent.isDirectory()) return base;
 
@@ -300,7 +297,7 @@ async function getEntryPoint(dir: string, dirent: Dirent) {
     throw new Error(`${dirent.name}: Couldn't find entry point`);
 }
 
-function isPluginFile({ name }: { name: string; }) {
+export function isPluginFile({ name }: { name: string; }) {
     if (name === "index.ts") return false;
     return !name.startsWith("_") && !name.startsWith(".");
 }
@@ -312,7 +309,7 @@ function isPluginFile({ name }: { name: string; }) {
 
     const plugins = [] as PluginData[];
 
-    await Promise.all(["src/equicordplugins"].flatMap(dir =>
+    await Promise.all(["src/plugins", "src/plugins/_core"].flatMap(dir =>
         readdirSync(dir, { withFileTypes: true })
             .filter(isPluginFile)
             .map(async dirent => {
