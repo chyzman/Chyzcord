@@ -36,7 +36,6 @@ const settings = definePluginSettings({
                     setErrorMessage(null);
                 }
 
-
                 if (changed < value) {
                     setShouldShowWarning(true);
                 } else {
@@ -45,7 +44,6 @@ const settings = definePluginSettings({
                 setState(newValue);
                 setValue(changed);
             }
-
 
             return (
                 <section>
@@ -57,8 +55,8 @@ const settings = definePluginSettings({
                         onChange={handleChange}
                         placeholder={"Enter a number"}
                     />
-                    {shouldShowWarning && <Paragraph style={{ color: "var(--text-danger)" }}>Warning! Setting the number to a lower value will reset the log!</Paragraph>}
-                    {errorMessage && <Paragraph style={{ color: "var(--text-danger)" }}>{errorMessage}</Paragraph>}
+                    {shouldShowWarning && <Paragraph style={{ color: "var(--text-feedback-critical)" }}>Warning! Setting the number to a lower value will reset the log!</Paragraph>}
+                    {errorMessage && <Paragraph style={{ color: "var(--text-feedback-critical)" }}>{errorMessage}</Paragraph>}
                 </section>
             );
         }

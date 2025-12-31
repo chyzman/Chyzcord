@@ -18,16 +18,13 @@
 
 import "./styles.css";
 
-import { addHeaderBarButton, removeHeaderBarButton } from "@api/HeaderBar";
+import { HeaderBarButton } from "@api/HeaderBar";
 import { definePluginSettings, migratePluginSettings } from "@api/Settings";
 import { ChyzcordDevs, Devs } from "@utils/constants";
 import definePlugin, { OptionType } from "@utils/types";
-import { findComponentByCodeLazy } from "@webpack";
 import { Popout, useRef, useState } from "@webpack/common";
 
 import { renderPopout } from "./menu";
-
-const HeaderBarIcon = findComponentByCodeLazy(".HEADER_BAR_BADGE_TOP:", '.iconBadge,"top"');
 
 export const settings = definePluginSettings({
     showPluginMenu: {
@@ -37,7 +34,7 @@ export const settings = definePluginSettings({
     }
 });
 
-function Icon() {
+function Icon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" width={24} height={24}>
             <path fill="#FFAC33" d="M11.792 6.062l-.011 3.324L17.129 8l-2.936-2zm21.458 17.42c0-1.138.761-2.071 1.75-2.238V9.585c-4-.962-34 7.191-34 7.191v3.536c1.564.294 2.75 1.662 2.75 3.312S2.564 26.644 1 26.938v7.716l34-6.482v-2.451c-.989-.168-1.75-1.102-1.75-2.239z"/>
@@ -64,7 +61,7 @@ function VencordPopoutButton() {
             renderPopout={() => renderPopout(() => setShow(false))}
         >
             {(_, { isShown }) => (
-                <HeaderBarIcon
+                <HeaderBarButton
                     ref={buttonRef}
                     className="vc-toolbox-btn"
                     onClick={() => setShow(v => !v)}
@@ -87,11 +84,9 @@ export default definePlugin({
 
     settings,
 
-    start() {
-        addHeaderBarButton("EquicordToolbox", VencordPopoutButton, 1000);
-    },
-
-    stop() {
-        removeHeaderBarButton("EquicordToolbox");
+    headerBarButton: {
+        icon: Icon,
+        render: VencordPopoutButton,
+        priority: 1337
     }
 });

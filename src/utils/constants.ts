@@ -55,9 +55,9 @@ export const IS_LINUX = platform.startsWith("linux");
 export const IS_MOBILE = navigator.userAgent.includes("Mobi");
 
 export interface Dev {
-  name: string;
-  id: bigint;
-  badge?: boolean;
+    name: string;
+    id: bigint;
+    badge?: boolean;
 }
 
 /**
@@ -243,7 +243,9 @@ export const Devs = /* #__PURE__*/ Object.freeze({
   samsam: {name: "samsam", id: 836452332387565589n},
   Cootshk: {name: "Cootshk", id: 921605971577548820n},
   thororen: {name: "thororen", id: 848339671629299742n},
-  alfred: {name: "alfred", id: 1038466644353232967n}
+  alfred: {name: "alfred", id: 1038466644353232967n},
+  vv: {name: "VV", id: 254866377087778816n},
+  u32: {name: "u32", id: 1063237286818488351n}
 } satisfies Record<string, Dev>);
 
 export const EquicordDevs = Object.freeze({
@@ -396,6 +398,9 @@ export const EquicordDevs = Object.freeze({
   square: {name: "square", id: 219363409097916416n},
   neoarz: {name: "neoarz", id: 1015372540937502851n},
   KamiRu:{name: "KamiRu", id: 819191621676695563n},
+  soapphia: {name: "soap phia", id: 1012095822957133976n},
+  benjii: {name: "Benjii", id: 463702169443368970n},
+  keyages: {name: "Key", id: 1230319937155760131n},
 } satisfies Record<string, Dev>);
 
 export const ChyzcordDevs = Object.freeze({
