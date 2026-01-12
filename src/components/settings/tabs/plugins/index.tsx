@@ -104,7 +104,7 @@ const enum SearchStatus {
     VENCORD,
     CHYZCORD,
     NEW,
-    USER_PLUGINS,
+    CUSTOM,
     API_PLUGINS
 }
 
@@ -342,7 +342,7 @@ export default function PluginSettings() {
     }
 
     // Code directly taken from supportHelper.tsx
-    const { totalStockPlugins, totalUserPlugins, enabledStockPlugins, enabledUserPlugins, enabledPlugins } = useMemo(() => {
+    const { totalPlugins, totalStockPlugins, totalUserPlugins, enabledStockPlugins, enabledUserPlugins, enabledPlugins } = useMemo(() => {
         const isApiPlugin = (plugin: string) => plugin.endsWith("API") || Plugins[plugin].required;
 
         const totalPlugins = Object.keys(Plugins).filter(p => !isApiPlugin(p));
@@ -352,7 +352,7 @@ export default function PluginSettings() {
         const totalUserPlugins = totalPlugins.filter(p => PluginMeta[p].userPlugin).length;
         const enabledStockPlugins = enabledPlugins.filter(p => !PluginMeta[p].userPlugin).length;
         const enabledUserPlugins = enabledPlugins.filter(p => PluginMeta[p].userPlugin).length;
-        return { totalStockPlugins, totalUserPlugins, enabledStockPlugins, enabledUserPlugins, enabledPlugins };
+        return { totalPlugins, totalStockPlugins, totalUserPlugins, enabledStockPlugins, enabledUserPlugins, enabledPlugins };
     }, [settings.plugins]);
     const pluginsToLoad = Math.min(36, plugins.length);
     const [visibleCount, setVisibleCount] = React.useState(pluginsToLoad);
@@ -373,7 +373,7 @@ export default function PluginSettings() {
 
     const totalEnabledPlugins = enabledPlugins.length;
     const totalDisabledPlugins = totalPlugins.length - totalEnabledPlugins;
-    const totalNewPlugins = totalPlugins.filter(p => newPlugins?.includes(p)).length;
+    const totalNewPlugins = totalPlugins.filter(p => newPluginsSet?.has(p)).length;
     const totalVencordPlugins = totalPlugins.filter(p => PluginMeta[p]?.folderName?.startsWith("src/plugins/")).length;
     const totalEquicordPlugins = totalPlugins.filter(p => PluginMeta[p]?.folderName?.startsWith("src/equicordplugins/")).length;
     const totalChyzcordPlugins = totalPlugins.filter(p => PluginMeta[p]?.folderName?.startsWith("src/chyzcordplugins/")).length;
