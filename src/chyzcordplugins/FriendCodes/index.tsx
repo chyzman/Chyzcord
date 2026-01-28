@@ -7,19 +7,20 @@
 import { Devs } from "@utils/constants";
 import definePlugin from "@utils/types";
 
-import FriendCodesPanel from "./components/FriendCodesPanel";
+import FriendCodesPanel from "./FriendCodesPanel";
 
 export default definePlugin({
     name: "FriendCodes",
     description: "Generate FriendCodes to easily add friends",
-    authors: [Devs.domiBtnr],
+    authors: [Devs.HypedDomi],
     patches: [
         {
-            find: ".Messages.ADD_FRIEND}),(",
+            find: "#{intl::ADD_FRIEND})}),(",
             replacement: {
-                match: /\.Fragment[^]*?children:\[[^]*?}\)/,
+                match: /"header",.{0,30}children:\[.*?\{\}\)/,
                 replace: "$&,$self.FriendCodesPanel"
-            }
+            },
+            noWarn: true,
         }
     ],
 

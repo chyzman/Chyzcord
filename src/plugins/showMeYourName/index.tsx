@@ -894,7 +894,7 @@ const settings = definePluginSettings({
 export default definePlugin({
     name: "ShowMeYourName",
     description: "Display any permutation of custom nicknames, friend nicknames, server nicknames, display names, and usernames in chat.",
-    authors: [Devs.Rini, Devs.TheKodeToad, EquicordDevs.Etorix, Devs.sadan, EquicordDevs.Prism],
+    authors: [Devs.Rini, Devs.TheKodeToad, EquicordDevs.Etorix, Devs.sadan, EquicordDevs.prism],
     tags: ["SMYN", "Nicknames", "Custom Nicknames",],
     isModified: true,
     settings,
@@ -921,8 +921,8 @@ export default definePlugin({
             // Attach the group ID to their messages to allow animating gradients within a group.
             find: "CUSTOM_GIFT?\"\":",
             replacement: {
-                match: /(\(\i,\i,\i\);)(let \i=\i.id===\i(?:.{0,500}?)hovering:(\i))/,
-                replace: "$1arguments[0].message.showMeYourNameGroupId=!!arguments[0].groupId?`g-${arguments[0].groupId}`:null;$self.handleHoveringMessage(arguments[0].message,$3);$2"
+                match: /(isHovered:(\i).{0,1300}?\(\i,\i,\i\);)(let \i=\i.id===\i)/,
+                replace: "$1arguments[0].message.showMeYourNameGroupId=!!arguments[0].groupId?`g-${arguments[0].groupId}`:null;$self.handleHoveringMessage(arguments[0].message,$2);$3"
             },
         },
         {
@@ -959,34 +959,16 @@ export default definePlugin({
         },
         {
             // Replace names in profile popouts.
-            find: "clickableUsername,\"aria-label\":",
+            find: "shouldWrap:!0,loop:!0,inProfile:!0",
             replacement: {
                 match: /(tags:\i,)nickname:(\i)/,
                 replace: "$1showMeYourNameNickname:$2=$self.getMemberListProfilesReactionsVoiceNameText({...arguments[0],type:\"profilesPopout\"})??(arguments[0].nickname)"
             },
         },
         {
-            // Tags *should* contain the guild ID nested in its structure, but on the first time
-            // loading a guild member's preview profile, it will be undefined. This patch bypasses
-            // that by passing the guild ID as its own prop.
-            find: "\"UserProfilePopoutBody\"}",
-            replacement: {
-                match: /(pronouns,tags:)/,
-                replace: "pronouns,guildId:arguments[0]?.guild?.id??null,tags:"
-            }
-        },
-        {
-            // Same as above, but for bot members.
-            find: "popularApplicationCommandIds)!=null&&null",
-            replacement: {
-                match: /(pronouns,tags:)/,
-                replace: "pronouns,guildId:arguments[0]?.guild?.id??null,tags:"
-            }
-        },
-        {
             // Replace names in the profile tooltip for switching between guild and global profiles.
             // You must open a profile modal before the code this is patching will be searchable.
-            find: "\"view-main-profile\",",
+            find: 'id:"view-server-profile",',
             group: true,
             replacement: [
                 {
@@ -1008,18 +990,18 @@ export default definePlugin({
             }
         },
         {
-            find: "discriminator,forceUsername",
+            find: "MESSAGE,userId:",
             group: true,
             replacement: [
                 {
-                    // Replace names in reaction popouts.
-                    match: /children:(\[null!=(?:.{0,300}?)forceUsername:!0}\)\])/,
-                    replace: "style:{\"overflow\":\"visible\"},children:($self.getMemberListProfilesReactionsVoiceNameElement({user:arguments[0].user,guildId:arguments[0].guildId,type:\"reactionsPopout\"}))??($1)"
+                    // Track hovering over reaction popouts.
+                    match: /(?<=return\(0,\i.\i\)\(\i.\i,{className:\i.\i,)(?=onContextMenu:\i=>)/,
+                    replace: "onMouseEnter:()=>{$self.addHoveringReactionPopout(arguments[0].user.id)},onMouseLeave:()=>{$self.removeHoveringReactionPopout(arguments[0].user.id)},$2"
                 },
                 {
-                    // Track hovering over reaction popouts.
-                    match: /(return\(0,\i.\i\)\(\i.\i,{className:\i.reactor,)(onContextMenu)/,
-                    replace: "$1onMouseEnter:()=>{$self.addHoveringReactionPopout(arguments[0].user.id)},onMouseLeave:()=>{$self.removeHoveringReactionPopout(arguments[0].user.id)},$2"
+                    // Replace names in reaction popouts.
+                    match: /(?<=Child,{className:\i.\i,children:)/,
+                    replace: "($self.getMemberListProfilesReactionsVoiceNameElement({user:arguments[0].user,guildId:arguments[0].guildId,type:\"reactionsPopout\"}))??"
                 }
             ]
         },

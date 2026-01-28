@@ -7,7 +7,7 @@
 import { BaseText } from "@components/BaseText";
 import { Flex } from "@components/Flex";import {Link} from "@components/Link";import { Paragraph } from "@components/Paragraph";
 import {settings } from "@plugins/decor/settings";
-import { cl, DecorationModalStyles, requireAvatarDecorationModal } from "@plugins/decor/ui";
+import { cl, DecorationModalClasses, requireAvatarDecorationModal } from "@plugins/decor/ui";
 import {ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalProps, ModalRoot, ModalSize, openModal} from "@utils/modal";
 import {Button} from "@webpack/common";
 
@@ -18,7 +18,7 @@ function GuidelinesModal(props: ModalProps) {
     return <ModalRoot
         {...props}
         size={ModalSize.SMALL}
-        className={DecorationModalStyles.modal}
+        className={DecorationModalClasses.modal}
     >
         <ModalHeader separator={false} className={cl("modal-header")}>
             <BaseText

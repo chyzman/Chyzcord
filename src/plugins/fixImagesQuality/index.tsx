@@ -39,7 +39,7 @@ export default definePlugin({
 
     settingsAboutComponent() {
         return (
-            <Card variant="normal">
+            <Card variant="primary">
                 <Flex flexDirection="column" gap="4px">
                     <Paragraph size="md" weight="semibold">The default behaviour is the following:</Paragraph>
                     <Paragraph>
@@ -74,11 +74,10 @@ export default definePlugin({
             const url = new URL(src);
             if (!url.pathname.startsWith("/attachments/")) return;
 
-            if (freeze) {
-                url.searchParams.set("animated", "false");
-
-                if (url.pathname.endsWith(".gif"))
-                    url.searchParams.set("format", "webp");
+            url.searchParams.set("animated", String(!freeze));
+            if (freeze && url.pathname.endsWith(".gif")) {
+                // gifs don't support animated=false, so we have no choice but to use webp
+                url.searchParams.set("format", "webp");
             }
 
             const isModal = !!trigger;
