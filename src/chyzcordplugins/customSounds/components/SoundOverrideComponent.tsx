@@ -10,7 +10,8 @@ import { classes } from "@utils/misc";
 import { useForceUpdater } from "@utils/react";
 import { makeRange } from "@utils/types";
 import { findByCodeLazy, findLazy } from "@webpack";
-import { Button, Card, Forms, React, Select, Slider, Switch } from "@webpack/common";
+import { Button, Forms, React, Select, Slider, Switch } from "@webpack/common";
+import { Card } from "@components/Card";
 import { ComponentType, Ref, SyntheticEvent } from "react";
 
 import { SoundOverride, SoundPlayer, SoundType } from "../types";

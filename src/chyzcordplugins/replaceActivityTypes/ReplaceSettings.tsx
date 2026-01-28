@@ -8,7 +8,8 @@ import { CheckedTextInput } from "@components/CheckedTextInput";
 import { Margins } from "@utils/margins";
 import { identity } from "@utils/misc";
 import { findByPropsLazy } from "@webpack";
-import { Card, Forms, React, Select, SnowflakeUtils, Switch } from "@webpack/common";
+import { Forms, React, Select, SnowflakeUtils, Switch } from "@webpack/common";
+import { Card } from "@components/Card";
 
 import { ActivityType, AppIdSetting, makeEmptyAppId } from ".";
 
