@@ -83,6 +83,7 @@ export const ToastType = {
     BOOKMARK: "bookmark",
     CLOCK: "clock"
 };
+
 const ToastPosition = {
     TOP: 0,
     BOTTOM: 1
@@ -146,7 +147,7 @@ export const UploadHandler = {
 
 export const ApplicationAssetUtils = mapMangledModuleLazy("getAssetImage: size must === [", {
     fetchAssetIds: filters.byCode('.startsWith("http:")', ".dispatch({"),
-    getAssetFromImageURL: filters.byCode("].serialize(", ',":"'),
+    getAssetFromImageURL: filters.byCode("].serialize(", ":null"),
     getAssetImage: filters.byCode("getAssetImage: size must === ["),
     getAssets: filters.byCode(".assets")
 });
@@ -163,7 +164,7 @@ export const ChannelRouter: t.ChannelRouter = mapMangledModuleLazy('"Thread must
 });
 
 export let SettingsRouter: any;
-waitFor(["open", "saveAccountChanges"], m => SettingsRouter = m);
+waitFor(["openUserSettings", "USER_SETTINGS_MODAL_KEY"], m => SettingsRouter = m);
 
 export const PermissionsBits: t.PermissionsBits = findLazy(m => typeof m.ADMINISTRATOR === "bigint");
 
@@ -174,11 +175,6 @@ export const { zustandCreate } = mapMangledModuleLazy(["useSyncExternalStoreWith
 export const { zustandPersist } = mapMangledModuleLazy(".onRehydrateStorage)?", {
     zustandPersist: filters.byCode(/(\(\i,\i\))=>.+?\i\1/)
 });
-
-export const { openUserSettings } = findByPropsLazy("openUserSettings");
-export function openUserSettingsPanel(panel: string) {
-    openUserSettings(panel + "_panel");
-}
 
 export const MessageActions = findByPropsLazy("editMessage", "sendMessage");
 export const MessageCache = findByPropsLazy("clearCache", "_channelMessages");
@@ -221,8 +217,8 @@ export const DisplayProfileUtils: t.DisplayProfileUtils = mapMangledModuleLazy(/
 });
 
 export const DateUtils: t.DateUtils = mapMangledModuleLazy("millisecondsInUnit:", {
-    calendarFormat: filters.byCode("sameElse"),
-    dateFormat: filters.byCode('":'),
+    calendarFormat: filters.byCode('<-1?"sameElse":'),
+    dateFormat: filters.byCode('<2?"nextDay":"sameElse";'),
     isSameDay: filters.byCode(/Math\.abs\(\i-\i\)/),
     diffAsUnits: filters.byCode("days:0", "millisecondsInUnit")
 });
@@ -230,3 +226,5 @@ export const DateUtils: t.DateUtils = mapMangledModuleLazy("millisecondsInUnit:"
 export const MessageTypeSets: t.MessageTypeSets = findByPropsLazy("REPLYABLE", "FORWARDABLE");
 
 export const fetchApplicationsRPC = findByCodeLazy('"Invalid Origin"', ".application");
+
+export const CloudUploader = findLazy(m => m.prototype?.trackUploadFinished) as typeof t.CloudUpload;

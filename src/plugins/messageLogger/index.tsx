@@ -367,16 +367,19 @@ const settings = definePluginSettings({
         type: OptionType.STRING,
         description: "Comma-separated list of user IDs to ignore",
         default: "",
+        multiline: true,
     },
     ignoreChannels: {
         type: OptionType.STRING,
         description: "Comma-separated list of channel IDs to ignore",
         default: "",
+        multiline: true,
     },
     ignoreGuilds: {
         type: OptionType.STRING,
         description: "Comma-separated list of guild IDs to ignore",
         default: "",
+        multiline: true,
     },
     showEditDiffs: {
         type: OptionType.BOOLEAN,
@@ -712,7 +715,7 @@ export default definePlugin({
 
         {
             // Updated message transformer(?)
-            find: "THREAD_STARTER_MESSAGE?null==",
+            find: ".PREMIUM_REFERRAL&&(",
             replacement: [
                 {
                     // Pass through editHistory & deleted & original attachments to the "edited message" transformer

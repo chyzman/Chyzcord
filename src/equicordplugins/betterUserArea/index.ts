@@ -5,7 +5,7 @@
  */
 
 import { definePluginSettings } from "@api/Settings";
-import { EquicordDevs } from "@utils/constants";
+import { Devs } from "@utils/constants";
 import definePlugin, { OptionType } from "@utils/types";
 
 const settings = definePluginSettings({
@@ -50,7 +50,7 @@ const settings = definePluginSettings({
 export default definePlugin({
     name: "BetterUserArea",
     description: "Customize and make the user area more clean.",
-    authors: [EquicordDevs.prism],
+    authors: [Devs.prism],
     settings,
     patches: [
         {
@@ -103,8 +103,8 @@ export default definePlugin({
                     replace: "tooltipText:void 0}"
                 },
                 {
-                    match: /(?<=useRef\(null\);)(\i)=.{0,100}#{intl::USER_SETTINGS}\);/,
-                    replace: "$1=void 0;"
+                    match: /tooltipText:\i,tooltipPositionKey/,
+                    replace: "tooltipText:void 0,tooltipPositionKey"
                 }
             ],
             predicate: () => settings.store.removeButtonTooltips
